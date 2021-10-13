@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const Users = require("../models/userModel");
 
@@ -13,6 +14,10 @@ const userController = {
           .json({ message: "Please enter email and password" });
       }
 
+      if (!validEmail(email)) {
+        return res.status(400).json({ message: "Invalid email" });
+      }
+
       const user = await Users.findOne({ email });
 
       if (user) {
@@ -22,7 +27,7 @@ const userController = {
       const passwordHash = await bcrypt.hash(password, 10);
 
       const newUser = new Users({
-        email,
+        email: email.toLowerCase(),
         password: passwordHash,
         role,
         userClaim,
@@ -37,6 +42,30 @@ const userController = {
           console.log(err);
           res.status(500).json({ message: "Failed to register" });
         });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  },
+  getAccessToken: (req, res) => {
+    try {
+      const { refreshToken } = req.body;
+
+      jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET,
+        (err, user) => {
+          if (err) {
+            return res.status(400).json({ message: "Verifying failed" });
+          }
+
+          const accessToken = createAccessToken({
+            id: user._id,
+            role: user.role,
+          });
+
+          res.json({ accessToken });
+        }
+      );
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
@@ -57,11 +86,41 @@ const userController = {
         return res.status(400).json({ message: "Password is incorrect" });
       }
 
-      res.status(200).json({ message: "Login successfully" });
+      const refreshToken = createRefreshToken({
+        id: user._id,
+        role: user.role,
+      });
+
+      res.status(200).json({
+        message: "Login successfully",
+        keys: {
+          refreshToken: refreshToken,
+          maxAge: "90 days",
+        },
+      });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
   },
 };
+
+const createAccessToken = (payload) => {
+  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "1h",
+  });
+};
+
+const createRefreshToken = (payload) => {
+  return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: "90d",
+  });
+};
+
+function validEmail(email) {
+  const regex =
+    /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g;
+
+  return regex.test(email);
+}
 
 module.exports = userController;

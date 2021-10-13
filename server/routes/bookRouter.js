@@ -1,6 +1,7 @@
 const router = require("express").Router();
 
 const bookController = require("../controllers/bookController");
+const authentication = require("../middlewares/authentication");
 
 router
   .route("/")
@@ -12,6 +13,6 @@ router
   .get(bookController.getBookById)
   .delete(bookController.deleteBook);
 
-router.patch("/comment", bookController.addComment);
+router.patch("/comment", authentication, bookController.addComment);
 
 module.exports = router;
