@@ -95,8 +95,20 @@ const userController = {
         message: "Login successfully",
         keys: {
           refreshToken: refreshToken,
-          maxAge: "90 days",
+          maxAge: "21 days",
         },
+      });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  },
+  getUserInfo: async (req, res) => {
+    try {
+      const user = await Users.findById(req.params.id).select("-password");
+
+      res.json({
+        message: "Get user information successfully",
+        user: user,
       });
     } catch (err) {
       return res.status(500).json({ message: err.message });
@@ -106,13 +118,13 @@ const userController = {
 
 const createAccessToken = (payload) => {
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "30m",
   });
 };
 
 const createRefreshToken = (payload) => {
   return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: "90d",
+    expiresIn: "21d",
   });
 };
 

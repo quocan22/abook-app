@@ -69,7 +69,7 @@ const bookController = {
         commentDate: new Date(),
       };
 
-      const book = await Books.findOne({ _id: bookId });
+      const book = await Books.findOne({ _id: bookId }).sort({ createdAt: 1 });
       if (!book) {
         return res.status(500).json({ message: "This book does not exist" });
       }
@@ -100,7 +100,6 @@ const updateAvgRate = (comments) => {
   for (var i = 0; i < comments.length; i++) {
     total += comments[i].rate;
   }
-
   return total / comments.length;
 };
 
