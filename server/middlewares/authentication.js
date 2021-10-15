@@ -1,7 +1,16 @@
 const jwt = require("jsonwebtoken");
 const authentication = (req, res, next) => {
   try {
-    const token = req.header("Authorization");
+    const header = req.header("Authorization");
+
+    const [firstEle, secondEle] = header.split(" ");
+
+    let token;
+    if (secondEle) {
+      token = secondEle;
+    } else {
+      token = firstEle;
+    }
 
     if (!token) {
       return res.status(401).json({ message: "Invalid authentication" });
