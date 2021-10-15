@@ -2,7 +2,8 @@
 
 ## Đồ án môn học "Đồ án 2" - SE122.M11
 
-GV Hướng dẫn: Th.S Lê Thanh Trọng
+GV Hướng dẫn: Th.S Lê Thanh Trọng\
+
 Sinh viên thực hiện:
 
 - Phan Quốc An - 18520438
