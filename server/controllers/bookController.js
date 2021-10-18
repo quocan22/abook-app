@@ -1,10 +1,12 @@
+const { cloudinary } = require("../utils/cloudinary");
 const Books = require("../models/bookModel");
 
 const bookController = {
   getAllBook: async (req, res) => {
     try {
-      const books = await Books.find();
+      const books = await Books.find().sort({ createdAt: 1 });
 
+      // return data after get all books
       res.json({
         message: "Get all books successfully",
         result: books.length,
@@ -18,6 +20,7 @@ const bookController = {
     try {
       const book = await Books.findById(req.params.id);
 
+      // check if book exists
       if (!book) {
         return res.status(404).json({ message: "Cannot find this book" });
       }
@@ -37,10 +40,12 @@ const bookController = {
 
       const book = await Books.findOne({ name });
 
+      // check if this name of book exists
       if (book) {
         return res.status(500).json({ message: "This book already existed" });
       }
 
+      // create a new book
       const newBook = new Books({
         categoryId,
         name,
@@ -49,6 +54,18 @@ const bookController = {
         quantity,
         description,
       });
+
+      // if create new book with image
+      if (req.file) {
+        // upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: "abook/book",
+        });
+
+        // set image url and image id for new book
+        newBook.imageUrl = result.secure_url;
+        newBook.cloudinaryId = result.public_id;
+      }
 
       await newBook.save();
 
@@ -62,6 +79,7 @@ const bookController = {
       const bookId = req.query.bookId;
       const { userId, rate, review } = req.body;
 
+      // create a new comment
       const newComment = {
         userId: userId,
         rate: rate,
@@ -69,11 +87,14 @@ const bookController = {
         commentDate: new Date(),
       };
 
-      const book = await Books.findOne({ _id: bookId }).sort({ createdAt: 1 });
+      // get book by id
+      const book = await Books.findOne({ _id: bookId });
+      // check if book exists
       if (!book) {
         return res.status(500).json({ message: "This book does not exist" });
       }
 
+      // add comment to array and update avarage rate of the book
       book.comments.push(newComment);
       book.avgRate = updateAvgRate(book.comments);
 
@@ -86,7 +107,15 @@ const bookController = {
   },
   deleteBook: async (req, res) => {
     try {
-      await Books.findByIdAndDelete(req.params.id);
+      const book = await Books.findById(req.params.id);
+
+      // if book image is not default, delete it
+      if (book.cloudinaryId !== process.env.DEFAULT_BOOK_PUBLIC_ID) {
+        await cloudinary.uploader.destroy(book.cloudinaryId);
+      }
+
+      // remove book from database
+      book.remove();
 
       res.status(202).json({ message: "Deleted successfully" });
     } catch (err) {
@@ -97,6 +126,8 @@ const bookController = {
 
 const updateAvgRate = (comments) => {
   var total = 0;
+
+  // calc avg rate
   for (var i = 0; i < comments.length; i++) {
     total += comments[i].rate;
   }

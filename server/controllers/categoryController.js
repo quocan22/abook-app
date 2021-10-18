@@ -21,6 +21,7 @@ const categoryController = {
 
       const cate = await Categories.findOne({ categoryName });
 
+      // check if category exists
       if (cate) {
         return res
           .status(403)
@@ -40,6 +41,7 @@ const categoryController = {
     try {
       const bookCount = Books.find({ categoryId: req.params.id }).count();
 
+      // if this category has any book, stop deleting
       if (count !== 0) {
         return res
           .status(400)

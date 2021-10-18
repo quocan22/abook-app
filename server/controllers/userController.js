@@ -8,22 +8,26 @@ const userController = {
     try {
       const { email, password, role, userClaim } = req.body;
 
+      // check if miss email or password field in request
       if (!email || !password) {
         return res
           .status(422)
           .json({ message: "Please enter email and password" });
       }
 
+      // check if email invalid
       if (!validEmail(email)) {
         return res.status(400).json({ message: "Invalid email" });
       }
 
       const user = await Users.findOne({ email });
 
+      // check if this email has already registed
       if (user) {
         return res.status(403).json({ message: "This email already existed" });
       }
 
+      // hash password by bcrypt
       const passwordHash = await bcrypt.hash(password, 10);
 
       const newUser = new Users({
@@ -50,6 +54,7 @@ const userController = {
     try {
       const { refreshToken } = req.body;
 
+      // verify the refresh token
       jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET,
@@ -58,6 +63,7 @@ const userController = {
             return res.status(400).json({ message: "Verifying failed" });
           }
 
+          // if refresh token has been verified, create a new access token
           const accessToken = createAccessToken({
             id: user._id,
             role: user.role,
@@ -74,18 +80,23 @@ const userController = {
     try {
       const { email, password } = req.body;
 
-      const user = await Users.findOne({ email });
+      // get user with additional field password - to verify
+      const user = await Users.findOne({ email }).select("+password");
 
+      // check if this user does not exists
       if (!user) {
         return res.status(400).json({ message: "This email does not exist" });
       }
 
+      // compare password from request and password in database
       const passwordMatched = await bcrypt.compare(password, user.password);
 
+      // check if password is not matched
       if (!passwordMatched) {
         return res.status(400).json({ message: "Password is incorrect" });
       }
 
+      // create a refresh token contains id and role
       const refreshToken = createRefreshToken({
         id: user._id,
         role: user.role,
@@ -104,11 +115,25 @@ const userController = {
   },
   getUserInfo: async (req, res) => {
     try {
-      const user = await Users.findById(req.params.id).select("-password");
+      const user = await Users.findById(req.params.id);
 
+      // return userclaim information
       res.json({
         message: "Get user information successfully",
-        user: user,
+        data: user.userClaim,
+      });
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  },
+  getAllUser: async (req, res) => {
+    try {
+      const users = await Users.find();
+
+      res.json({
+        message: "Get all users successfully",
+        result: users.length,
+        data: users,
       });
     } catch (err) {
       return res.status(500).json({ message: err.message });
@@ -117,18 +142,23 @@ const userController = {
 };
 
 const createAccessToken = (payload) => {
+  // create access token expired in 30 minutes
+  // this token will be used to authorize
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "30m",
   });
 };
 
 const createRefreshToken = (payload) => {
+  // create refresh token expired in 21 days
+  // this token will be used to get access token
   return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: "21d",
   });
 };
 
 function validEmail(email) {
+  // regex to check if email is valid
   const regex =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g;
 

@@ -15,6 +15,7 @@ app.use("/api/users", require("./routes/userRouter"));
 app.use("/api/books", require("./routes/bookRouter"));
 app.use("/api/categories", require("./routes/categoryRouter"));
 app.use("/api/carts", require("./routes/cartRouter"));
+app.use("/api/asset", require("./routes/assetRouter"));
 
 app.listen(port, () => {
   console.log(`Server is running at port ${port}`);
