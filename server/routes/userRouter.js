@@ -12,4 +12,8 @@ router.put("/login", userController.login);
 
 router.post("/getaccesstoken", userController.getAccessToken);
 
+router.post("/changepassword", userController.changePassword);
+
+router.post("/googlelogin", userController.googleLogin);
+
 module.exports = router;

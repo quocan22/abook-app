@@ -91,7 +91,7 @@ const bookController = {
       const book = await Books.findOne({ _id: bookId });
       // check if book exists
       if (!book) {
-        return res.status(500).json({ message: "This book does not exist" });
+        return res.status(400).json({ message: "This book does not exist" });
       }
 
       // add comment to array and update avarage rate of the book
