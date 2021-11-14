@@ -10,9 +10,8 @@ import {
 } from 'react-native';
 import FormButton from '../../components/utils/FormButton';
 import FormInput from '../../components/utils/FormInput';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import styles from './styles';
-import GoogleSigninButton from '../../components/utils/GoogleSigninButton';
+import GoogleSignInButton from '../../components/utils/GoogleSignInButton';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState();
@@ -67,7 +66,7 @@ const LoginScreen = () => {
           <Text style={styles.navButtonText}>Forgot password?</Text>
         </TouchableOpacity>
 
-        <GoogleSigninButton
+        <GoogleSignInButton
           buttonTitle="Sign In with Google"
           onPress={() => {
             if (!email || !password) {

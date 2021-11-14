@@ -1,14 +1,14 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {windowHeight} from '../../utils/Dimension';
-import FontAwesome from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const GoogleSigninButton = ({buttonTitle, ...rest}) => {
+const GoogleSignInButton = ({buttonTitle, ...rest}) => {
   return (
     <TouchableOpacity style={styles.buttonContainer} {...rest}>
       <View style={styles.inputContainer}>
         <View style={styles.iconStyle}>
-          <FontAwesome name="google" size={25} color="#666"></FontAwesome>
+          <FontAwesome5 name="google" size={25} color="#666"></FontAwesome5>
         </View>
         <Text style={styles.buttonText}>{buttonTitle}</Text>
       </View>
@@ -16,7 +16,7 @@ const GoogleSigninButton = ({buttonTitle, ...rest}) => {
   );
 };
 
-export default GoogleSigninButton;
+export default GoogleSignInButton;
 
 const styles = StyleSheet.create({
   inputContainer: {
@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconStyle: {
-    paddingVertical: 10,
     paddingLeft: 10,
     height: '100%',
     justifyContent: 'center',
