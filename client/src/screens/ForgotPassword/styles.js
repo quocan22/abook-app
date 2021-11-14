@@ -14,37 +14,25 @@ const styles = StyleSheet.create({
     width: 150,
     resizeMode: 'cover',
   },
-  welcomeText: {
+  title: {
     fontSize: 20,
     color: '#000',
     fontWeight: 'bold',
   },
-  welcomeTextView: {
+  titleView: {
     marginBottom: 10,
     marginTop: 50,
     width: '100%',
     flexDirection: 'row',
   },
-  forgotButton: {
-    marginTop: 35,
+  content: {
+    fontSize: 17,
+    color: '#666',
   },
-  navButtonText: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#0096C7',
-    fontWeight: 'bold',
-  },
-  navText: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#000',
-    fontWeight: 'bold',
-  },
-  textNavView: {
+  contentView: {
+    marginBottom: 10,
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 15,
   },
   smallCircleView: {
     width: 150,
@@ -63,11 +51,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: -150,
     bottom: -150,
-  },
-  googleButton: {
-    marginTop: 15,
-    width: '100%',
-    height: windowHeight / 15,
   },
 });
 

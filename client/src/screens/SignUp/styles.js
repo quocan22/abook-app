@@ -14,19 +14,16 @@ const styles = StyleSheet.create({
     width: 150,
     resizeMode: 'cover',
   },
-  welcomeText: {
+  startText: {
     fontSize: 20,
     color: '#000',
     fontWeight: 'bold',
   },
-  welcomeTextView: {
+  startTextView: {
     marginBottom: 10,
     marginTop: 50,
     width: '100%',
     flexDirection: 'row',
-  },
-  forgotButton: {
-    marginTop: 35,
   },
   navButtonText: {
     fontSize: 15,
@@ -63,11 +60,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: -150,
     bottom: -150,
-  },
-  googleButton: {
-    marginTop: 15,
-    width: '100%',
-    height: windowHeight / 15,
   },
 });
 
