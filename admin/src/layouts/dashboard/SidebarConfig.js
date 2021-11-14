@@ -13,23 +13,28 @@ const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
 
 const sidebarConfig = [
   {
-    title: 'dashboard',
+    title: 'trang chủ',
     path: '/dashboard/app',
     icon: getIcon(pieChart2Fill)
   },
   {
-    title: 'user',
+    title: 'quản lý tài khoản',
     path: '/dashboard/user',
     icon: getIcon(peopleFill)
   },
   {
-    title: 'product',
+    title: 'quản lý kho sách',
     path: '/dashboard/products',
     icon: getIcon(shoppingBagFill)
   },
   {
-    title: 'blog',
-    path: '/dashboard/blog',
+    title: 'các cài đặt khác',
+    path: '/dashboard/products',
+    icon: getIcon(shoppingBagFill)
+  },
+  {
+    title: 'báo cáo',
+    path: '/dashboard/report',
     icon: getIcon(fileTextFill)
   },
   {

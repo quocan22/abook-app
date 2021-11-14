@@ -32,11 +32,11 @@ import USERLIST from '../_mocks_/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
+  { id: 'name', label: 'Họ và Tên', alignRight: false },
+  { id: 'company', label: 'Công ty', alignRight: false },
+  { id: 'role', label: 'Chức vụ', alignRight: false },
   { id: 'isVerified', label: 'Verified', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'status', label: 'Trạng thái', alignRight: false },
   { id: '' }
 ];
 
@@ -132,11 +132,11 @@ export default function User() {
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
-    <Page title="User | Minimal-UI">
+    <Page title="Quản lý tài khoản | ABook">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Quản lý tài khoản
           </Typography>
           <Button
             variant="contained"
@@ -144,7 +144,7 @@ export default function User() {
             to="#"
             startIcon={<Icon icon={plusFill} />}
           >
-            New User
+            Thêm nhân viên
           </Button>
         </Stack>
 

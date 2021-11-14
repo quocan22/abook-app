@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
-import { Box, Link, Drawer, Typography, Avatar } from '@mui/material';
+import { Box, Link, Drawer, Typography, Avatar, Stack } from '@mui/material';
 // components
 import Logo from '../../components/Logo';
 import Scrollbar from '../../components/Scrollbar';
@@ -57,9 +57,14 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       }}
     >
       <Box sx={{ px: 2.5, py: 3 }}>
-        <Box component={RouterLink} to="/" sx={{ display: 'inline-flex' }}>
-          <Logo />
-        </Box>
+        <Stack direction="row" alignItems="center" justifyContent="left">
+          <Box component={RouterLink} to="/" sx={{ display: 'inline-flex' }} marginRight="10px">
+            <Logo />
+          </Box>
+          <Typography variant="h4" gutterBottom>
+            ABook
+          </Typography>
+        </Stack>
       </Box>
 
       <Box sx={{ mb: 5, mx: 2.5 }}>
