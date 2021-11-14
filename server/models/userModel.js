@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     role: {
       type: Number, //0: user, 1: staff, 2: admin
@@ -25,6 +26,10 @@ const userSchema = new mongoose.Schema(
         type: String,
         default:
           "https://res.cloudinary.com/quocan/image/upload/v1633830550/abook/avatar/anonymous_lx6zwf.png",
+      },
+      cloudinaryId: {
+        type: String,
+        default: "abook/avatar/anonymous_lx6zwf",
       },
       phoneNumber: {
         type: String,

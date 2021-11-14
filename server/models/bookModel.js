@@ -12,7 +12,12 @@ const bookSchema = new mongoose.Schema(
     },
     imageUrl: {
       type: String,
-      default: "",
+      default:
+        "https://res.cloudinary.com/quocan/image/upload/v1634490881/abook/book/book_default_qsmm4e.jpg",
+    },
+    cloudinaryId: {
+      type: String,
+      default: "abook/book/book_default_qsmm4e",
     },
     isAvailable: {
       type: Boolean,

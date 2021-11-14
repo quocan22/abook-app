@@ -8,12 +8,14 @@ const cartController = {
 
       const useCheck = await Users.findById(userId);
 
+      // check if user exists
       if (!useCheck) {
         return res.status(404).json({ message: "Cannot found this user" });
       }
 
       const cart = await Carts.findOne({ userId });
 
+      // check if cart exists
       if (!cart) {
         return res.status(404).json({ message: "This user has no cart" });
       }
@@ -32,12 +34,14 @@ const cartController = {
 
       const useCheck = await Users.findById(userId);
 
+      // check if user exists
       if (!useCheck) {
         return res.status(404).json({ message: "Cannot found this user" });
       }
 
       const cart = await Carts.findOne({ userId });
 
+      // check if this user already had a cart
       if (cart) {
         return res.status(422).json({ message: "This user already had cart" });
       }
@@ -58,21 +62,25 @@ const cartController = {
 
       const useCheck = await Users.findById(userId);
 
+      // check if user exists
       if (!useCheck) {
         return res.status(404).json({ message: "Cannot found this user" });
       }
 
       const cart = await Carts.findOne({ userId });
 
+      // check if cart exists
       if (!cart) {
         return res.status(404).json({ message: "Cannot found this cart" });
       }
 
+      // create a new cart detail
       const newDetail = {
         bookId,
         quantity,
       };
 
+      // push detail to array
       cart.details.push(newDetail);
 
       await cart.save();
@@ -88,12 +96,14 @@ const cartController = {
 
       const useCheck = await Users.findById(userId);
 
+      // check if user exists
       if (!useCheck) {
         return res.status(404).json({ message: "Cannot found this user" });
       }
 
       const cart = await Carts.findOne({ userId });
 
+      // check if cart exists
       if (!cart) {
         return res.status(404).json({ message: "Cannot found this cart" });
       }
@@ -114,6 +124,7 @@ const cartController = {
 
       const cart = await Carts.findOne({ userId });
 
+      // if cart exist, update correspondding book
       if (cart) {
         for (var i = 0; i < cart.details.length; i++) {
           if (cart.details[i].bookId === bookId) {

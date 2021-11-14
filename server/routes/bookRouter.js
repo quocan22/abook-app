@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const upload = require("../utils/multer");
 
 const bookController = require("../controllers/bookController");
 const authentication = require("../middlewares/authentication");
@@ -8,6 +9,7 @@ router
   .route("/")
   .get(bookController.getAllBook)
   .post(
+    upload.single("image"),
     authentication,
     authenticationEmployee.authenticationStaff,
     bookController.createBook
