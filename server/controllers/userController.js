@@ -47,7 +47,7 @@ const userController = {
 
       const activateToken = createActivateToken(newUser);
 
-      const url = `${SERVER_URL}/api/users/activate?activatetoken=${activateToken}`;
+      const url = `${SERVER_URL}/api/users/activate?t=${activateToken}`;
 
       mailService.sendActivationEmail(email, url);
 
@@ -60,7 +60,7 @@ const userController = {
   },
   activateEmail: async (req, res) => {
     try {
-      const activateToken = req.query.activatetoken;
+      const activateToken = req.query.t;
 
       const user = jwt.verify(activateToken, ACTIVATE_TOKEN_SECRET);
 
