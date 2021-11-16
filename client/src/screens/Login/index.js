@@ -13,6 +13,7 @@ import FormInput from '../../components/utils/FormInput';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import styles from './styles';
 import GoogleSigninButton from '../../components/utils/GoogleSigninButton';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState();
@@ -65,6 +66,7 @@ const LoginScreen = () => {
 
         <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
           <Text style={styles.navButtonText}>Forgot password?</Text>
+          <FontAwesome name="google"></FontAwesome>
         </TouchableOpacity>
 
         <GoogleSigninButton

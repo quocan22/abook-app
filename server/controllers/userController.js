@@ -1,13 +1,18 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-const { google } = require("googleapis");
-const { OAuth2 } = google.auth;
-const client = new OAuth2(process.env.GOOGLE_API_CLIENT_ID);
-
 const fetch = require("node-fetch");
 
 const Users = require("../models/userModel");
+const { mailService } = require("../utils/mailService");
+
+const {
+  ACTIVATE_TOKEN_SECRET,
+  ACCESS_TOKEN_SECRET,
+  REFRESH_TOKEN_SECRET,
+  GOOGLE_SECRET,
+  FACEBOOK_SECRET,
+  SERVER_URL,
+} = process.env;
 
 const userController = {
   register: async (req, res) => {
@@ -33,27 +38,54 @@ const userController = {
         return res.status(403).json({ message: "This email already existed" });
       }
 
-      // hash password by bcrypt
+      const newUser = {
+        email: email.toLowerCase(),
+        password: password,
+        role: role,
+        userClaim: userClaim,
+      };
+
+      const activateToken = createActivateToken(newUser);
+
+      const url = `${SERVER_URL}/api/users/activate?activatetoken=${activateToken}`;
+
+      mailService.sendActivationEmail(email, url);
+
+      res.json({
+        message: "Regist successfully! Please activate your email to start.",
+      });
+    } catch (err) {
+      return res.status(500).json({ place: "register", message: err.message });
+    }
+  },
+  activateEmail: async (req, res) => {
+    try {
+      const activateToken = req.query.activatetoken;
+
+      const user = jwt.verify(activateToken, ACTIVATE_TOKEN_SECRET);
+
+      const { email, password, role, userClaim } = user;
+
+      const check = await Users.findOne({ email });
+
+      if (check) {
+        return res.status(400).json({ message: "This email already existed" });
+      }
+
       const passwordHash = await bcrypt.hash(password, 10);
 
       const newUser = new Users({
-        email: email.toLowerCase(),
+        email,
         password: passwordHash,
         role,
         userClaim,
       });
 
-      newUser
-        .save()
-        .then(() => {
-          res.status(201).json({ message: "Create user successfully" });
-        })
-        .catch((err) => {
-          console.log(err);
-          res.status(500).json({ message: "Failed to register" });
-        });
+      await newUser.save();
+
+      res.json({ message: "Account has been actived" });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ place: "activate", message: err.message });
     }
   },
   getAccessToken: (req, res) => {
@@ -61,23 +93,19 @@ const userController = {
       const { refreshToken } = req.body;
 
       // verify the refresh token
-      jwt.verify(
-        refreshToken,
-        process.env.REFRESH_TOKEN_SECRET,
-        (err, user) => {
-          if (err) {
-            return res.status(404).json({ message: "Verifying failed" });
-          }
-
-          // if refresh token has been verified, create a new access token
-          const accessToken = createAccessToken({
-            id: user._id,
-            role: user.role,
-          });
-
-          res.json({ accessToken });
+      jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) {
+          return res.status(404).json({ message: "Verifying failed" });
         }
-      );
+
+        // if refresh token has been verified, create a new access token
+        const accessToken = createAccessToken({
+          id: user._id,
+          role: user.role,
+        });
+
+        res.json({ accessToken });
+      });
     } catch (err) {
       return res.status(500).json({ message: err.message });
     }
@@ -153,17 +181,12 @@ const userController = {
     try {
       const { tokenId } = req.body;
 
-      // use token to create verify object
-      const verify = await client.verifyIdToken({
-        idToken: tokenId,
-        audience: process.env.GOOGLE_API_CLIENT_ID,
-      });
-
       // get user info payload
-      const { email_verified, email, name, picture } = verify.payload;
+      const { email_verified, email, name, picture } =
+        await mailService.googleLogin(tokenId);
 
       // generate password
-      const password = email + process.env.GOOGLE_SECRET;
+      const password = email + GOOGLE_SECRET;
       const passwordHash = await bcrypt.hash(password, 10);
 
       if (!email_verified) {
@@ -234,7 +257,7 @@ const userController = {
       const { accessToken, userId } = req.body;
 
       // make Facebook graph URL to get data
-      const graphUrl = `https://graph.facebook.com/v4.0/${userId}/?fields=id,name,email,picture&access_token=ACCESS-TOKEN`;
+      const graphUrl = `https://graph.facebook.com/v4.0/${userId}/?fields=id,name,email,picture&access_token=${accessToken}`;
 
       // get user's data from graph URL
       const data = await fetch(graphUrl)
@@ -245,7 +268,7 @@ const userController = {
       const { email, name, picture } = data;
 
       // generate password
-      const password = email + process.env.FACEBOOK_SECRET;
+      const password = email + FACEBOOK_SECRET;
       const passwordHash = await bcrypt.hash(password, 10);
 
       const user = await Users.findOne({ email }).select("+password");
@@ -334,10 +357,18 @@ const userController = {
   },
 };
 
+const createActivateToken = (payload) => {
+  // create activate token expired in 5 minutes
+  // this token will be used to activate the account
+  return jwt.sign(payload, ACTIVATE_TOKEN_SECRET, {
+    expiresIn: "5m",
+  });
+};
+
 const createAccessToken = (payload) => {
   // create access token expired in 30 minutes
   // this token will be used to authorize
-  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+  return jwt.sign(payload, ACCESS_TOKEN_SECRET, {
     expiresIn: "30m",
   });
 };
@@ -345,7 +376,7 @@ const createAccessToken = (payload) => {
 const createRefreshToken = (payload) => {
   // create refresh token expired in 21 days
   // this token will be used to get access token
-  return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+  return jwt.sign(payload, REFRESH_TOKEN_SECRET, {
     expiresIn: "21d",
   });
 };
