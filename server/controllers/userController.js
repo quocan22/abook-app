@@ -83,12 +83,12 @@ const userController = {
 
       await newUser.save();
 
-      res.json({ message: "Account has been actived" });
+      res.json({ message: "Account has been activated" });
     } catch (err) {
       return res.status(500).json({ place: "activate", message: err.message });
     }
   },
-  getAccessToken: (req, res) => {
+  refreshToken: (req, res) => {
     try {
       const { refreshToken } = req.body;
 
@@ -136,10 +136,17 @@ const userController = {
         role: user.role,
       });
 
+      // create an access token contains id and role
+      const accessToken = createAccessToken({
+        id: user._id,
+        role: user.role,
+      });
+
       res.status(200).json({
         message: "Login successfully",
         keys: {
-          refreshToken: refreshToken,
+          refreshToken,
+          accessToken,
           maxAge: "21 days",
         },
       });
@@ -212,7 +219,7 @@ const userController = {
         res.status(200).json({
           message: "Login successfully",
           keys: {
-            refreshToken: refreshToken,
+            refreshToken,
             maxAge: "21 days",
           },
         });
@@ -243,7 +250,7 @@ const userController = {
         res.status(200).json({
           message: "Login successfully",
           keys: {
-            refreshToken: refreshToken,
+            refreshToken,
             maxAge: "21 days",
           },
         });
@@ -333,7 +340,7 @@ const userController = {
     try {
       const user = await Users.findById(req.params.id);
 
-      // return userclaim information
+      // return user claim information
       res.json({
         message: "Get user information successfully",
         data: user.userClaim,
@@ -349,7 +356,7 @@ const userController = {
       res.json({
         message: "Get all users successfully",
         result: users.length,
-        data: users,
+        users,
       });
     } catch (err) {
       return res.status(500).json({ message: err.message });
