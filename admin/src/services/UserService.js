@@ -1,19 +1,18 @@
-const axios = require('axios');
+import api from './api';
 
-const UserService = (token) => {
-  const getAllUsers = async () => {
-    axios
-      .get('http://localhost:5000/api/users')
-      .then((res) => res.data)
-      .catch((err) => {
-        console.error(err);
-        return null;
-      });
-  };
+const getAllUsers = () => api.get('/users');
 
-  return {
-    getAllUsers
-  };
+const addNewUser = (user) => api.post('/users/register', user);
+
+const getUserInfo = (userId) => api.get(`/users/${userId}`);
+
+const updateUserInfo = (userId, userClaim) => api.put(`/users/${userId}`, userClaim);
+
+const UserService = {
+  getAllUsers,
+  addNewUser,
+  getUserInfo,
+  updateUserInfo
 };
 
 export default UserService;

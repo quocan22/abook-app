@@ -8,12 +8,12 @@ const bookController = {
 
       // return data after get all books
       res.json({
-        message: "Get all books successfully",
+        msg: "Get all books successfully",
         result: books.length,
         data: books,
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   getBookById: async (req, res) => {
@@ -22,15 +22,15 @@ const bookController = {
 
       // check if book exists
       if (!book) {
-        return res.status(404).json({ message: "Cannot find this book" });
+        return res.status(404).json({ msg: "Cannot find this book" });
       }
 
       res.json({
-        message: "Get 1 book successfully",
+        msg: "Get 1 book successfully",
         data: book,
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   createBook: async (req, res) => {
@@ -42,7 +42,7 @@ const bookController = {
 
       // check if this name of book exists
       if (book) {
-        return res.status(500).json({ message: "This book already existed" });
+        return res.status(500).json({ msg: "This book already existed" });
       }
 
       // create a new book
@@ -69,9 +69,9 @@ const bookController = {
 
       await newBook.save();
 
-      res.status(201).json({ message: "Creating book successfully" });
+      res.status(201).json({ msg: "Creating book successfully" });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   addComment: async (req, res) => {
@@ -91,7 +91,7 @@ const bookController = {
       const book = await Books.findOne({ _id: bookId });
       // check if book exists
       if (!book) {
-        return res.status(400).json({ message: "This book does not exist" });
+        return res.status(400).json({ msg: "This book does not exist" });
       }
 
       // add comment to array and update avarage rate of the book
@@ -100,9 +100,9 @@ const bookController = {
 
       await book.save();
 
-      res.status(200).json({ message: "Add new comment successfully" });
+      res.status(200).json({ msg: "Add new comment successfully" });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   deleteBook: async (req, res) => {
@@ -117,9 +117,9 @@ const bookController = {
       // remove book from database
       book.remove();
 
-      res.status(202).json({ message: "Deleted successfully" });
+      res.status(202).json({ msg: "Deleted successfully" });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
 };

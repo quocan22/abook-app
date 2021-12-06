@@ -7,12 +7,12 @@ const categoryController = {
       const cates = await Categories.find();
 
       res.json({
-        message: "Get all categories successfully",
+        msg: "Get all categories successfully",
         result: cates.length,
         data: cates,
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   createCategory: async (req, res) => {
@@ -23,18 +23,16 @@ const categoryController = {
 
       // check if category exists
       if (cate) {
-        return res
-          .status(403)
-          .json({ message: "This category already existed" });
+        return res.status(403).json({ msg: "This category already existed" });
       }
 
       const newCate = new Categories({ categoryName });
 
       await newCate.save();
 
-      res.status(201).json({ message: "Creating category successfully" });
+      res.status(201).json({ msg: "Creating category successfully" });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   deleteCategory: async (req, res) => {
@@ -45,14 +43,14 @@ const categoryController = {
       if (count !== 0) {
         return res
           .status(400)
-          .json({ message: "Please delete all books in this category" });
+          .json({ msg: "Please delete all books in this category" });
       }
 
       await Categories.findByIdAndDelete(req.params.id);
 
-      res.status(202).json({ message: "Deleted successfully" });
+      res.status(202).json({ msg: "Deleted successfully" });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
 };

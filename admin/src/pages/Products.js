@@ -1,79 +1,69 @@
-import { useFormik } from 'formik';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { filter } from 'lodash';
 // material
-import { Container, Stack, Typography } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 // components
 import Page from '../components/Page';
-import {
-  ProductSort,
-  ProductList,
-  ProductCartWidget,
-  ProductFilterSidebar
-} from '../components/_dashboard/products';
+import SearchNotFound from '../components/SearchNotFound';
+import { ProductList, ProductSearchBar } from '../components/_dashboard/products';
 //
-import PRODUCTS from '../_mocks_/products';
+import BookService from '../services/BookService';
 
 // ----------------------------------------------------------------------
 
-export default function EcommerceShop() {
-  const [openFilter, setOpenFilter] = useState(false);
+function applyFilter(array, name, cate) {
+  const stabilize = filter(
+    array,
+    (_book) => _book.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+  );
 
-  const formik = useFormik({
-    initialValues: {
-      gender: '',
-      category: '',
-      colors: '',
-      priceRange: '',
-      rating: ''
-    },
-    onSubmit: () => {
-      setOpenFilter(false);
-    }
-  });
+  if (cate) {
+    return stabilize.filter((_book) => _book.categoryId === cate);
+  }
 
-  const { resetForm, handleSubmit } = formik;
+  return stabilize;
+}
 
-  const handleOpenFilter = () => {
-    setOpenFilter(true);
+export default function Products() {
+  const [books, setBooks] = useState([]);
+  const [filterName, setFilterName] = useState('');
+  const [filterCate, setFilterCate] = useState('');
+
+  useEffect(() => {
+    BookService.getAllBooks()
+      .then((res) => setBooks(res.data.data))
+      .catch((err) => console.error(err));
+  }, []);
+
+  const handleFilterByName = (event) => {
+    setFilterName(event.target.value);
   };
 
-  const handleCloseFilter = () => {
-    setOpenFilter(false);
+  const handleFilterByCate = (event) => {
+    setFilterCate(event.target.value);
   };
 
-  const handleResetFilter = () => {
-    handleSubmit();
-    resetForm();
-  };
+  const filteredBooks = applyFilter(books, filterName, filterCate);
+
+  const isBookNotFound = filteredBooks.length === 0;
 
   return (
-    <Page title="Quản lý kho sách | ABook">
+    <Page title="Product Management | ABook">
       <Container>
         <Typography variant="h4" sx={{ mb: 5 }}>
           Products
         </Typography>
 
-        <Stack
-          direction="row"
-          flexWrap="wrap-reverse"
-          alignItems="center"
-          justifyContent="flex-end"
-          sx={{ mb: 5 }}
-        >
-          <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-            <ProductFilterSidebar
-              formik={formik}
-              isOpenFilter={openFilter}
-              onResetFilter={handleResetFilter}
-              onOpenFilter={handleOpenFilter}
-              onCloseFilter={handleCloseFilter}
-            />
-            <ProductSort />
-          </Stack>
-        </Stack>
+        <ProductSearchBar
+          filterName={filterName}
+          onFilterName={handleFilterByName}
+          filterCate={filterCate}
+          onFilterCate={handleFilterByCate}
+        />
 
-        <ProductList products={PRODUCTS} />
-        <ProductCartWidget />
+        {isBookNotFound && <SearchNotFound searchQuery={filterName} />}
+
+        <ProductList products={filteredBooks} />
       </Container>
     </Page>
   );

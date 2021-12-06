@@ -14,8 +14,8 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
     role: {
-      type: Number, //0: user, 1: staff, 2: admin
-      default: 0,
+      type: Number, // 1: user, 2: staff, 3: admin
+      default: 1,
     },
     userClaim: {
       displayName: {

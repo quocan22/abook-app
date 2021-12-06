@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
-import { Link as RouterLink } from 'react-router-dom';
 // material
-import { Box, Card, Link, Typography, Stack } from '@mui/material';
+import { Icon } from '@iconify/react';
+import { Box, Card, Typography, Stack, IconButton, Rating } from '@mui/material';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 import { styled } from '@mui/material/styles';
 // utils
 import { fCurrency } from '../../../utils/formatNumber';
 //
 import Label from '../../Label';
-import ColorPreview from '../../ColorPreview';
 
 // ----------------------------------------------------------------------
 
@@ -21,59 +22,85 @@ const ProductImgStyle = styled('img')({
 
 // ----------------------------------------------------------------------
 
+const LightTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[10],
+    fontSize: 11
+  }
+}));
+
 ShopProductCard.propTypes = {
   product: PropTypes.object
 };
 
 export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale } = product;
+  const { name, imageUrl, price, quantity, status, priceSale, avgRate, isAvailable } = product;
 
   return (
-    <Card>
-      <Box sx={{ pt: '100%', position: 'relative' }}>
-        {status && (
-          <Label
-            variant="filled"
-            color={(status === 'sale' && 'error') || 'info'}
-            sx={{
-              zIndex: 9,
-              top: 16,
-              right: 16,
-              position: 'absolute',
-              textTransform: 'uppercase'
-            }}
-          >
-            {status}
+    <LightTooltip
+      placement="bottom-start"
+      title={
+        <Stack>
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <Typography variant="subtitle2">
+              Price:&nbsp;{fCurrency(price)}&#8363;&nbsp;
+              <Typography
+                component="span"
+                variant="body1"
+                sx={{
+                  color: 'text.disabled',
+                  textDecoration: 'line-through'
+                }}
+              >
+                {priceSale && fCurrency(priceSale)}
+              </Typography>
+            </Typography>
+          </Stack>
+          <Typography variant="subtitle2">Quantity:&nbsp;{quantity}</Typography>
+          <Label variant="ghost" color={(isAvailable && 'secondary') || 'error'}>
+            {(isAvailable && 'Available') || 'Not Available'}
           </Label>
-        )}
-        <ProductImgStyle alt={name} src={cover} />
-      </Box>
-
-      <Stack spacing={2} sx={{ p: 3 }}>
-        <Link to="#" color="inherit" underline="hover" component={RouterLink}>
-          <Typography variant="subtitle2" noWrap>
-            {name}
-          </Typography>
-        </Link>
-
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <ColorPreview colors={colors} />
-          <Typography variant="subtitle1">
-            <Typography
-              component="span"
-              variant="body1"
+        </Stack>
+      }
+    >
+      <Card>
+        <Box sx={{ pt: '100%', position: 'relative' }}>
+          {status && (
+            <Label
+              variant="filled"
+              color={(status === 'sale' && 'error') || 'info'}
               sx={{
-                color: 'text.disabled',
-                textDecoration: 'line-through'
+                zIndex: 9,
+                top: 16,
+                right: 16,
+                position: 'absolute',
+                textTransform: 'uppercase'
               }}
             >
-              {priceSale && fCurrency(priceSale)}
-            </Typography>
-            &nbsp;
-            {fCurrency(price)}
-          </Typography>
+              {status}
+            </Label>
+          )}
+          <ProductImgStyle alt={name} src={imageUrl} />
+        </Box>
+
+        <Stack spacing={2} sx={{ p: 3 }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <Stack>
+              <Typography variant="subtitle1" noWrap>
+                {name}
+              </Typography>
+              <Rating readOnly value={avgRate} />
+            </Stack>
+            <IconButton>
+              <Icon icon={moreVerticalFill} width={20} height={20} />
+            </IconButton>
+          </Stack>
         </Stack>
-      </Stack>
-    </Card>
+      </Card>
+    </LightTooltip>
   );
 }

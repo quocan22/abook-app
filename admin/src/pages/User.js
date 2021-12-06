@@ -2,7 +2,6 @@ import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink } from 'react-router-dom';
 // material
 import {
   Card,
@@ -10,7 +9,6 @@ import {
   Stack,
   Avatar,
   Button,
-  Checkbox,
   TableRow,
   TableBody,
   TableCell,
@@ -21,14 +19,21 @@ import {
   Box,
   CircularProgress
 } from '@mui/material';
+import { toast } from 'react-toastify';
 // components
 import Page from '../components/Page';
 import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
+import {
+  UserListHead,
+  UserListToolbar,
+  UserMoreMenu,
+  AddUserDialog,
+  EditUserDialog
+} from '../components/_dashboard/user';
 // ----------------------------------------------------------------------
-import api from '../services/api';
+import UserService from '../services/UserService';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Display Name', alignRight: false },
@@ -71,40 +76,73 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function User() {
+  // all state
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-  const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
-  const [filterName, setFilterName] = useState('');
+  const [filterEmail, setFilterEmail] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
+  const [change, setChange] = useState(false);
+  const [idOnEdit, setIdOnEdit] = useState('');
 
+  // all effect
   useEffect(() => {
-    api
-      .get('/users')
+    UserService.getAllUsers()
       .then((res) => {
         setUsers(res.data.users);
         setLoading(false);
       })
       .catch((err) => {
-        console.error(err);
+        if (err.response.data.msg) toast.error(err.response.data.msg);
+        setLoading(false);
       });
-  }, []);
+  }, [change]);
 
+  // api calling
+  const handleAddUser = (user) => {
+    setLoading(true);
+    UserService.addNewUser(user)
+      .then((res) => {
+        toast.success(res.data.message);
+        setChange(!change);
+      })
+      .catch((err) => {
+        if (err.response.data.msg) toast.error(err.response.data.msg);
+        setLoading(false);
+      });
+  };
+
+  const handleEditUser = (userId, userClaim) => {
+    setLoading(true);
+    UserService.updateUserInfo(userId, userClaim)
+      .then((res) => {
+        toast.success(res.data.message);
+        setChange(!change);
+      })
+      .catch((err) => {
+        if (err.response.data.msg) toast.error(err.response.data.msg);
+        setLoading(false);
+      });
+  };
+
+  // function
   const convertRole = (role) => {
     // convert role from number to string
-    // 0: user, 1: staff, 2: admin
+    // 1: user, 2: staff, 3: admin
     switch (role) {
-      case 0:
-        return 'user';
       case 1:
-        return 'staff';
+        return 'User';
       case 2:
-        return 'admin';
+        return 'Staff';
+      case 3:
+        return 'Admin';
       default:
-        return 'unknown';
+        return 'Unknown';
     }
   };
 
@@ -112,33 +150,6 @@ export default function User() {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.email);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -150,40 +161,60 @@ export default function User() {
     setPage(0);
   };
 
-  const handleFilterByName = (event) => {
-    setFilterName(event.target.value);
+  const handleFilterByEmail = (event) => {
+    setFilterEmail(event.target.value);
+  };
+
+  const handleAddClick = () => {
+    setOpenAddDialog(true);
+  };
+
+  const handleEditClick = () => {
+    setOpenEditDialog(true);
+  };
+
+  const handleCloseAddDialog = () => {
+    setOpenAddDialog(false);
+  };
+
+  const handleCloseEditDialog = () => {
+    setIdOnEdit('');
+    setOpenEditDialog(false);
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
-  const filteredUsers = applySortFilter(users, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(users, getComparator(order, orderBy), filterEmail);
 
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
-    <Page title="Account Management | ABook">
+    <Page title="Accounts Management | ABook">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Account Management
+            Accounts Management
           </Typography>
-          <Button
-            variant="contained"
-            component={RouterLink}
-            to="#"
-            startIcon={<Icon icon={plusFill} />}
-            onClick={() => setLoading(false)}
-          >
+          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleAddClick}>
             Add An Account
           </Button>
         </Stack>
 
+        <AddUserDialog
+          openAddDialog={openAddDialog}
+          handleCloseAddDialog={handleCloseAddDialog}
+          handleAddUser={handleAddUser}
+        />
+
+        <EditUserDialog
+          idOnEdit={idOnEdit}
+          openEditDialog={openEditDialog}
+          handleCloseEditDialog={handleCloseEditDialog}
+          handleEditUser={handleEditUser}
+        />
+
         <Card>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filterName}
-            onFilterName={handleFilterByName}
-          />
+          <UserListToolbar filterEmail={filterEmail} onFilterEmail={handleFilterByEmail} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -206,34 +237,17 @@ export default function User() {
                     order={order}
                     orderBy={orderBy}
                     headLabel={TABLE_HEAD}
-                    rowCount={users.length}
-                    numSelected={selected.length}
                     onRequestSort={handleRequestSort}
-                    onSelectAllClick={handleSelectAllClick}
                   />
                   <TableBody>
                     {filteredUsers
                       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       .map((row) => {
                         const { _id, email, role, userClaim } = row;
-                        const isItemSelected = selected.indexOf(email) !== -1;
 
                         return (
-                          <TableRow
-                            hover
-                            key={_id}
-                            tabIndex={-1}
-                            role="checkbox"
-                            selected={isItemSelected}
-                            aria-checked={isItemSelected}
-                          >
-                            <TableCell padding="checkbox">
-                              <Checkbox
-                                checked={isItemSelected}
-                                onChange={(event) => handleClick(event, email)}
-                              />
-                            </TableCell>
-                            <TableCell component="th" scope="row" padding="none">
+                          <TableRow hover key={_id} tabIndex={-1} role="checkbox">
+                            <TableCell component="th" scope="row">
                               <Stack direction="row" alignItems="center" spacing={2}>
                                 <Avatar alt={userClaim.displayName} src={userClaim.avatarUrl} />
                                 <Typography variant="subtitle2" noWrap>
@@ -246,9 +260,9 @@ export default function User() {
                               <Label
                                 variant="ghost"
                                 color={
-                                  (role === 0 && 'default') ||
-                                  (role === 1 && 'primary') ||
-                                  (role === 2 && 'secondary') ||
+                                  (role === 1 && 'default') ||
+                                  (role === 2 && 'primary') ||
+                                  (role === 3 && 'secondary') ||
                                   'error'
                                 }
                               >
@@ -258,7 +272,11 @@ export default function User() {
                             <TableCell align="left">{userClaim.phoneNumber}</TableCell>
                             <TableCell align="left">{userClaim.address}</TableCell>
                             <TableCell align="right">
-                              <UserMoreMenu />
+                              <UserMoreMenu
+                                userId={_id}
+                                handleEditClick={handleEditClick}
+                                setIdOnEdit={setIdOnEdit}
+                              />
                             </TableCell>
                           </TableRow>
                         );
@@ -273,7 +291,7 @@ export default function User() {
                     <TableBody>
                       <TableRow>
                         <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                          <SearchNotFound searchQuery={filterName} />
+                          <SearchNotFound searchQuery={filterEmail} />
                         </TableCell>
                       </TableRow>
                     </TableBody>

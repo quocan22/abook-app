@@ -3,10 +3,7 @@ import TokenService from './TokenService';
 const axios = require('axios');
 
 const instance = axios.create({
-  baseURL: 'http://localhost:5000/api',
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  baseURL: 'http://localhost:5000/api'
 });
 
 instance.interceptors.request.use(

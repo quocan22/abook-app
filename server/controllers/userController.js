@@ -2,8 +2,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fetch = require("node-fetch");
 
-const Users = require("../models/userModel");
+const { cloudinary } = require("../utils/cloudinary");
 const { mailService } = require("../utils/mailService");
+const Users = require("../models/userModel");
 
 const {
   ACTIVATE_TOKEN_SECRET,
@@ -21,55 +22,107 @@ const userController = {
 
       // check if miss email or password field in request
       if (!email || !password) {
-        return res
-          .status(422)
-          .json({ message: "Please enter email and password" });
+        return res.status(422).json({ msg: "Please enter email and password" });
       }
 
       // check if email invalid
       if (!validEmail(email)) {
-        return res.status(400).json({ message: "Invalid email" });
+        return res.status(400).json({ msg: "Invalid email" });
       }
 
       const user = await Users.findOne({ email });
 
-      // check if this email has already registed
+      // check if this email has already registered
       if (user) {
-        return res.status(403).json({ message: "This email already existed" });
+        return res.status(403).json({ msg: "This email already existed" });
       }
 
-      const newUser = {
+      const newUser = new Users({
         email: email.toLowerCase(),
         password: password,
         role: role,
         userClaim: userClaim,
-      };
+      });
+
+      if (req.file) {
+        // upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: "abook/avatar",
+        });
+
+        // save image url and image id to user
+        newUser.userClaim.avatarUrl = result.secure_url;
+        newUser.userClaim.cloudinaryId = result.public_id;
+      }
+
+      await newUser.save();
+
+      res.json({
+        msg: "Register successfully!",
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  signup: async (req, res) => {
+    try {
+      const { email, password, role, userClaim } = req.body;
+
+      // check if miss email or password field in request
+      if (!email || !password) {
+        return res.status(422).json({ msg: "Please enter email and password" });
+      }
+
+      // check if email invalid
+      if (!validEmail(email)) {
+        return res.status(400).json({ msg: "Invalid email" });
+      }
+
+      const user = await Users.findOne({ email });
+
+      // check if this email has already registered
+      if (user) {
+        return res.status(403).json({ msg: "This email already existed" });
+      }
+
+      const newUser = new Users({
+        email: email.toLowerCase(),
+        password: password,
+        role: role,
+        userClaim: userClaim,
+      });
+
+      await newUser.save();
 
       const activateToken = createActivateToken(newUser);
 
-      const url = `${SERVER_URL}/api/users/activate?t=${activateToken}`;
+      const url = `${SERVER_URL}/api/users/activate/${activateToken}`;
 
       mailService.sendActivationEmail(email, url);
 
       res.json({
-        message: "Regist successfully! Please activate your email to start.",
+        msg: "Sign up successfully! Please activate your email to start.",
+      });
+
+      res.json({
+        msg: "Create account successfully!",
       });
     } catch (err) {
-      return res.status(500).json({ place: "register", message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   activateEmail: async (req, res) => {
     try {
-      const activateToken = req.query.t;
+      const token = req.params;
 
-      const user = jwt.verify(activateToken, ACTIVATE_TOKEN_SECRET);
+      const user = jwt.verify(token, ACTIVATE_TOKEN_SECRET);
 
       const { email, password, role, userClaim } = user;
 
       const check = await Users.findOne({ email });
 
       if (check) {
-        return res.status(400).json({ message: "This email already existed" });
+        return res.status(400).json({ msg: "This email already existed" });
       }
 
       const passwordHash = await bcrypt.hash(password, 10);
@@ -83,9 +136,9 @@ const userController = {
 
       await newUser.save();
 
-      res.json({ message: "Account has been activated" });
+      res.json({ msg: "Account has been activated" });
     } catch (err) {
-      return res.status(500).json({ place: "activate", message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   refreshToken: (req, res) => {
@@ -95,7 +148,7 @@ const userController = {
       // verify the refresh token
       jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) {
-          return res.status(404).json({ message: "Verifying failed" });
+          return res.status(404).json({ msg: "Verifying failed" });
         }
 
         // if refresh token has been verified, create a new access token
@@ -107,7 +160,7 @@ const userController = {
         res.json({ accessToken });
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   login: async (req, res) => {
@@ -119,7 +172,7 @@ const userController = {
 
       // check if this user does not exists
       if (!user) {
-        return res.status(400).json({ message: "This email does not exist" });
+        return res.status(400).json({ msg: "This email does not exist" });
       }
 
       // compare password from request and password in database
@@ -127,7 +180,7 @@ const userController = {
 
       // check if password is not matched
       if (!passwordMatched) {
-        return res.status(400).json({ message: "Password is incorrect" });
+        return res.status(400).json({ msg: "Password is incorrect" });
       }
 
       // create a refresh token contains id and role
@@ -143,7 +196,7 @@ const userController = {
       });
 
       res.status(200).json({
-        message: "Login successfully",
+        msg: "Login successfully",
         keys: {
           refreshToken,
           accessToken,
@@ -151,7 +204,53 @@ const userController = {
         },
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  updateInfo: async (req, res) => {
+    try {
+      const { displayName, phoneNumber, address } = req.body;
+
+      const user = await Users.findById(req.params.id);
+
+      if (!user) {
+        return res.status(404).json({ msg: "Cannot find this user" });
+      }
+
+      if (req.file) {
+        var result;
+
+        if (user.userClaim.cloudinaryId !== process.env.DEFAULT_PUBLIC_ID) {
+          // if old avatar is not default, delete it
+          await cloudinary.uploader.destroy(user.userClaim.cloudinaryId);
+          // upload image to Cloudinary
+          result = await cloudinary.uploader.upload(req.file.path, {
+            folder: "abook/avatar",
+          });
+        } else {
+          // if old avatar is default, wait the result to be uploaded
+          result = await cloudinary.uploader.upload(req.file.path, {
+            folder: "abook/avatar",
+          });
+        }
+
+        // save new avatar url and id for user
+        user.userClaim.avatarUrl = result.secure_url;
+        user.userClaim.cloudinaryId = result.public_id;
+      }
+
+      if (displayName) user.userClaim.displayName = displayName;
+      if (phoneNumber) user.userClaim.phoneNumber = phoneNumber;
+      if (address) user.userClaim.address = address;
+
+      await user.save();
+
+      res.json({
+        msg: "Update user information successfully",
+        data: user,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
     }
   },
   changePassword: async (req, res) => {
@@ -161,7 +260,7 @@ const userController = {
       const user = await Users.findById(userId).select("+password");
 
       if (!user) {
-        return res.status(400).json({ message: "Cannot find this user" });
+        return res.status(400).json({ msg: "Cannot find this user" });
       }
 
       const isMatch = await bcrypt.compare(oldPassword, user.password);
@@ -174,14 +273,12 @@ const userController = {
           { password: passwordHash }
         );
 
-        return res
-          .status(200)
-          .json({ message: "Change password successfully" });
+        return res.status(200).json({ msg: "Change password successfully" });
       }
 
-      res.status(400).json({ message: "Old password is incorrect" });
+      res.status(400).json({ msg: "Old password is incorrect" });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   googleLogin: async (req, res) => {
@@ -197,17 +294,17 @@ const userController = {
       const passwordHash = await bcrypt.hash(password, 10);
 
       if (!email_verified) {
-        return res.status(400).json({ message: "Email verification failed" });
+        return res.status(400).json({ msg: "Email verification failed" });
       }
 
       const user = Users.findOne({ email }).select("+password");
 
       if (user) {
-        // if user has already registed
+        // if user has already registered
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-          return res.status(500).json({ message: "Something went wrong" });
+          return res.status(500).json({ msg: "Something went wrong" });
         }
 
         // create a refresh token contains id and role
@@ -217,7 +314,7 @@ const userController = {
         });
 
         res.status(200).json({
-          message: "Login successfully",
+          msg: "Login successfully",
           keys: {
             refreshToken,
             maxAge: "21 days",
@@ -248,7 +345,7 @@ const userController = {
         });
 
         res.status(200).json({
-          message: "Login successfully",
+          msg: "Login successfully",
           keys: {
             refreshToken,
             maxAge: "21 days",
@@ -256,7 +353,7 @@ const userController = {
         });
       }
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   facebookLogin: async (req, res) => {
@@ -284,7 +381,7 @@ const userController = {
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-          return res.status(400).json({ message: "Something went wrong" });
+          return res.status(400).json({ msg: "Something went wrong" });
         }
 
         // create a refresh token contains id and role
@@ -294,7 +391,7 @@ const userController = {
         });
 
         res.status(200).json({
-          message: "Login successfully",
+          msg: "Login successfully",
           keys: {
             refreshToken: refreshToken,
             maxAge: "21 days",
@@ -325,7 +422,7 @@ const userController = {
         });
 
         res.status(200).json({
-          message: "Login successfully",
+          msg: "Login successfully",
           keys: {
             refreshToken: refreshToken,
             maxAge: "21 days",
@@ -333,20 +430,24 @@ const userController = {
         });
       }
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   getUserInfo: async (req, res) => {
     try {
       const user = await Users.findById(req.params.id);
 
+      if (!user) {
+        return res.status(404).json({ msg: "User does not exist" });
+      }
+
       // return user claim information
       res.json({
-        message: "Get user information successfully",
+        msg: "Get user information successfully",
         data: user.userClaim,
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   getAllUser: async (req, res) => {
@@ -354,12 +455,12 @@ const userController = {
       const users = await Users.find();
 
       res.json({
-        message: "Get all users successfully",
+        msg: "Get all users successfully",
         result: users.length,
         users,
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
 };
