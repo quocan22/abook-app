@@ -43,17 +43,24 @@ ProductSearchBar.propTypes = {
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
   filterCate: PropTypes.string,
-  onFilterCate: PropTypes.func
+  onFilterCate: PropTypes.func,
+  change: PropTypes.bool
 };
 
-export default function ProductSearchBar({ filterName, onFilterName, filterCate, onFilterCate }) {
+export default function ProductSearchBar({
+  filterName,
+  onFilterName,
+  filterCate,
+  onFilterCate,
+  change
+}) {
   const [cates, setCates] = useState([{ _id: '', categoryName: 'All' }]);
 
   useEffect(() => {
     CategoryService.getAllCates()
       .then((res) => setCates(res.data.data))
       .catch((err) => err.response.data.msg && toast.error(err.response.data.msg));
-  }, []);
+  }, [change]);
 
   return (
     <RootStyle>

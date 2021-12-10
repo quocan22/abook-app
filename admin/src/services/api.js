@@ -2,8 +2,10 @@ import TokenService from './TokenService';
 
 const axios = require('axios');
 
+const API_BASE_URL = 'http://localhost:5000/api';
+
 const instance = axios.create({
-  baseURL: 'http://localhost:5000/api'
+  baseURL: API_BASE_URL
 });
 
 instance.interceptors.request.use(

@@ -1,12 +1,14 @@
 import api from './api';
 
-const getAllUsers = () => api.get('/users');
+const API_MODEL_URL = '/users';
 
-const addNewUser = (user) => api.post('/users/register', user);
+const getAllUsers = () => api.get(API_MODEL_URL);
 
-const getUserInfo = (userId) => api.get(`/users/${userId}`);
+const addNewUser = (user) => api.post(`${API_MODEL_URL}/register`, user);
 
-const updateUserInfo = (userId, userClaim) => api.put(`/users/${userId}`, userClaim);
+const getUserInfo = (userId) => api.get(`${API_MODEL_URL}/${userId}`);
+
+const updateUserInfo = (userId, userClaim) => api.put(`${API_MODEL_URL}/${userId}`, userClaim);
 
 const UserService = {
   getAllUsers,

@@ -99,6 +99,8 @@ export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, han
       });
       return;
     }
+
+    // Have to use form data for sending file
     const userFormData = new FormData();
     userFormData.append('email', user.email);
     userFormData.append('password', user.password);

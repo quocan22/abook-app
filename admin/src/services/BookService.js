@@ -1,6 +1,8 @@
 import api from './api';
 
-const getAllBooks = () => api.get('/books');
+const API_MODEL_URL = '/books';
+
+const getAllBooks = () => api.get(API_MODEL_URL);
 
 const BookService = {
   getAllBooks

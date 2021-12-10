@@ -1,5 +1,6 @@
 const { cloudinary } = require("../utils/cloudinary");
 const Books = require("../models/bookModel");
+const Users = require("../models/userModel");
 
 const bookController = {
   getAllBook: async (req, res) => {
@@ -76,8 +77,14 @@ const bookController = {
   },
   addComment: async (req, res) => {
     try {
-      const bookId = req.query.bookId;
-      const { userId, rate, review } = req.body;
+      const { bookId, userId, rate, review } = req.body;
+
+      // get book by id
+      const book = await Books.findOne({ _id: bookId });
+      // check if book exists
+      if (!book) {
+        return res.status(400).json({ msg: "This book does not exist" });
+      }
 
       // create a new comment
       const newComment = {
@@ -87,14 +94,7 @@ const bookController = {
         commentDate: new Date(),
       };
 
-      // get book by id
-      const book = await Books.findOne({ _id: bookId });
-      // check if book exists
-      if (!book) {
-        return res.status(400).json({ msg: "This book does not exist" });
-      }
-
-      // add comment to array and update avarage rate of the book
+      // add comment to array and update average rate of the book
       book.comments.push(newComment);
       book.avgRate = updateAvgRate(book.comments);
 
@@ -105,9 +105,42 @@ const bookController = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  getComments: async (req, res) => {
+    try {
+      const book = await Books.findById(req.body.bookId);
+
+      // check if book exists
+      if (!book) {
+        return res.status(400).json({ msg: "This book does not exist" });
+      }
+
+      var commentsRes = book.comments;
+
+      // Get info of comments owner
+      for (let i = 0; i < book.comments.length; i++) {
+        let user = await Users.findById(book.comments[i].userId);
+        let userInfo = user.userClaim;
+
+        commentsRes[i].owner = userInfo;
+      }
+
+      res.status(200).json({
+        msg: "Get comments successfully",
+        result: commentsRes.length,
+        data: commentsRes,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
   deleteBook: async (req, res) => {
     try {
       const book = await Books.findById(req.params.id);
+
+      // check if book exists
+      if (!book) {
+        return res.status(400).json({ msg: "This book does not exist" });
+      }
 
       // if book image is not default, delete it
       if (book.cloudinaryId !== process.env.DEFAULT_BOOK_PUBLIC_ID) {

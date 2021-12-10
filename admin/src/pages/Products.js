@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { filter } from 'lodash';
 // material
-import { Container, Typography } from '@mui/material';
+import { Button, Container, Stack, Typography } from '@mui/material';
+import { Icon } from '@iconify/react';
+import layersFill from '@iconify/icons-eva/layers-fill';
+import { toast } from 'react-toastify';
 // components
 import Page from '../components/Page';
 import SearchNotFound from '../components/SearchNotFound';
-import { ProductList, ProductSearchBar } from '../components/_dashboard/products';
+import { ProductList, ProductSearchBar, CategoryDialog } from '../components/_dashboard/products';
 //
 import BookService from '../services/BookService';
 
@@ -28,11 +31,14 @@ export default function Products() {
   const [books, setBooks] = useState([]);
   const [filterName, setFilterName] = useState('');
   const [filterCate, setFilterCate] = useState('');
+  const [openCateDialog, setOpenCateDialog] = useState(false);
+
+  const [change, setChange] = useState(false);
 
   useEffect(() => {
     BookService.getAllBooks()
       .then((res) => setBooks(res.data.data))
-      .catch((err) => console.error(err));
+      .catch((err) => err.response.data.msg && toast.error(err.response.data.msg));
   }, []);
 
   const handleFilterByName = (event) => {
@@ -43,6 +49,14 @@ export default function Products() {
     setFilterCate(event.target.value);
   };
 
+  const handleCloseCateDialog = () => {
+    setOpenCateDialog(false);
+  };
+
+  const onChange = () => {
+    setChange(!change);
+  };
+
   const filteredBooks = applyFilter(books, filterName, filterCate);
 
   const isBookNotFound = filteredBooks.length === 0;
@@ -50,15 +64,31 @@ export default function Products() {
   return (
     <Page title="Product Management | ABook">
       <Container>
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          Products
-        </Typography>
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Typography variant="h4" gutterBottom>
+            Products
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<Icon icon={layersFill} />}
+            onClick={() => setOpenCateDialog(true)}
+          >
+            Category Management
+          </Button>
+        </Stack>
+
+        <CategoryDialog
+          open={openCateDialog}
+          handleClose={handleCloseCateDialog}
+          onChange={onChange}
+        />
 
         <ProductSearchBar
           filterName={filterName}
           onFilterName={handleFilterByName}
           filterCate={filterCate}
           onFilterCate={handleFilterByCate}
+          change={change}
         />
 
         {isBookNotFound && <SearchNotFound searchQuery={filterName} />}
