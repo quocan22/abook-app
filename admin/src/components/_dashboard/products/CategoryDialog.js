@@ -15,7 +15,9 @@ import {
   Box,
   CircularProgress,
   TextField,
-  DialogContentText
+  DialogContentText,
+  Collapse,
+  InputLabel
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import { Icon } from '@iconify/react';
@@ -40,7 +42,12 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
   const [loading, setLoading] = useState(true);
   const [cates, setCates] = useState([]);
   const [change, setChange] = useState(false);
+  const [newCate, setNewCate] = useState('');
 
+  const [invalidNew, setInvalidNew] = useState(false);
+  const [invalidEdit, setInvalidEdit] = useState(false);
+
+  const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [cateOnEdit, setCateOnEdit] = useState(initialCate);
   const [openDelete, setOpenDelete] = useState(false);
@@ -59,9 +66,29 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
       });
   }, [change]);
 
+  const confirmAdd = () => {
+    if (!newCate) {
+      setInvalidNew(true);
+      return;
+    }
+
+    setLoading(true);
+    CategoryService.createCates({ categoryName: newCate })
+      .then((res) => {
+        toast.success(res.data.msg);
+        setChange(!change);
+        addClick();
+        onChange();
+      })
+      .catch((err) => {
+        if (err.response) toast.error(err.response.data.msg);
+        setLoading(false);
+      });
+  };
+
   const confirmUpdate = () => {
     if (!cateOnEdit.categoryName) {
-      toast.error('Please enter category name');
+      setInvalidEdit(true);
       return;
     }
 
@@ -96,7 +123,12 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
       });
   };
 
+  const addClick = () => {
+    setOpenAdd(!openAdd);
+  };
+
   const closeClick = () => {
+    setOpenAdd(false);
     handleClose();
   };
 
@@ -124,9 +156,7 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
     <Dialog open={open} onClose={closeClick}>
       <DialogTitle>Category Management</DialogTitle>
       <DialogContent style={{ width: 400 }}>
-        <Button variant="contained" sx={{ mb: 2, ml: 2 }} startIcon={<Icon icon={plusFill} />}>
-          Add New Category
-        </Button>
+        <InputLabel sx={{ mx: 2 }}>Categories List</InputLabel>
         <Paper style={{ maxHeight: 300, overflow: 'auto' }}>
           {loading ? (
             <Box
@@ -162,6 +192,30 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
             </List>
           )}
         </Paper>
+        <Button
+          variant="contained"
+          sx={{ mb: 2, ml: 2 }}
+          startIcon={<Icon icon={plusFill} />}
+          onClick={addClick}
+        >
+          Add New Category
+        </Button>
+        <Collapse in={openAdd} timeout="auto" unmountOnExit>
+          <Stack sx={{ mx: 2 }} direction="row" justifyContent="space-between">
+            <TextField
+              error={invalidNew}
+              helperText={invalidNew && 'Please enter category name'}
+              onFocus={() => setInvalidNew(false)}
+              variant="outlined"
+              label="Category name"
+              value={newCate}
+              onChange={(e) => setNewCate(e.target.value)}
+            />
+            <Button variant="contained" onClick={confirmAdd}>
+              Add
+            </Button>
+          </Stack>
+        </Collapse>
       </DialogContent>
       <DialogActions>
         <Button variant="contained" color="error" onClick={closeClick}>
@@ -171,9 +225,14 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
 
       {/* Edit dialog */}
       <Dialog open={openEdit} onClose={() => setOpenEdit(false)}>
-        <DialogTitle>Edit Category</DialogTitle>
+        <DialogTitle>
+          Edit Category: {cateOnEdit.categoryName && cateOnEdit.categoryName}
+        </DialogTitle>
         <DialogContent>
           <TextField
+            error={invalidEdit}
+            helperText={invalidEdit && 'Please enter category name'}
+            onFocus={() => setInvalidEdit(false)}
             value={cateOnEdit.categoryName}
             onChange={(e) => setCateOnEdit({ ...cateOnEdit, categoryName: e.target.value })}
           />
