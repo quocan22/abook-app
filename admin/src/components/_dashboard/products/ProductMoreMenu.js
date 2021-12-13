@@ -11,15 +11,21 @@ import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/mat
 // ----------------------------------------------------------------------
 
 ProductMoreMenu.propTypes = {
-  handleEditClick: PropTypes.func
+  handleEditClick: PropTypes.func,
+  handleReceiveClick: PropTypes.func
 };
 
-export default function ProductMoreMenu({ handleEditClick }) {
+export default function ProductMoreMenu({ handleEditClick, handleReceiveClick }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
   const editClick = () => {
     handleEditClick();
+    setIsOpen(false);
+  };
+
+  const receiveClick = () => {
+    handleReceiveClick();
     setIsOpen(false);
   };
 
@@ -39,7 +45,7 @@ export default function ProductMoreMenu({ handleEditClick }) {
         anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}
       >
-        <MenuItem onClick={editClick} sx={{ color: 'text.secondary' }}>
+        <MenuItem onClick={receiveClick} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={downloadFill} width={24} height={24} />
           </ListItemIcon>

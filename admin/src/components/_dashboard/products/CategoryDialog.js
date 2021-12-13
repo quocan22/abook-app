@@ -24,6 +24,7 @@ import { Icon } from '@iconify/react';
 import trashFill from '@iconify/icons-eva/trash-fill';
 import editFill from '@iconify/icons-eva/edit-fill';
 import plusFill from '@iconify/icons-eva/plus-fill';
+import closeFill from '@iconify/icons-eva/close-fill';
 
 import CategoryService from '../../../services/CategoryService';
 
@@ -195,10 +196,10 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
         <Button
           variant="contained"
           sx={{ mb: 2, ml: 2 }}
-          startIcon={<Icon icon={plusFill} />}
+          startIcon={(openAdd && <Icon icon={closeFill} />) || <Icon icon={plusFill} />}
           onClick={addClick}
         >
-          Add New Category
+          {(openAdd && 'Cancel') || 'Add New Category'}
         </Button>
         <Collapse in={openAdd} timeout="auto" unmountOnExit>
           <Stack sx={{ mx: 2 }} direction="row" justifyContent="space-between">
@@ -217,7 +218,7 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
           </Stack>
         </Collapse>
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ mr: 2, mb: 2 }}>
         <Button variant="contained" color="error" onClick={closeClick}>
           Close
         </Button>
@@ -237,7 +238,7 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
             onChange={(e) => setCateOnEdit({ ...cateOnEdit, categoryName: e.target.value })}
           />
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ mr: 2, mb: 2 }}>
           <Button variant="contained" onClick={confirmUpdate}>
             Update
           </Button>
@@ -256,7 +257,7 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
             deleted forever.
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ mr: 2, mb: 2 }}>
           <Button variant="contained" color="error" onClick={confirmDelete}>
             Delete
           </Button>

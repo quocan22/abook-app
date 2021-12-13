@@ -33,13 +33,14 @@ export default function Products() {
   const [filterCate, setFilterCate] = useState('');
   const [openCateDialog, setOpenCateDialog] = useState(false);
 
-  const [change, setChange] = useState(false);
+  const [productChange, setProductChange] = useState(false);
+  const [cateChange, setCateChange] = useState(false);
 
   useEffect(() => {
     BookService.getAllBooks()
       .then((res) => setBooks(res.data.data))
       .catch((err) => err.response.data.msg && toast.error(err.response.data.msg));
-  }, []);
+  }, [productChange]);
 
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
@@ -53,8 +54,12 @@ export default function Products() {
     setOpenCateDialog(false);
   };
 
-  const onChange = () => {
-    setChange(!change);
+  const onProductChange = () => {
+    setProductChange(!productChange);
+  };
+
+  const onCateChange = () => {
+    setCateChange(!cateChange);
   };
 
   const filteredBooks = applyFilter(books, filterName, filterCate);
@@ -80,7 +85,7 @@ export default function Products() {
         <CategoryDialog
           open={openCateDialog}
           handleClose={handleCloseCateDialog}
-          onChange={onChange}
+          onChange={onCateChange}
         />
 
         <ProductSearchBar
@@ -88,12 +93,12 @@ export default function Products() {
           onFilterName={handleFilterByName}
           filterCate={filterCate}
           onFilterCate={handleFilterByCate}
-          change={change}
+          change={cateChange}
         />
 
         {isBookNotFound && <SearchNotFound searchQuery={filterName} />}
 
-        <ProductList products={filteredBooks} />
+        <ProductList products={filteredBooks} onChange={onProductChange} />
       </Container>
     </Page>
   );

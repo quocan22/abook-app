@@ -5,9 +5,9 @@ const bookController = require("../controllers/bookController");
 const authentication = require("../middlewares/authentication");
 const authenticationEmployee = require("../middlewares/authenticationEmployee");
 
-router.patch("/comment", authentication, bookController.addComment);
-
 router.get("/comment", bookController.getComments);
+router.patch("/comment", authentication, bookController.addComment);
+router.put("/receive", bookController.receiveBook);
 
 router
   .route("/")

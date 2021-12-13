@@ -94,6 +94,10 @@ export default function EditUserDialog({
     handleClose();
   };
 
+  const handleChangeUser = (prop) => (event) => {
+    setUser({ ...user, [prop]: event.target.value });
+  };
+
   return (
     <Dialog open={openEditDialog} onClose={handleClose}>
       <DialogTitle>Edit User Info</DialogTitle>
@@ -139,33 +143,31 @@ export default function EditUserDialog({
               variant="outlined"
               label="Display Name"
               value={user.displayName}
-              onChange={(e) => setUser({ ...user, displayName: e.target.value })}
+              onChange={handleChangeUser('displayName')}
             />
             <TextField
               variant="outlined"
               label="Phone Number"
               value={user.phoneNumber}
-              onChange={(e) => setUser({ ...user, phoneNumber: e.target.value })}
+              onChange={handleChangeUser('phoneNumber')}
             />
             <TextField
               variant="outlined"
               label="Address"
               value={user.address}
-              onChange={(e) => setUser({ ...user, address: e.target.value })}
+              onChange={handleChangeUser('address')}
             />
           </Box>
         </DialogContent>
       )}
-      <div style={{ marginRight: 24, marginBottom: 24 }}>
-        <DialogActions>
-          <Button color="error" variant="outlined" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={confirmClick}>
-            Confirm
-          </Button>
-        </DialogActions>
-      </div>
+      <DialogActions sx={{ mr: 2, mb: 2 }}>
+        <Button color="error" variant="outlined" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="contained" onClick={confirmClick}>
+          Confirm
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 }

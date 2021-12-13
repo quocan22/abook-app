@@ -8,3 +8,9 @@ export function validateEmail(email) {
 export function validatePassword(password) {
   return password.length >= 6;
 }
+
+export function validatePrice(value) {
+  const regex = /^[1-9].*$/;
+
+  return regex.test(value);
+}

@@ -115,6 +115,10 @@ export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, han
     handleClose();
   };
 
+  const handleChangeUser = (prop) => (event) => {
+    setUser({ ...user, [prop]: event.target.value });
+  };
+
   return (
     <Dialog open={openAddDialog} onClose={handleClose}>
       <DialogTitle>Add New Account</DialogTitle>
@@ -136,7 +140,7 @@ export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, han
             variant="outlined"
             helperText={invalid.email && 'Invalid email.'}
             onFocus={() => setInvalid({ ...invalid, email: false })}
-            onChange={(e) => setUser({ ...user, email: e.target.value })}
+            onChange={handleChangeUser('email')}
             value={user.email}
           />
           <TextField
@@ -148,7 +152,7 @@ export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, han
             variant="outlined"
             helperText={invalid.password && 'Password must have at least 6 characters.'}
             onFocus={() => setInvalid({ ...invalid, password: false })}
-            onChange={(e) => setUser({ ...user, password: e.target.value })}
+            onChange={handleChangeUser('password')}
             value={user.password}
           />
           <TextField
@@ -156,14 +160,14 @@ export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, han
             variant="outlined"
             autoComplete="nope"
             value={user.displayName}
-            onChange={(e) => setUser({ ...user, displayName: e.target.value })}
+            onChange={handleChangeUser('displayName')}
           />
           <TextField
             error={invalid.role}
             required
             label="Role"
             variant="outlined"
-            onChange={(e) => setUser({ ...user, role: e.target.value })}
+            onChange={handleChangeUser('role')}
             value={user.role}
             select
             helperText={invalid.role && 'Choose a role.'}
@@ -180,14 +184,14 @@ export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, han
             variant="outlined"
             autoComplete="nope"
             value={user.phoneNumber}
-            onChange={(e) => setUser({ ...user, phoneNumber: e.target.value })}
+            onChange={handleChangeUser('phoneNumber')}
           />
           <TextField
             label="Address"
             variant="outlined"
             autoComplete="nope"
             value={user.address}
-            onChange={(e) => setUser({ ...user, address: e.target.value })}
+            onChange={handleChangeUser('address')}
           />
           <Stack spacing={1}>
             <InputLabel>Avatar</InputLabel>
@@ -207,16 +211,14 @@ export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, han
           </Stack>
         </Box>
       </DialogContent>
-      <div style={{ marginRight: 24, marginBottom: 24 }}>
-        <DialogActions>
-          <Button color="error" variant="outlined" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={applyClick}>
-            Confirm
-          </Button>
-        </DialogActions>
-      </div>
+      <DialogActions sx={{ mr: 2, mb: 2 }}>
+        <Button color="error" variant="outlined" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="contained" onClick={applyClick}>
+          Confirm
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 }
