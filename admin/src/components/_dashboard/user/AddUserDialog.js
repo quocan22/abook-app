@@ -90,7 +90,7 @@ export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, han
     handleCloseAddDialog();
   };
 
-  const applyClick = () => {
+  const confirmAdd = () => {
     if (!validateEmail(user.email) || !validatePassword(user.password) || !user.role) {
       setInvalid({
         email: !validateEmail(user.email),
@@ -124,6 +124,7 @@ export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, han
       <DialogTitle>Add New Account</DialogTitle>
       <DialogContent>
         <Box
+          onSubmit={confirmAdd}
           component="form"
           sx={{
             '& > :not(style)': { m: 1, width: '26.5ch' }
@@ -212,11 +213,11 @@ export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, han
         </Box>
       </DialogContent>
       <DialogActions sx={{ mr: 2, mb: 2 }}>
+        <Button variant="contained" onClick={confirmAdd}>
+          Confirm
+        </Button>
         <Button color="error" variant="outlined" onClick={handleClose}>
           Cancel
-        </Button>
-        <Button variant="contained" onClick={applyClick}>
-          Confirm
         </Button>
       </DialogActions>
     </Dialog>

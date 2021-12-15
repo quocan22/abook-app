@@ -22,6 +22,7 @@ router
 router
   .route("/:id")
   .get(bookController.getBookById)
+  .put(upload.single("image"), bookController.updateInfo)
   .delete(
     authentication,
     authenticationEmployee.authenticationStaff,

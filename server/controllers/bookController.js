@@ -36,21 +36,19 @@ const bookController = {
   },
   createBook: async (req, res) => {
     try {
-      const { categoryId, name, imageUrl, price, quantity, description } =
-        req.body;
+      const { categoryId, name, price, quantity, description } = req.body;
 
       const book = await Books.findOne({ name });
 
       // check if this name of book exists
       if (book) {
-        return res.status(500).json({ msg: "This book already existed" });
+        return res.status(400).json({ msg: "This book already existed" });
       }
 
       // create a new book
       const newBook = new Books({
         categoryId,
         name,
-        imageUrl,
         price,
         quantity,
         description,
@@ -70,7 +68,57 @@ const bookController = {
 
       await newBook.save();
 
-      res.status(201).json({ msg: "Creating book successfully" });
+      res.status(201).json({ msg: "Create book successfully" });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  updateInfo: async (req, res) => {
+    try {
+      const { categoryId, name, isAvailable, price, quantity, description } =
+        req.body;
+
+      const book = await Books.findById(req.params.id);
+
+      if (!book) {
+        return res.status(404).json({ msg: "Cannot find this book" });
+      }
+
+      if (req.file) {
+        var result;
+
+        if (book.cloudinaryId !== process.env.DEFAULT_PUBLIC_ID) {
+          // if old image is not default, delete it
+          await cloudinary.uploader.destroy(book.cloudinaryId);
+          // upload image to Cloudinary
+          result = await cloudinary.uploader.upload(req.file.path, {
+            folder: "abook/book",
+          });
+        } else {
+          // if old image is default, wait the result to be uploaded
+          result = await cloudinary.uploader.upload(req.file.path, {
+            folder: "abook/book",
+          });
+        }
+
+        // save new image url and cloudinary id for book
+        book.imageUrl = result.secure_url;
+        book.cloudinaryId = result.public_id;
+      }
+
+      if (categoryId) book.categoryId = categoryId;
+      if (name) book.name = name;
+      if (price) book.price = price;
+      if (quantity) book.quantity = quantity;
+      if (description) book.description = description;
+      book.isAvailable = isAvailable;
+
+      await book.save();
+
+      res.status(200).json({
+        msg: "Update book information successfully",
+        data: book,
+      });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
@@ -92,14 +140,12 @@ const bookController = {
 
       await book.save();
 
-      res
-        .status(200)
-        .json({
-          msg: "Receive book successfully",
-          id: bookId,
-          newPrice: book.price,
-          newQuantity: book.quantity,
-        });
+      res.status(200).json({
+        msg: "Receive book successfully",
+        id: bookId,
+        newPrice: book.price,
+        newQuantity: book.quantity,
+      });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
