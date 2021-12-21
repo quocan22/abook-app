@@ -5,7 +5,7 @@ const Users = require("../models/userModel");
 const bookController = {
   getAllBook: async (req, res) => {
     try {
-      const books = await Books.find().sort({ createdAt: 1 });
+      const books = await Books.find().sort({ createdAt: -1 });
 
       // return data after get all books
       res.json({

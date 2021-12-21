@@ -36,25 +36,21 @@ const categoryController = {
     }
   },
   updateCategory: async (req, res) => {
-    try {
-      const { id, newName } = req.body;
+    const { id, newName } = req.body;
 
-      Categories.findByIdAndUpdate(
-        id,
-        { categoryName: newName },
-        function (err, result) {
-          if (err) {
-            res.status(400).json({ msg: err.message });
-          } else {
-            res
-              .status(201)
-              .json({ msg: "Update category successfully", id: result._id });
-          }
+    Categories.findByIdAndUpdate(
+      id,
+      { categoryName: newName },
+      function (err, result) {
+        if (err) {
+          res.status(400).json({ msg: err.message });
+        } else {
+          res
+            .status(201)
+            .json({ msg: "Update category successfully", id: result._id });
         }
-      );
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
+      }
+    );
   },
   deleteCategory: async (req, res) => {
     try {

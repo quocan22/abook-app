@@ -133,24 +133,24 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
     handleClose();
   };
 
-  const editClick = (cate) => {
+  const editClick = (cate) => () => {
     setCateOnEdit(cate);
     setOpenEdit(true);
   };
 
   const cancelEditClick = () => {
-    setCateOnEdit(initialCate);
     setOpenEdit(false);
+    setCateOnEdit(initialCate);
   };
 
-  const deleteClick = (cate) => {
+  const deleteClick = (cate) => () => {
     setCateOnDelete(cate);
     setOpenDelete(true);
   };
 
   const cancelDeleteClick = () => {
-    setCateOnDelete(initialCate);
     setOpenDelete(false);
+    setCateOnDelete(initialCate);
   };
 
   return (
@@ -178,10 +178,10 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
                   key={c._id}
                   secondaryAction={
                     <Stack direction="row" spacing={2}>
-                      <IconButton edge="end" aria-label="edit" onClick={() => editClick(c)}>
+                      <IconButton edge="end" aria-label="edit" onClick={editClick(c)}>
                         <Icon icon={editFill} style={{ color: '#0096C7' }} />
                       </IconButton>
-                      <IconButton edge="end" aria-label="delete" onClick={() => deleteClick(c)}>
+                      <IconButton edge="end" aria-label="delete" onClick={deleteClick(c)}>
                         <Icon icon={trashFill} style={{ color: '#FF4842' }} />
                       </IconButton>
                     </Stack>

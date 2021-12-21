@@ -13,15 +13,19 @@ import {
   TextField,
   IconButton,
   InputAdornment,
-  FormControlLabel
+  FormControlLabel,
+  Typography
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import AuthService from '../../../services/AuthService';
+import TokenService from '../../../services/TokenService';
 
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [fail, setFail] = useState({ show: false, message: '' });
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
@@ -35,8 +39,25 @@ export default function LoginForm() {
       remember: true
     },
     validationSchema: LoginSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    onSubmit: (values, actions) => {
+      actions.setSubmitting(true);
+      AuthService.login(values.email, values.password)
+        .then((res) => {
+          TokenService.setUser(res.data.data);
+          navigate('/dashboard', { replace: true });
+        })
+        .catch((err) => {
+          if (err.response) {
+            if (err.response.data.msg) {
+              setFail({ show: true, message: err.response.data.msg });
+            } else {
+              setFail({ show: true, message: err.response.data });
+            }
+          } else {
+            setFail({ show: true, message: 'Something went wrong' });
+          }
+          actions.setSubmitting(false);
+        });
     }
   });
 
@@ -79,6 +100,12 @@ export default function LoginForm() {
             helperText={touched.password && errors.password}
           />
         </Stack>
+
+        {fail.show && (
+          <Typography sx={{ mt: 2 }} color="red">
+            *{fail.message}
+          </Typography>
+        )}
 
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
           <FormControlLabel

@@ -50,7 +50,7 @@ const cartController = {
 
       await newCart.save();
 
-      res.status(202).json({ msg: "Creating cart successfully" });
+      res.status(202).json({ msg: "Create cart successfully" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
@@ -124,7 +124,7 @@ const cartController = {
 
       const cart = await Carts.findOne({ userId });
 
-      // if cart exist, update correspondding book
+      // if cart exist, update corresponding book
       if (cart) {
         for (var i = 0; i < cart.details.length; i++) {
           if (cart.details[i].bookId === bookId) {

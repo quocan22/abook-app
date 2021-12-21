@@ -16,6 +16,7 @@ app.use("/api/users", require("./routes/userRouter"));
 app.use("/api/books", require("./routes/bookRouter"));
 app.use("/api/categories", require("./routes/categoryRouter"));
 app.use("/api/carts", require("./routes/cartRouter"));
+app.use("/api/orders", require("./routes/orderRouter"));
 app.use("/api/asset", require("./routes/assetRouter"));
 
 app.listen(port, () => {

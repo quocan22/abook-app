@@ -79,7 +79,7 @@ export default function Products() {
   const isBookNotFound = filteredBooks.length === 0;
 
   return (
-    <Page title="Product Management | ABook">
+    <Page title="Products Management | ABook">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Typography variant="h4" gutterBottom>

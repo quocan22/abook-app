@@ -8,14 +8,6 @@ const authentication = (req, res, next) => {
       const bearerToken = bearer[1];
       const token = bearerToken;
 
-      const { exp } = decode(token);
-
-      if (Date.now() >= exp * 1000) {
-        return res
-          .status(401)
-          .json({ message: "Forbidden! Token was expired" });
-      }
-
       jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) {
           return res.status(401).json({ message: "Invalid token" });

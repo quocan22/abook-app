@@ -245,7 +245,6 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
               error={invalid.price}
               helperText={invalid.price && 'Invalid price'}
               onFocus={() => setInvalid({ ...invalid, price: false })}
-              price
               value={book.price}
               onChange={handleChangeBook('price')}
             />

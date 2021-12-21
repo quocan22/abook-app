@@ -75,7 +75,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function User() {
+export default function Users() {
   // all state
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -98,7 +98,7 @@ export default function User() {
         setLoading(false);
       })
       .catch((err) => {
-        if (err.response.data.msg) toast.error(err.response.data.msg);
+        if (err.response) toast.error(err.response.data.msg);
         setLoading(false);
       });
   }, [change]);
@@ -112,7 +112,7 @@ export default function User() {
         setChange(!change);
       })
       .catch((err) => {
-        if (err.response.data.msg) toast.error(err.response.data.msg);
+        if (err.response) toast.error(err.response.data.msg);
         setLoading(false);
       });
   };
@@ -125,7 +125,7 @@ export default function User() {
         setChange(!change);
       })
       .catch((err) => {
-        if (err.response.data.msg) toast.error(err.response.data.msg);
+        if (err.response) toast.error(err.response.data.msg);
         setLoading(false);
       });
   };
@@ -189,14 +189,14 @@ export default function User() {
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
-    <Page title="Accounts Management | ABook">
+    <Page title="Users Management | ABook">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Accounts Management
+            Users
           </Typography>
           <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={handleAddClick}>
-            Add An Account
+            New User
           </Button>
         </Stack>
 
@@ -227,7 +227,7 @@ export default function User() {
                     alignItems: 'center'
                   }}
                 >
-                  <Box sx={{ height: 100 }}>
+                  <Box sx={{ height: 100, display: 'flex', alignItems: 'center' }}>
                     <CircularProgress color="inherit" />
                   </Box>
                 </Box>

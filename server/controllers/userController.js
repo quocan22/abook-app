@@ -172,7 +172,7 @@ const userController = {
 
       // check if this user does not exists
       if (!user) {
-        return res.status(400).json({ msg: "This email does not exist" });
+        return res.status(404).json({ msg: "This email does not exist" });
       }
 
       // compare password from request and password in database
@@ -197,10 +197,14 @@ const userController = {
 
       res.status(200).json({
         msg: "Login successfully",
-        keys: {
+        data: {
           refreshToken,
           accessToken,
-          maxAge: "21 days",
+          id: user._id,
+          email: user.email,
+          role: user.role,
+          displayName: user.userClaim.displayName,
+          avatarUrl: user.userClaim.avatarUrl,
         },
       });
     } catch (err) {
@@ -332,7 +336,7 @@ const userController = {
         const newUser = new Users({
           email,
           role,
-          password,
+          passwordHash,
           userClaim,
         });
 
@@ -409,7 +413,7 @@ const userController = {
         const newUser = new Users({
           email,
           role,
-          password,
+          passwordHash,
           userClaim,
         });
 

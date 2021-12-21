@@ -11,7 +11,6 @@ import NavSection from '../../components/NavSection';
 import { MHidden } from '../../components/@material-extend';
 //
 import sidebarConfig from './SidebarConfig';
-import account from '../../_mocks_/account';
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +33,10 @@ const AccountStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
+function displayRole(role) {
+  return (role === 1 && 'User') || (role === 2 && 'Staff') || (role === 3 && 'Admin') || 'Unknown';
+}
+
 DashboardSidebar.propTypes = {
   isOpenSidebar: PropTypes.bool,
   onCloseSidebar: PropTypes.func
@@ -41,6 +44,8 @@ DashboardSidebar.propTypes = {
 
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const { pathname } = useLocation();
+
+  const { displayName, avatarUrl, role } = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     if (isOpenSidebar) {
@@ -70,13 +75,13 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none" component={RouterLink} to="#">
           <AccountStyle>
-            <Avatar src={account.photoURL} alt="photoURL" />
+            <Avatar src={avatarUrl} alt="photoURL" />
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.displayName}
+                {displayName}
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
+                {displayRole(role)}
               </Typography>
             </Box>
           </AccountStyle>
