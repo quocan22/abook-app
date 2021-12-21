@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
+import { filter } from 'lodash';
 import dateFormat from 'dateformat';
 import {
   Container,
-  Stack,
   Typography,
-  Button,
   Card,
   TableContainer,
   Table,
@@ -17,13 +16,12 @@ import {
   TableBody
 } from '@mui/material';
 import { toast } from 'react-toastify';
-import { Icon } from '@iconify/react';
-import plusFill from '@iconify/icons-eva/plus-fill';
 import { fCurrency } from '../utils/formatNumber';
+import SearchNotFound from '../components/SearchNotFound';
 import Page from '../components/Page';
 import Scrollbar from '../components/Scrollbar';
 import Label from '../components/Label';
-import { DetailDialog } from '../components/_dashboard/orders';
+import { OrderSearchBar, DetailDialog } from '../components/_dashboard/orders';
 
 import OrderService from '../services/OrderService';
 
@@ -38,15 +36,54 @@ const TABLE_HEAD = [
   { label: 'Shipping', align: 'center' }
 ];
 
+const convertPaidStatus = (paidStatus) => {
+  // convert paid status from number to string
+  // 1: unpaid, 2: paid
+  switch (paidStatus) {
+    case 1:
+      return 'Unpaid';
+    case 2:
+      return 'Paid';
+    default:
+      return 'Unknown';
+  }
+};
+
+const convertShippingStatus = (shippingStatus) => {
+  // convert shipping status from number to string
+  // 1: pending, 2: completed, 3: cancelled
+  switch (shippingStatus) {
+    case 1:
+      return 'Pending';
+    case 2:
+      return 'Completed';
+    case 3:
+      return 'Cancelled';
+    default:
+      return 'Unknown';
+  }
+};
+
+function applyFilter(array, field, value) {
+  if (field !== 'paidStatus' && field !== 'shippingStatus') {
+    return filter(
+      array,
+      (_order) => _order[field].toLowerCase().indexOf(value.toLowerCase()) !== -1
+    );
+  }
+  return array.filter((_order) => _order[field].toString() === value);
+}
+
 export default function Orders() {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
   const [selectedId, setSelectedId] = useState('');
   const [change, setChange] = useState(false);
 
+  const [searchField, setSearchField] = useState('customerName');
+  const [searchValue, setSearchValue] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const [openDetailDialog, setOpenDetailDialog] = useState(false);
 
   useEffect(() => {
@@ -61,36 +98,21 @@ export default function Orders() {
       });
   }, [change]);
 
-  const convertPaidStatus = (paidStatus) => {
-    // convert paid status from number to string
-    // 1: unpaid, 2: paid
-    switch (paidStatus) {
-      case 1:
-        return 'Unpaid';
-      case 2:
-        return 'Paid';
-      default:
-        return 'Unknown';
-    }
-  };
-
-  const convertShippingStatus = (shippingStatus) => {
-    // convert shipping status from number to string
-    // 1: pending, 2: completed, 3: cancelled
-    switch (shippingStatus) {
-      case 1:
-        return 'Pending';
-      case 2:
-        return 'Completed';
-      case 3:
-        return 'Cancelled';
-      default:
-        return 'Unknown';
-    }
-  };
-
   const onChange = () => {
     setChange(!change);
+  };
+
+  const changeSearchField = (event) => {
+    setSearchField(event.target.value);
+    if (event.target.value === 'paidStatus' || event.target.value === 'shippingStatus') {
+      setSearchValue('1');
+    } else {
+      setSearchValue('');
+    }
+  };
+
+  const changeSearchValue = (event) => {
+    setSearchValue(event.target.value);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -111,19 +133,23 @@ export default function Orders() {
     setOpenDetailDialog(false);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - orders.length) : 0;
+  // const filteredOrders = filter(
+  //   orders,
+  //   (_order) => _order[searchField].toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
+  // );
+
+  const filteredOrders = applyFilter(orders, searchField, searchValue);
+
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredOrders.length) : 0;
+
+  const isOrderNotFound = filteredOrders.length === 0;
 
   return (
     <Page title="Orders Management | ABook">
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Orders
-          </Typography>
-          <Button variant="contained" startIcon={<Icon icon={plusFill} />}>
-            New Order
-          </Button>
-        </Stack>
+        <Typography sx={{ mb: 5 }} variant="h4" gutterBottom>
+          Orders
+        </Typography>
 
         <DetailDialog
           open={openDetailDialog}
@@ -134,6 +160,13 @@ export default function Orders() {
         />
 
         <Card>
+          <OrderSearchBar
+            searchField={searchField}
+            changeSearchField={changeSearchField}
+            searchValue={searchValue}
+            changeSearchValue={changeSearchValue}
+          />
+
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               {loading ? (
@@ -167,7 +200,7 @@ export default function Orders() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {orders
+                    {filteredOrders
                       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       .map((row) => {
                         const {
@@ -233,10 +266,20 @@ export default function Orders() {
                       })}
                     {emptyRows > 0 && (
                       <TableRow style={{ height: 53 * emptyRows }}>
-                        <TableCell colSpan={6} />
+                        <TableCell colSpan={8} />
                       </TableRow>
                     )}
                   </TableBody>
+
+                  {isOrderNotFound && (
+                    <TableBody>
+                      <TableRow>
+                        <TableCell align="center" colSpan={8} sx={{ py: 3 }}>
+                          <SearchNotFound searchQuery={searchValue} />
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  )}
                 </Table>
               )}
             </TableContainer>
