@@ -10,22 +10,22 @@ const cartController = {
 
       // check if user exists
       if (!useCheck) {
-        return res.status(404).json({ message: "Cannot found this user" });
+        return res.status(404).json({ msg: "Cannot found this user" });
       }
 
       const cart = await Carts.findOne({ userId });
 
       // check if cart exists
       if (!cart) {
-        return res.status(404).json({ message: "This user has no cart" });
+        return res.status(404).json({ msg: "This user has no cart" });
       }
 
       res.json({
-        message: "Get cart by userId successfully",
+        msg: "Get cart by userId successfully",
         data: cart,
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   createCart: async (req, res) => {
@@ -36,23 +36,23 @@ const cartController = {
 
       // check if user exists
       if (!useCheck) {
-        return res.status(404).json({ message: "Cannot found this user" });
+        return res.status(404).json({ msg: "Cannot found this user" });
       }
 
       const cart = await Carts.findOne({ userId });
 
       // check if this user already had a cart
       if (cart) {
-        return res.status(422).json({ message: "This user already had cart" });
+        return res.status(422).json({ msg: "This user already had cart" });
       }
 
       const newCart = new Carts({ userId });
 
       await newCart.save();
 
-      res.status(202).json({ message: "Creating cart successfully" });
+      res.status(202).json({ msg: "Create cart successfully" });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   addBookToCart: async (req, res) => {
@@ -64,14 +64,14 @@ const cartController = {
 
       // check if user exists
       if (!useCheck) {
-        return res.status(404).json({ message: "Cannot found this user" });
+        return res.status(404).json({ msg: "Cannot found this user" });
       }
 
       const cart = await Carts.findOne({ userId });
 
       // check if cart exists
       if (!cart) {
-        return res.status(404).json({ message: "Cannot found this cart" });
+        return res.status(404).json({ msg: "Cannot found this cart" });
       }
 
       // create a new cart detail
@@ -85,9 +85,9 @@ const cartController = {
 
       await cart.save();
 
-      res.status(200).json({ message: "Add boook to cart successfully" });
+      res.status(200).json({ msg: "Add boook to cart successfully" });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   getCartDetail: async (req, res) => {
@@ -98,23 +98,23 @@ const cartController = {
 
       // check if user exists
       if (!useCheck) {
-        return res.status(404).json({ message: "Cannot found this user" });
+        return res.status(404).json({ msg: "Cannot found this user" });
       }
 
       const cart = await Carts.findOne({ userId });
 
       // check if cart exists
       if (!cart) {
-        return res.status(404).json({ message: "Cannot found this cart" });
+        return res.status(404).json({ msg: "Cannot found this cart" });
       }
 
       res.status(200).json({
-        message: "Get cart details successfully",
+        msg: "Get cart details successfully",
         result: cart.details.length,
         data: cart.details,
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   changeQuantity: async (req, res) => {
@@ -124,7 +124,7 @@ const cartController = {
 
       const cart = await Carts.findOne({ userId });
 
-      // if cart exist, update correspondding book
+      // if cart exist, update corresponding book
       if (cart) {
         for (var i = 0; i < cart.details.length; i++) {
           if (cart.details[i].bookId === bookId) {
@@ -135,14 +135,12 @@ const cartController = {
           }
         }
 
-        return res
-          .status(200)
-          .json({ message: "Change quantity successfully" });
+        return res.status(200).json({ msg: "Change quantity successfully" });
       }
 
-      res.status(400).json({ message: "Change quantity failed" });
+      res.status(400).json({ msg: "Change quantity failed" });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
 };

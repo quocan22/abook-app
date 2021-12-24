@@ -8,21 +8,29 @@ import Register from './pages/Register';
 import DashboardApp from './pages/DashboardApp';
 import Products from './pages/Products';
 import Blog from './pages/Blog';
-import User from './pages/User';
+import Users from './pages/Users';
+import Orders from './pages/Orders';
 import NotFound from './pages/Page404';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  function handleNavigate() {
+    if (!localStorage.getItem('user')) {
+      return <Navigate to="/login" replace />;
+    }
+    return <Navigate to="/dashboard/app" replace />;
+  }
   return useRoutes([
     {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" replace /> },
+        { element: handleNavigate() },
         { path: 'app', element: <DashboardApp /> },
-        { path: 'user', element: <User /> },
+        { path: 'users', element: <Users /> },
         { path: 'products', element: <Products /> },
+        { path: 'orders', element: <Orders /> },
         { path: 'report', element: <Blog /> }
       ]
     },

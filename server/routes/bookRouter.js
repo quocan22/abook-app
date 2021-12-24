@@ -5,6 +5,10 @@ const bookController = require("../controllers/bookController");
 const authentication = require("../middlewares/authentication");
 const authenticationEmployee = require("../middlewares/authenticationEmployee");
 
+router.get("/comment", bookController.getComments);
+router.patch("/comment", authentication, bookController.addComment);
+router.put("/receive", bookController.receiveBook);
+
 router
   .route("/")
   .get(bookController.getAllBook)
@@ -18,12 +22,11 @@ router
 router
   .route("/:id")
   .get(bookController.getBookById)
+  .put(upload.single("image"), bookController.updateInfo)
   .delete(
     authentication,
     authenticationEmployee.authenticationStaff,
     bookController.deleteBook
   );
-
-router.patch("/comment", authentication, bookController.addComment);
 
 module.exports = router;

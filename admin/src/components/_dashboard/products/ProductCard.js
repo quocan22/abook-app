@@ -1,13 +1,13 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link as RouterLink } from 'react-router-dom';
 // material
-import { Box, Card, Link, Typography, Stack } from '@mui/material';
+import { Box, Card, Typography, Stack, Rating, Zoom, Tooltip } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // utils
 import { fCurrency } from '../../../utils/formatNumber';
 //
 import Label from '../../Label';
-import ColorPreview from '../../ColorPreview';
+import { ProductMoreMenu, EditDialog, ReceiveDialog } from '.';
 
 // ----------------------------------------------------------------------
 
@@ -21,59 +21,93 @@ const ProductImgStyle = styled('img')({
 
 // ----------------------------------------------------------------------
 
-ShopProductCard.propTypes = {
-  product: PropTypes.object
+ProductCard.propTypes = {
+  product: PropTypes.object,
+  onChange: PropTypes.func
 };
 
-export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale } = product;
+export default function ProductCard({ product, onChange }) {
+  const { name, imageUrl, price, quantity, avgRate, isAvailable } = product;
+
+  const [onPreview, setOnPreview] = useState(false);
+
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openReceiveDialog, setOpenReceiveDialog] = useState(false);
+
+  const handleCloseEditDialog = () => {
+    setOpenEditDialog(false);
+  };
+
+  const handleEditClick = () => {
+    setOpenEditDialog(true);
+  };
+
+  const handleCloseReceiveDialog = () => {
+    setOpenReceiveDialog(false);
+  };
+
+  const handleReceiveClick = () => {
+    setOpenReceiveDialog(true);
+  };
 
   return (
-    <Card>
-      <Box sx={{ pt: '100%', position: 'relative' }}>
-        {status && (
-          <Label
-            variant="filled"
-            color={(status === 'sale' && 'error') || 'info'}
-            sx={{
-              zIndex: 9,
-              top: 16,
-              right: 16,
-              position: 'absolute',
-              textTransform: 'uppercase'
-            }}
-          >
-            {status}
-          </Label>
+    <Card
+      onMouseEnter={() => setOnPreview(true)}
+      onBlur={() => setOnPreview(false)}
+      onMouseLeave={() => setOnPreview(false)}
+    >
+      <Box
+        sx={{
+          pt: '100%',
+          position: 'relative',
+          backgroundColor: 'primary.lighter'
+        }}
+      >
+        {onPreview ? (
+          <Zoom in={onPreview}>
+            <Box sx={{ position: 'absolute', top: 30, left: 30 }}>
+              <Typography variant="subtitle1">Price:&nbsp;{fCurrency(price)}&#8363;</Typography>
+              <Typography variant="subtitle1">Quantity:&nbsp;{quantity}</Typography>
+              <Label variant="filled" color={(isAvailable && 'secondary') || 'error'}>
+                {(isAvailable && 'Available') || 'Not Available'}
+              </Label>
+            </Box>
+          </Zoom>
+        ) : (
+          <ProductImgStyle alt={name} src={imageUrl} />
         )}
-        <ProductImgStyle alt={name} src={cover} />
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
-        <Link to="#" color="inherit" underline="hover" component={RouterLink}>
-          <Typography variant="subtitle2" noWrap>
-            {name}
-          </Typography>
-        </Link>
-
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <ColorPreview colors={colors} />
-          <Typography variant="subtitle1">
-            <Typography
-              component="span"
-              variant="body1"
-              sx={{
-                color: 'text.disabled',
-                textDecoration: 'line-through'
-              }}
-            >
-              {priceSale && fCurrency(priceSale)}
-            </Typography>
-            &nbsp;
-            {fCurrency(price)}
-          </Typography>
+          <Stack>
+            <Tooltip title={<h2>{name}</h2>}>
+              <Typography sx={{ maxWidth: 150 }} variant="subtitle1" noWrap>
+                {name}
+              </Typography>
+            </Tooltip>
+            <Rating readOnly value={avgRate} />
+          </Stack>
+          <ProductMoreMenu
+            handleEditClick={handleEditClick}
+            handleReceiveClick={handleReceiveClick}
+          />
         </Stack>
       </Stack>
+
+      <EditDialog
+        open={openEditDialog}
+        handleClose={handleCloseEditDialog}
+        product={product}
+        onChange={onChange}
+      />
+
+      <ReceiveDialog
+        open={openReceiveDialog}
+        handleClose={handleCloseReceiveDialog}
+        product={product}
+        onChange={onChange}
+      />
     </Card>
   );
 }

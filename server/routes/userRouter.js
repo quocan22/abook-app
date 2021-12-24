@@ -1,21 +1,28 @@
 const router = require("express").Router();
+const upload = require("../utils/multer");
+const authentication = require("../middlewares/authentication");
+const authenticationEmployee = require("../middlewares/authenticationEmployee");
 
 const userController = require("../controllers/userController");
+
+router.get("/activate/:token", userController.activateEmail);
 
 router.get("/:id", userController.getUserInfo);
 
 router.get("/", userController.getAllUser);
 
-router.post("/register", userController.register);
+router.put("/:id", upload.single("image"), userController.updateInfo);
 
-router.put("/login", userController.login);
+router.post(
+  "/register",
+  upload.single("image"),
+  authentication,
+  authenticationEmployee.authenticationAdmin,
+  userController.register
+);
 
-router.post("/getaccesstoken", userController.getAccessToken);
+router.post("/signup", userController.signup);
 
-router.post("/changepassword", userController.changePassword);
-
-router.post("/googlelogin", userController.googleLogin);
-
-router.post("/facebooklogin", userController.facebookLogin);
+router.post("/change_password", userController.changePassword);
 
 module.exports = router;

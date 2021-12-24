@@ -9,7 +9,7 @@ const assetController = {
 
       // check if user exists
       if (!user) {
-        return res.status(400).json({ message: "Cannot find this user" });
+        return res.status(400).json({ msg: "Cannot find this user" });
       }
 
       // upload image to Cloudinary
@@ -23,11 +23,11 @@ const assetController = {
 
       await user.save();
       res.json({
-        message: "Upload image successfully",
+        msg: "Upload image successfully",
         data: user.userClaim,
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   deleteAvatar: async (req, res) => {
@@ -36,7 +36,7 @@ const assetController = {
 
       // check if user exists
       if (!user) {
-        return res.status(400).json({ message: "Cannot find this user" });
+        return res.status(400).json({ msg: "Cannot find this user" });
       }
 
       // if image id is default, delete the image
@@ -51,11 +51,11 @@ const assetController = {
       user.save();
 
       res.json({
-        message: "Delete avatar successfully",
+        msg: "Delete avatar successfully",
         data: user,
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   updateAvatar: async (req, res) => {
@@ -64,19 +64,21 @@ const assetController = {
 
       // check if user exists
       if (!user) {
-        return res.status(400).json({ message: "Cannot find this user" });
+        return res.status(400).json({ msg: "Cannot find this user" });
       }
+
+      var result;
 
       if (user.userClaim.cloudinaryId !== process.env.DEFAULT_PUBLIC_ID) {
         // if old avatar is not default, delete it
         await cloudinary.uploader.destroy(user.userClaim.cloudinaryId);
         // upload image to Cloudinary
-        const result = await cloudinary.uploader.upload(req.file.path, {
+        result = await cloudinary.uploader.upload(req.file.path, {
           folder: "abook/avatar",
         });
       } else {
         // if old avatar is default, wait the result to be uploaded
-        const result = await cloudinary.uploader.upload(req.file.path, {
+        result = await cloudinary.uploader.upload(req.file.path, {
           folder: "abook/avatar",
         });
       }
@@ -87,11 +89,11 @@ const assetController = {
 
       await user.save();
       res.json({
-        message: "Update image successfully",
+        msg: "Update image successfully",
         data: user.userClaim,
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   updateBookImage: async (req, res) => {
@@ -100,7 +102,7 @@ const assetController = {
 
       // check if book exists
       if (!book) {
-        return res.status(400).json({ message: "Cannot find this book" });
+        return res.status(400).json({ msg: "Cannot find this book" });
       }
 
       var result;
@@ -124,12 +126,13 @@ const assetController = {
       book.cloudinaryId = result.public_id;
 
       await book.save();
+
       res.json({
-        message: "Update image successfully",
+        msg: "Update image successfully",
         data: book,
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
 };

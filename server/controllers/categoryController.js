@@ -7,12 +7,12 @@ const categoryController = {
       const cates = await Categories.find();
 
       res.json({
-        message: "Get all categories successfully",
+        msg: "Get all categories successfully",
         result: cates.length,
         data: cates,
       });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
   createCategory: async (req, res) => {
@@ -23,36 +23,51 @@ const categoryController = {
 
       // check if category exists
       if (cate) {
-        return res
-          .status(403)
-          .json({ message: "This category already existed" });
+        return res.status(403).json({ msg: "This category already existed" });
       }
 
       const newCate = new Categories({ categoryName });
 
       await newCate.save();
 
-      res.status(201).json({ message: "Creating category successfully" });
+      res.status(201).json({ msg: "Create category successfully" });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
+  },
+  updateCategory: async (req, res) => {
+    const { id, newName } = req.body;
+
+    Categories.findByIdAndUpdate(
+      id,
+      { categoryName: newName },
+      function (err, result) {
+        if (err) {
+          res.status(400).json({ msg: err.message });
+        } else {
+          res
+            .status(201)
+            .json({ msg: "Update category successfully", id: result._id });
+        }
+      }
+    );
   },
   deleteCategory: async (req, res) => {
     try {
-      const bookCount = Books.find({ categoryId: req.params.id }).count();
+      const bookCount = await Books.find({ categoryId: req.params.id }).count();
 
       // if this category has any book, stop deleting
-      if (count !== 0) {
+      if (bookCount !== 0) {
         return res
           .status(400)
-          .json({ message: "Please delete all books in this category" });
+          .json({ msg: "Please delete all books in this category" });
       }
 
       await Categories.findByIdAndDelete(req.params.id);
 
-      res.status(202).json({ message: "Deleted successfully" });
+      res.status(202).json({ msg: "Deleted successfully" });
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ msg: err.message });
     }
   },
 };

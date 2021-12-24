@@ -1,7 +1,7 @@
 const authenticationEmployee = {
   authenticationStaff: (req, res, next) => {
     try {
-      if (req.user.role === 0) {
+      if (req.user.role !== 2 && req.user.role !== 3) {
         return res.status(403).json({ message: "Forbidden" });
       }
       next();
@@ -11,7 +11,7 @@ const authenticationEmployee = {
   },
   authenticationAdmin: (req, res, next) => {
     try {
-      if (req.user.role !== 2) {
+      if (req.user.role !== 3) {
         return res.status(403).json({ message: "Forbidden" });
       }
       next();
