@@ -7,7 +7,7 @@ const RecommendSchema = new mongoose.Schema({
   },
   type: {
     type: Number,
-    default: 1,
+    default: 1, // 1: New arrived, 2: Recommend for you
   },
 });
 

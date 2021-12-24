@@ -95,7 +95,7 @@ export default function ReceiveDialog({ open, handleClose, product, onChange }) 
         <Button variant="contained" onClick={confirmReceive}>
           Receive
         </Button>
-        <Button variant="contained" color="error" onClick={handleClose}>
+        <Button color="error" onClick={handleClose}>
           Cancel
         </Button>
       </DialogActions>

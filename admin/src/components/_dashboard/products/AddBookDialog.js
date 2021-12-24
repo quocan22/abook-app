@@ -246,7 +246,7 @@ export default function AddBookDialog({ open, handleClose, onChange }) {
         <Button variant="contained" onClick={confirmCreate}>
           Confirm
         </Button>
-        <Button variant="contained" color="error" onClick={cancelClick}>
+        <Button color="error" onClick={cancelClick}>
           Cancel
         </Button>
       </DialogActions>

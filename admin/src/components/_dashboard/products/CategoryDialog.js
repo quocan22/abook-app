@@ -219,7 +219,7 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
         </Collapse>
       </DialogContent>
       <DialogActions sx={{ mr: 2, mb: 2 }}>
-        <Button variant="contained" color="error" onClick={closeClick}>
+        <Button color="error" onClick={closeClick}>
           Close
         </Button>
       </DialogActions>
@@ -261,9 +261,7 @@ export default function CategoryDialog({ open, handleClose, onChange }) {
           <Button variant="contained" color="error" onClick={confirmDelete}>
             Delete
           </Button>
-          <Button variant="contained" onClick={cancelDeleteClick}>
-            Cancel
-          </Button>
+          <Button onClick={cancelDeleteClick}>Cancel</Button>
         </DialogActions>
       </Dialog>
     </Dialog>

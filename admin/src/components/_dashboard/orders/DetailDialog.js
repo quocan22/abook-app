@@ -4,6 +4,7 @@ import dateFormat from 'dateformat';
 import {
   Avatar,
   Button,
+  CardMedia,
   Chip,
   Container,
   Dialog,
@@ -22,6 +23,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography
 } from '@mui/material';
 import { toast } from 'react-toastify';
@@ -250,7 +252,7 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
               >
                 Complete
               </LoadingButton>
-              <LoadingButton
+              <Button
                 variant="contained"
                 color="error"
                 endIcon={<Icon icon={closeFill} />}
@@ -259,7 +261,7 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
                 onClick={handleSubmit(3)}
               >
                 Cancel
-              </LoadingButton>
+              </Button>
             </Stack>
           )}
           <Typography sx={{ mt: 2 }} variant="h6">
@@ -286,7 +288,22 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
                         <TableCell align="left">{index + 1}</TableCell>
                         <TableCell>
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={row.name} src={row.imageUrl} />
+                            <Tooltip
+                              placement="left-end"
+                              title={
+                                <CardMedia
+                                  height="250"
+                                  width="250"
+                                  component="img"
+                                  image={
+                                    (row.imageUrl && row.imageUrl) || '/static/empty_image.jpg'
+                                  }
+                                  alt="Preview avatar"
+                                />
+                              }
+                            >
+                              <Avatar alt={row.name} src={row.imageUrl} />
+                            </Tooltip>
                             <Typography variant="subtitle2" noWrap>
                               {row.name}
                             </Typography>

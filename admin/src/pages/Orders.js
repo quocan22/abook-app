@@ -133,11 +133,6 @@ export default function Orders() {
     setOpenDetailDialog(false);
   };
 
-  // const filteredOrders = filter(
-  //   orders,
-  //   (_order) => _order[searchField].toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
-  // );
-
   const filteredOrders = applyFilter(orders, searchField, searchValue);
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredOrders.length) : 0;
@@ -221,7 +216,7 @@ export default function Orders() {
                             hover
                             key={billNo}
                             tabIndex={-1}
-                            onDoubleClick={handleOpenDetailDialog(_id)}
+                            onClick={handleOpenDetailDialog(_id)}
                             sx={{
                               '&:hover:not(.Mui-disabled)': {
                                 cursor: 'pointer'

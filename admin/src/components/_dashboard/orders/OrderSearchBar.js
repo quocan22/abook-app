@@ -14,7 +14,6 @@ const RootStyle = styled(Toolbar)(({ theme }) => ({
 
 const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
   width: 240,
-  marginRight: 10,
   transition: theme.transitions.create(['box-shadow', 'width'], {
     easing: theme.transitions.easing.easeInOut,
     duration: theme.transitions.duration.shorter
@@ -60,10 +59,25 @@ export default function OrderSearchBar({
 }) {
   return (
     <RootStyle>
+      {/* Select options */}
+      <TextField
+        style={{ width: 200, marginRight: 10 }}
+        select
+        label="Search field"
+        value={searchField}
+        onChange={changeSearchField}
+      >
+        {searchOptions.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </TextField>
+
       {/* Value entering input */}
       {(searchField === 'paidStatus' && (
         <TextField
-          style={{ width: 200, marginRight: 10 }}
+          style={{ width: 200 }}
           select
           label="Search value"
           value={searchValue}
@@ -102,21 +116,6 @@ export default function OrderSearchBar({
             }
           />
         )}
-
-      {/* Select options */}
-      <TextField
-        style={{ width: 200 }}
-        select
-        label="Search field"
-        value={searchField}
-        onChange={changeSearchField}
-      >
-        {searchOptions.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
-            {option.label}
-          </MenuItem>
-        ))}
-      </TextField>
     </RootStyle>
   );
 }

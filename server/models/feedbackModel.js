@@ -1,18 +1,19 @@
 const mongoose = require("mongoose");
 
-const FeedbackSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
+const FeedbackSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      default: "",
+    },
+    content: {
+      type: String,
+      required: true,
+    },
   },
-  content: {
-    type: String,
-    required: true,
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 module.exports = mongoose.model("Feedbacks", FeedbackSchema);

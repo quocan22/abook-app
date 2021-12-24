@@ -5,12 +5,9 @@ const DiscountSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  ratio: {
+  value: {
     type: Number,
     required: true,
-  },
-  maxDiscount: {
-    type: Number,
   },
   expiredDate: {
     type: Date,

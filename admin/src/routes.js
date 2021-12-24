@@ -11,6 +11,8 @@ import Blog from './pages/Blog';
 import Users from './pages/Users';
 import Orders from './pages/Orders';
 import NotFound from './pages/Page404';
+import OtherSettings from './pages/OtherSettings';
+import Feedbacks from './pages/Feedbacks';
 
 // ----------------------------------------------------------------------
 
@@ -19,7 +21,7 @@ export default function Router() {
     if (!localStorage.getItem('user')) {
       return <Navigate to="/login" replace />;
     }
-    return <Navigate to="/dashboard/app" replace />;
+    return <Navigate to="/dashboard/users" replace />;
   }
   return useRoutes([
     {
@@ -31,6 +33,8 @@ export default function Router() {
         { path: 'users', element: <Users /> },
         { path: 'products', element: <Products /> },
         { path: 'orders', element: <Orders /> },
+        { path: 'other_settings', element: <OtherSettings /> },
+        { path: 'feedbacks', element: <Feedbacks /> },
         { path: 'report', element: <Blog /> }
       ]
     },
