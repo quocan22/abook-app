@@ -34,7 +34,7 @@ import checkFill from '@iconify/icons-eva/checkmark-fill';
 import Label from '../../Label';
 import { fCurrency } from '../../../utils/formatNumber';
 
-import OrderService from '../../../services/OrderService';
+import { OrderService } from '../../../services';
 
 const TABLE_HEAD = [
   { label: 'No.', align: 'left' },

@@ -33,7 +33,7 @@ import {
   EditUserDialog
 } from '../components/_dashboard/user';
 // ----------------------------------------------------------------------
-import UserService from '../services/UserService';
+import { UserService } from '../services';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Display Name', alignRight: false },

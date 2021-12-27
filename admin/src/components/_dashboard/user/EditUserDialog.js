@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { toast } from 'react-toastify';
 
-import UserService from '../../../services/UserService';
+import { UserService } from '../../../services';
 
 EditUserDialog.propTypes = {
   idOnEdit: PropTypes.string,
@@ -51,7 +51,7 @@ export default function EditUserDialog({
           setLoading(false);
         },
         (err) => {
-          toast.error(err.message);
+          if (err.response) toast.error(err.response.data.msg);
           setLoading(false);
         }
       );

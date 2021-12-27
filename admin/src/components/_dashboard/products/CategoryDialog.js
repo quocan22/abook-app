@@ -26,7 +26,7 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import closeFill from '@iconify/icons-eva/close-fill';
 
-import CategoryService from '../../../services/CategoryService';
+import { CategoryService } from '../../../services';
 
 const initialCate = {
   _id: '',

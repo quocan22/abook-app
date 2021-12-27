@@ -36,7 +36,8 @@ const bookController = {
   },
   createBook: async (req, res) => {
     try {
-      const { categoryId, name, price, quantity, description } = req.body;
+      const { categoryId, name, author, price, quantity, description } =
+        req.body;
 
       const book = await Books.findOne({ name });
 
@@ -49,6 +50,7 @@ const bookController = {
       const newBook = new Books({
         categoryId,
         name,
+        author,
         price,
         quantity,
         description,
@@ -75,8 +77,15 @@ const bookController = {
   },
   updateInfo: async (req, res) => {
     try {
-      const { categoryId, name, isAvailable, price, quantity, description } =
-        req.body;
+      const {
+        categoryId,
+        name,
+        author,
+        isAvailable,
+        price,
+        quantity,
+        description,
+      } = req.body;
 
       const book = await Books.findById(req.params.id);
 
@@ -108,6 +117,7 @@ const bookController = {
 
       if (categoryId) book.categoryId = categoryId;
       if (name) book.name = name;
+      if (author) book.author = author;
       if (price) book.price = price;
       if (quantity) book.quantity = quantity;
       if (description) book.description = description;

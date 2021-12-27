@@ -16,7 +16,7 @@ import {
   Button
 } from '@mui/material';
 
-import CategoryService from '../../../services/CategoryService';
+import { CategoryService } from '../../../services';
 
 const RootStyle = styled(Toolbar)(({ theme }) => ({
   height: 96,
@@ -59,7 +59,7 @@ export default function ProductSearchBar({
   useEffect(() => {
     CategoryService.getAllCates()
       .then((res) => setCates(res.data.data))
-      .catch((err) => err.response.data.msg && toast.error(err.response.data.msg));
+      .catch((err) => err.response && toast.error(err.response.data.msg));
   }, [change]);
 
   return (

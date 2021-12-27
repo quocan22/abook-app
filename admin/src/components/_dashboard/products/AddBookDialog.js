@@ -16,13 +16,13 @@ import {
   CardMedia
 } from '@mui/material';
 import { toast } from 'react-toastify';
-import BookService from '../../../services/BookService';
-import CategoryService from '../../../services/CategoryService';
+import { BookService, CategoryService } from '../../../services';
 import { validatePrice } from '../../../utils/validate';
 
 const initialBook = {
   categoryId: '',
   name: '',
+  author: '',
   price: '',
   quantity: '',
   description: ''
@@ -31,6 +31,7 @@ const initialBook = {
 const initialInvalid = {
   categoryId: false,
   name: false,
+  author: false,
   price: false,
   quantity: false,
   description: false
@@ -58,7 +59,7 @@ export default function AddBookDialog({ open, handleClose, onChange }) {
         setLoading(false);
       })
       .catch((err) => {
-        if (err.response.data.msg) toast.error(err.response.data.msg);
+        if (err.response) toast.error(err.response.data.msg);
         setLoading(false);
       });
   }, []);
@@ -108,6 +109,7 @@ export default function AddBookDialog({ open, handleClose, onChange }) {
     const bookFormData = new FormData();
     bookFormData.append('categoryId', book.categoryId);
     bookFormData.append('name', book.name);
+    bookFormData.append('author', book.author);
     bookFormData.append('price', parseInt(book.price, 10));
     bookFormData.append('quantity', parseInt(book.quantity, 10));
     bookFormData.append('description', book.description);
@@ -190,6 +192,16 @@ export default function AddBookDialog({ open, handleClose, onChange }) {
               onFocus={() => setInvalid({ ...invalid, name: false })}
               value={book.name}
               onChange={handleChangeBook('name')}
+            />
+            <TextField
+              autoComplete="nope"
+              variant="outlined"
+              label="Author"
+              error={invalid.author}
+              helperText={invalid.author && 'Author is required'}
+              onFocus={() => setInvalid({ ...invalid, author: false })}
+              value={book.author}
+              onChange={handleChangeBook('author')}
             />
             <TextField
               select

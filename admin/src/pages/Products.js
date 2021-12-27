@@ -16,7 +16,7 @@ import {
   AddBookDialog
 } from '../components/_dashboard/products';
 //
-import BookService from '../services/BookService';
+import { BookService } from '../services';
 
 // ----------------------------------------------------------------------
 
@@ -47,7 +47,7 @@ export default function Products() {
   useEffect(() => {
     BookService.getAllBooks()
       .then((res) => setBooks(res.data.data))
-      .catch((err) => err.response.data.msg && toast.error(err.response.data.msg));
+      .catch((err) => err.response && toast.error(err.response.data.msg));
   }, [productChange]);
 
   const handleFilterByName = (event) => {

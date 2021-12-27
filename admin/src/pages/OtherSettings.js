@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import {
   Avatar,
+  Box,
   Card,
+  CircularProgress,
   Container,
   Grid,
   Stack,
@@ -12,14 +15,20 @@ import {
   TableRow,
   Typography
 } from '@mui/material';
+import dateFormat from 'dateformat';
+import { toast } from 'react-toastify';
 import Page from '../components/Page';
+import { DiscountTableButton } from '../components/_dashboard/others';
 import { fCurrency } from '../utils/formatNumber';
+
+import { DiscountService } from '../services';
 
 const DISCOUNT_TABLE_HEAD = [
   { label: 'STT', align: 'center' },
   { label: 'Code', align: 'left' },
   { label: 'Value', align: 'right' },
-  { label: 'Expired Date', algin: 'left' }
+  { label: 'Expired Date', align: 'right' },
+  { label: '', align: 'right' }
 ];
 const SALE_TABLE_HEAD = [
   { label: 'Book', align: 'left' },
@@ -27,12 +36,6 @@ const SALE_TABLE_HEAD = [
   { label: 'Sale Price', align: 'right' }
 ];
 
-const discount = [
-  { code: 'CMNM', value: 50000, expiredDate: '21/01/2022' },
-  { code: 'CMNM2022', value: 100000, expiredDate: '21/01/2022' },
-  { code: 'MERRYCHRISTMAS', value: 200000, expiredDate: '28/12/2021' },
-  { code: 'HAPPYNEWYEAR', value: 100000, expiredDate: '02/01/2022' }
-];
 const sale = [
   {
     imageUrl:
@@ -65,6 +68,21 @@ const sale = [
 ];
 
 export default function OtherSettings() {
+  const [loading, setLoading] = useState(false);
+  const [discounts, setDiscounts] = useState([]);
+
+  useEffect(() => {
+    DiscountService.getAllDiscounts()
+      .then((res) => {
+        setLoading(false);
+        setDiscounts(res.data.data);
+      })
+      .catch((err) => {
+        if (err.response) toast.error(err.response.data.msg);
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <Page title="Other Settings | ABook">
       <Container>
@@ -79,27 +97,47 @@ export default function OtherSettings() {
                 Discount Code
               </Typography>
               <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      {DISCOUNT_TABLE_HEAD.map((headCell) => (
-                        <TableCell key={headCell.label} align={headCell.align}>
-                          {headCell.label}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {discount.map((row, index) => (
-                      <TableRow key={index}>
-                        <TableCell align="center">{index + 1}</TableCell>
-                        <TableCell align="left">{row.code}</TableCell>
-                        <TableCell align="right">{fCurrency(row.value)}</TableCell>
-                        <TableCell align="left">{row.expiredDate}</TableCell>
+                {loading ? (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      width: '100%',
+                      flexDirection: 'column',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Box sx={{ height: 100, display: 'flex', alignItems: 'center' }}>
+                      <CircularProgress color="inherit" />
+                    </Box>
+                  </Box>
+                ) : (
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        {DISCOUNT_TABLE_HEAD.map((headCell) => (
+                          <TableCell key={headCell.label} align={headCell.align}>
+                            {headCell.label}
+                          </TableCell>
+                        ))}
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHead>
+                    <TableBody>
+                      {discounts.map((row, index) => (
+                        <TableRow hover tabIndex={-1} key={index}>
+                          <TableCell align="center">{index + 1}</TableCell>
+                          <TableCell align="left">{row.code}</TableCell>
+                          <TableCell align="right">{fCurrency(row.value)}</TableCell>
+                          <TableCell align="right">
+                            {dateFormat(row.expiredDate, 'dd/mm/yyyy')}
+                          </TableCell>
+                          <TableCell align="right">
+                            <DiscountTableButton />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </TableContainer>
             </Card>
           </Grid>

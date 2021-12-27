@@ -17,8 +17,7 @@ import {
   Typography
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import AuthService from '../../../services/AuthService';
-import TokenService from '../../../services/TokenService';
+import { AuthService, TokenService } from '../../../services';
 
 // ----------------------------------------------------------------------
 

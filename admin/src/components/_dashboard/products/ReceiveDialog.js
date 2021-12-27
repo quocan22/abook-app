@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 // utils
 import { validatePrice } from '../../../utils/validate';
 //
-import BookService from '../../../services/BookService';
+import { BookService } from '../../../services';
 
 const initialInvalid = {
   price: false,

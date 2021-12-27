@@ -98,6 +98,15 @@ const discountController = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  deleteDiscount: async (req, res) => {
+    try {
+      await Discounts.findByIdAndDelete(req.params.id);
+
+      res.status(202).json({ msg: "Delete discount successfully" });
+    } catch {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
 };
 
 module.exports = discountController;

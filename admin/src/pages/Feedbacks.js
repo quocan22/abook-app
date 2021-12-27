@@ -18,7 +18,7 @@ import {
 import Scrollbar from '../components/Scrollbar';
 import Page from '../components/Page';
 
-import FeedbackService from '../services/FeedbackService';
+import { FeedbackService } from '../services';
 
 const TABLE_HEAD = [
   { label: 'STT', align: 'left' },

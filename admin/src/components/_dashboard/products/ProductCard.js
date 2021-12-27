@@ -27,7 +27,7 @@ ProductCard.propTypes = {
 };
 
 export default function ProductCard({ product, onChange }) {
-  const { name, imageUrl, price, quantity, avgRate, isAvailable } = product;
+  const { name, author, imageUrl, price, quantity, avgRate, isAvailable } = product;
 
   const [onPreview, setOnPreview] = useState(false);
 
@@ -66,6 +66,7 @@ export default function ProductCard({ product, onChange }) {
         {onPreview ? (
           <Zoom in={onPreview}>
             <Box sx={{ position: 'absolute', top: 30, left: 30 }}>
+              <Typography variant="subtitle1">Author:&nbsp;{author}</Typography>
               <Typography variant="subtitle1">Price:&nbsp;{fCurrency(price)}&#8363;</Typography>
               <Typography variant="subtitle1">Quantity:&nbsp;{quantity}</Typography>
               <Label variant="filled" color={(isAvailable && 'secondary') || 'error'}>

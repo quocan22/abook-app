@@ -21,13 +21,13 @@ import {
   FormLabel
 } from '@mui/material';
 import { toast } from 'react-toastify';
-import BookService from '../../../services/BookService';
-import CategoryService from '../../../services/CategoryService';
+import { BookService, CategoryService } from '../../../services';
 import { validatePrice } from '../../../utils/validate';
 
 const initialInvalid = {
   categoryId: false,
   name: false,
+  author: false,
   price: false,
   quantity: false,
   description: false
@@ -45,6 +45,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
     bookId: product._id,
     categoryId: product.categoryId,
     name: product.name,
+    author: product.author,
     isAvailable: product.isAvailable,
     price: product.price,
     quantity: product.quantity,
@@ -62,6 +63,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
       bookId: product._id,
       categoryId: product.categoryId,
       name: product.name,
+      author: product.author,
       isAvailable: product.isAvailable,
       price: product.price,
       quantity: product.quantity,
@@ -73,7 +75,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
         setLoading(false);
       })
       .catch((err) => {
-        if (err.response.data.msg) toast.error(err.response.data.msg);
+        if (err.response) toast.error(err.response.data.msg);
         setLoading(false);
       });
   }, [product]);
@@ -103,6 +105,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
     if (
       !book.categoryId ||
       !book.name ||
+      !book.author ||
       !validatePrice(book.price) ||
       !validatePrice(book.quantity) ||
       !book.description
@@ -110,6 +113,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
       setInvalid({
         categoryId: !book.categoryId,
         name: !book.name,
+        author: !book.author,
         price: !validatePrice(book.price),
         quantity: !validatePrice(book.quantity),
         description: !book.description
@@ -123,6 +127,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
     const bookFormData = new FormData();
     bookFormData.append('categoryId', book.categoryId);
     bookFormData.append('name', book.name);
+    bookFormData.append('author', book.author);
     bookFormData.append('isAvailable', book.isAvailable);
     bookFormData.append('price', parseInt(book.price, 10));
     bookFormData.append('quantity', parseInt(book.quantity, 10));
@@ -149,6 +154,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
       bookId: product._id,
       categoryId: product.categoryId,
       name: product.name,
+      author: product.author,
       isAvailable: product.isAvailable,
       price: product.price,
       quantity: product.quantity,
@@ -237,6 +243,15 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
               onFocus={() => setInvalid({ ...invalid, name: false })}
               value={book.name}
               onChange={handleChangeBook('name')}
+            />
+            <TextField
+              variant="outlined"
+              label="Author"
+              error={invalid.author}
+              helperText={invalid.author && 'Author is required'}
+              onFocus={() => setInvalid({ ...invalid, author: false })}
+              value={book.author}
+              onChange={handleChangeBook('author')}
             />
             <TextField
               variant="outlined"

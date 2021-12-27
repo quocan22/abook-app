@@ -23,7 +23,7 @@ import Scrollbar from '../components/Scrollbar';
 import Label from '../components/Label';
 import { OrderSearchBar, DetailDialog } from '../components/_dashboard/orders';
 
-import OrderService from '../services/OrderService';
+import { OrderService } from '../services';
 
 const TABLE_HEAD = [
   { label: 'Bill No.', align: 'left' },
