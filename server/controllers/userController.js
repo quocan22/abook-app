@@ -37,9 +37,11 @@ const userController = {
         return res.status(403).json({ msg: "This email already existed" });
       }
 
+      const passwordHash = await bcrypt.hash(password, 10);
+
       const newUser = new Users({
         email: email.toLowerCase(),
-        password: password,
+        password: passwordHash,
         role: role,
         userClaim: userClaim,
       });
@@ -222,21 +224,15 @@ const userController = {
       }
 
       if (req.file) {
-        var result;
-
         if (user.userClaim.cloudinaryId !== process.env.DEFAULT_PUBLIC_ID) {
           // if old avatar is not default, delete it
           await cloudinary.uploader.destroy(user.userClaim.cloudinaryId);
-          // upload image to Cloudinary
-          result = await cloudinary.uploader.upload(req.file.path, {
-            folder: "abook/avatar",
-          });
-        } else {
-          // if old avatar is default, wait the result to be uploaded
-          result = await cloudinary.uploader.upload(req.file.path, {
-            folder: "abook/avatar",
-          });
         }
+
+        // upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: "abook/avatar",
+        });
 
         // save new avatar url and id for user
         user.userClaim.avatarUrl = result.secure_url;

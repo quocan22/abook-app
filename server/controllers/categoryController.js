@@ -1,3 +1,4 @@
+const { cloudinary } = require("../utils/cloudinary");
 const Categories = require("../models/categoryModel");
 const Books = require("../models/bookModel");
 
@@ -28,6 +29,18 @@ const categoryController = {
 
       const newCate = new Categories({ categoryName });
 
+      // if create new category with image
+      if (req.file) {
+        // upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: "abook/category",
+        });
+
+        // set image url and image id for new category
+        newCate.imageUrl = result.secure_url;
+        newCate.cloudinaryId = result.public_id;
+      }
+
       await newCate.save();
 
       res.status(201).json({ msg: "Create category successfully" });
@@ -36,21 +49,41 @@ const categoryController = {
     }
   },
   updateCategory: async (req, res) => {
-    const { id, newName } = req.body;
+    try {
+      const { id, newName } = req.body;
 
-    Categories.findByIdAndUpdate(
-      id,
-      { categoryName: newName },
-      function (err, result) {
-        if (err) {
-          res.status(400).json({ msg: err.message });
-        } else {
-          res
-            .status(201)
-            .json({ msg: "Update category successfully", id: result._id });
-        }
+      const cate = await Categories.findById(id);
+
+      if (!cate) {
+        return res.status(400).json({ msg: "Cannot find this category" });
       }
-    );
+
+      if (req.file) {
+        if (cate.cloudinaryId !== process.env.DEFAULT_CATE_PUBLIC_ID) {
+          // if old image is not default, delete it
+          await cloudinary.uploader.destroy(cate.cloudinaryId);
+        }
+
+        // upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: "abook/category",
+        });
+
+        // save new image url and cloudinary id for category
+        cate.imageUrl = result.secure_url;
+        cate.cloudinaryId = result.public_id;
+      }
+
+      cate.categoryName = newName;
+
+      await cate.save();
+
+      res
+        .status(201)
+        .json({ msg: "Update category successfully", id: cate._id });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
   },
   deleteCategory: async (req, res) => {
     try {
@@ -63,9 +96,21 @@ const categoryController = {
           .json({ msg: "Please delete all books in this category" });
       }
 
-      await Categories.findByIdAndDelete(req.params.id);
+      const cate = await Categories.findById(req.params.id);
 
-      res.status(202).json({ msg: "Deleted successfully" });
+      if (!cate) {
+        return res.status(400).json({ msg: "This category does not exist" });
+      }
+
+      // if category image is not default, delete it
+      if (cate.cloudinaryId !== process.env.DEFAULT_CATE_PUBLIC_ID) {
+        await cloudinary.uploader.destroy(cate.cloudinaryId);
+      }
+
+      // remove category from database
+      await cate.remove();
+
+      res.status(202).json({ msg: "Delete category successfully" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }

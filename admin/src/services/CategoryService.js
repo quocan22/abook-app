@@ -4,7 +4,7 @@ const API_MODEL_URL = '/categories';
 
 const getAllCates = () => api.get(API_MODEL_URL);
 
-const createCates = (cateName) => api.post(API_MODEL_URL, cateName);
+const createCates = (cate) => api.post(API_MODEL_URL, cate);
 
 const updateCate = (cate) => api.put(API_MODEL_URL, cate);
 

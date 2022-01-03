@@ -1,1 +1,5 @@
-export { default as DiscountTableButton } from './DiscountTableButton';
+export { default as DiscountMenu } from './DiscountMenu';
+export { default as CategoryMenu } from './CategoryMenu';
+export { default as AddCateDialog } from './AddCateDialog';
+export { default as EditCateDialog } from './EditCateDialog';
+export { default as DeleteCateDialog } from './DeleteCateDialog';

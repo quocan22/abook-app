@@ -1,4 +1,3 @@
-import { toast } from 'react-toastify';
 import TokenService from './TokenService';
 
 const axios = require('axios');
@@ -38,11 +37,12 @@ instance.interceptors.response.use(
 
           const { accessToken } = rs.data;
 
+          console.log(rs);
+
           TokenService.updateLocalAccessToken(accessToken);
 
           return instance(originalConfig);
         } catch (error) {
-          toast.error('Login section has been expired. Please login again.');
           return Promise.reject(error);
         }
       }

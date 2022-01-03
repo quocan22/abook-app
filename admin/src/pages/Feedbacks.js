@@ -21,7 +21,7 @@ import Page from '../components/Page';
 import { FeedbackService } from '../services';
 
 const TABLE_HEAD = [
-  { label: 'STT', align: 'left' },
+  { label: 'No.', align: 'left' },
   { label: 'Email', align: 'left' },
   { label: 'Date Time', align: 'left' },
   { label: 'Content', align: 'left' }

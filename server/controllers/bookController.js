@@ -94,21 +94,15 @@ const bookController = {
       }
 
       if (req.file) {
-        var result;
-
-        if (book.cloudinaryId !== process.env.DEFAULT_PUBLIC_ID) {
+        if (book.cloudinaryId !== process.env.DEFAULT_BOOK_PUBLIC_ID) {
           // if old image is not default, delete it
           await cloudinary.uploader.destroy(book.cloudinaryId);
-          // upload image to Cloudinary
-          result = await cloudinary.uploader.upload(req.file.path, {
-            folder: "abook/book",
-          });
-        } else {
-          // if old image is default, wait the result to be uploaded
-          result = await cloudinary.uploader.upload(req.file.path, {
-            folder: "abook/book",
-          });
         }
+
+        // upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: "abook/book",
+        });
 
         // save new image url and cloudinary id for book
         book.imageUrl = result.secure_url;
@@ -233,9 +227,9 @@ const bookController = {
       }
 
       // remove book from database
-      book.remove();
+      await book.remove();
 
-      res.status(202).json({ msg: "Deleted successfully" });
+      res.status(202).json({ msg: "Delete book successfully" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
