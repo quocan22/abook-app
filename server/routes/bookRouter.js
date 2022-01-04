@@ -6,6 +6,7 @@ const authentication = require("../middlewares/authentication");
 const authenticationEmployee = require("../middlewares/authenticationEmployee");
 
 router.get("/comment", bookController.getComments);
+router.get("/cate", bookController.getBooksByCate);
 router.patch("/comment", authentication, bookController.addComment);
 router.put("/receive", bookController.receiveBook);
 

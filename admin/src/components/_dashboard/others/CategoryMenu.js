@@ -9,14 +9,14 @@ import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/mat
 
 // ----------------------------------------------------------------------
 
-ProductMoreMenu.propTypes = {
+CategoryMenu.propTypes = {
   cate: PropTypes.object,
   setSelectedCate: PropTypes.func,
   handleEditClick: PropTypes.func,
   handleDeleteClick: PropTypes.func
 };
 
-export default function ProductMoreMenu({
+export default function CategoryMenu({
   cate,
   setSelectedCate,
   handleEditClick,

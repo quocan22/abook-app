@@ -44,7 +44,7 @@ const discountController = {
       const existedCode = await Discounts.find({ code: code }).count();
 
       if (existedCode > 0) {
-        return res.status(400).json({ msg: "This code has been used" });
+        return res.status(400).json({ msg: "This code has existed" });
       }
 
       const newDiscount = new Discounts({
@@ -94,6 +94,10 @@ const discountController = {
       if (value) discount.value = value;
 
       await discount.save();
+
+      res.status(200).json({
+        msg: "Update discount successfully",
+      });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }

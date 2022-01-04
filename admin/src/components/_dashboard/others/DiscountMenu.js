@@ -9,22 +9,31 @@ import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/mat
 
 // ----------------------------------------------------------------------
 
-ProductMoreMenu.propTypes = {
+DiscountMenu.propTypes = {
+  discount: PropTypes.object,
+  setSelectedDiscount: PropTypes.func,
   handleEditClick: PropTypes.func,
-  handleDelateClick: PropTypes.func
+  handleDeleteClick: PropTypes.func
 };
 
-export default function ProductMoreMenu({ handleEditClick, handleDelateClick }) {
+export default function DiscountMenu({
+  discount,
+  setSelectedDiscount,
+  handleEditClick,
+  handleDeleteClick
+}) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
   const editClick = () => {
+    setSelectedDiscount(discount);
     handleEditClick();
     setIsOpen(false);
   };
 
   const deleteClick = () => {
-    handleDelateClick();
+    setSelectedDiscount(discount);
+    handleDeleteClick();
     setIsOpen(false);
   };
 

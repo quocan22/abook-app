@@ -4,8 +4,10 @@ import {
   Box,
   Button,
   Card,
+  Checkbox,
   CircularProgress,
   Container,
+  FormControlLabel,
   Grid,
   Stack,
   Table,
@@ -26,11 +28,26 @@ import {
   CategoryMenu,
   AddCateDialog,
   EditCateDialog,
-  DeleteCateDialog
+  DeleteCateDialog,
+  AddDiscountDialog,
+  EditDiscountDialog,
+  DeleteDiscountDialog
 } from '../components/_dashboard/others';
 import { fCurrency } from '../utils/formatNumber';
 
 import { DiscountService, CategoryService } from '../services';
+
+const initialDiscount = {
+  _id: '',
+  code: '',
+  value: '',
+  expiredDate: ''
+};
+
+const initialCate = {
+  _id: '',
+  categoryName: ''
+};
 
 const DISCOUNT_TABLE_HEAD = [
   { label: 'No.', align: 'center' },
@@ -48,27 +65,48 @@ const CATE_TABLE_HEAD = [
 export default function OtherSettings() {
   const [loadingDiscount, setLoadingDiscount] = useState(false);
   const [discounts, setDiscounts] = useState([]);
+  const [showAvailable, setShowAvailable] = useState(false);
+  const [discountChange, setDiscountChange] = useState(false);
+  const [selectedDis, setSelectedDis] = useState(initialDiscount);
 
   const [loadingCate, setLoadingCate] = useState(false);
   const [cates, setCates] = useState([]);
   const [cateChange, setCateChange] = useState(false);
-  const [selectedCate, setSelectedCate] = useState('');
+  const [selectedCate, setSelectedCate] = useState(initialCate);
+
+  const [openAddDisDialog, setOpenAddDisDialog] = useState(false);
+  const [openEditDisDialog, setOpenEditDisDialog] = useState(false);
+  const [openDeleteDisDialog, setOpenDeleteDisDialog] = useState(false);
 
   const [openAddCateDialog, setOpenAddCateDialog] = useState(false);
   const [openEditCateDialog, setOpenEditCateDialog] = useState(false);
   const [openDeleteCateDialog, setOpenDeleteCateDialog] = useState(false);
 
   useEffect(() => {
-    DiscountService.getAllDiscounts()
-      .then((res) => {
-        setLoadingDiscount(false);
-        setDiscounts(res.data.data);
-      })
-      .catch((err) => {
-        if (err.response) toast.error(err.response.data.msg);
-        setLoadingDiscount(false);
-      });
-  }, []);
+    setLoadingDiscount(true);
+
+    if (showAvailable) {
+      DiscountService.getAvailableDiscounts()
+        .then((res) => {
+          setLoadingDiscount(false);
+          setDiscounts(res.data.data);
+        })
+        .catch((err) => {
+          if (err.response) toast.error(err.response.data.msg);
+          setLoadingDiscount(false);
+        });
+    } else {
+      DiscountService.getAllDiscounts()
+        .then((res) => {
+          setLoadingDiscount(false);
+          setDiscounts(res.data.data);
+        })
+        .catch((err) => {
+          if (err.response) toast.error(err.response.data.msg);
+          setLoadingDiscount(false);
+        });
+    }
+  }, [discountChange, showAvailable]);
 
   useEffect(() => {
     CategoryService.getAllCates()
@@ -81,6 +119,30 @@ export default function OtherSettings() {
         setLoadingCate(false);
       });
   }, [cateChange]);
+
+  const onDiscountChange = () => {
+    setDiscountChange(!discountChange);
+  };
+
+  const handleCloseAddDisDialog = () => {
+    setOpenAddDisDialog(false);
+  };
+
+  const handleOpenEditDisDialog = () => {
+    setOpenEditDisDialog(true);
+  };
+
+  const handleCloseEditDisDialog = () => {
+    setOpenEditDisDialog(false);
+  };
+
+  const handleOpenDeleteDisDialog = () => {
+    setOpenDeleteDisDialog(true);
+  };
+
+  const handleCloseDeleteDisDialog = () => {
+    setOpenDeleteDisDialog(false);
+  };
 
   const onCateChange = () => {
     setCateChange(!cateChange);
@@ -120,10 +182,24 @@ export default function OtherSettings() {
                 <Typography variant="h5" sx={{ ml: 3, my: 2 }}>
                   Discount Code
                 </Typography>
-                <Button variant="contained" startIcon={<Icon icon={plusFill} />}>
+                <Button
+                  variant="contained"
+                  startIcon={<Icon icon={plusFill} />}
+                  onClick={() => setOpenAddDisDialog(true)}
+                >
                   New Discount
                 </Button>
               </Stack>
+              <FormControlLabel
+                sx={{ ml: 2 }}
+                control={
+                  <Checkbox
+                    checked={showAvailable}
+                    onChange={(e) => setShowAvailable(e.target.checked)}
+                  />
+                }
+                label="Show Available Only"
+              />
               <TableContainer>
                 {loadingDiscount ? (
                   <Box
@@ -159,7 +235,12 @@ export default function OtherSettings() {
                             {dateFormat(row.expiredDate, 'dd/mm/yyyy')}
                           </TableCell>
                           <TableCell align="right">
-                            <DiscountMenu />
+                            <DiscountMenu
+                              discount={row}
+                              setSelectedDiscount={setSelectedDis}
+                              handleEditClick={handleOpenEditDisDialog}
+                              handleDeleteClick={handleOpenDeleteDisDialog}
+                            />
                           </TableCell>
                         </TableRow>
                       ))}
@@ -167,6 +248,26 @@ export default function OtherSettings() {
                   </Table>
                 )}
               </TableContainer>
+
+              <AddDiscountDialog
+                open={openAddDisDialog}
+                handleClose={handleCloseAddDisDialog}
+                onChange={onDiscountChange}
+              />
+
+              <EditDiscountDialog
+                selectedDiscount={selectedDis}
+                open={openEditDisDialog}
+                handleClose={handleCloseEditDisDialog}
+                onChange={onDiscountChange}
+              />
+
+              <DeleteDiscountDialog
+                selectedDiscount={selectedDis}
+                open={openDeleteDisDialog}
+                handleClose={handleCloseDeleteDisDialog}
+                onChange={onDiscountChange}
+              />
             </Card>
           </Grid>
           <Grid item xs={5}>

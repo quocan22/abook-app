@@ -34,6 +34,20 @@ const bookController = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  getBooksByCate: async (req, res) => {
+    try {
+      const cateId = req.query.c;
+
+      const books = await Books.find({ categoryId: cateId });
+
+      res.status(200).json({
+        msg: "Get books by category successfully",
+        data: books,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
   createBook: async (req, res) => {
     try {
       const { categoryId, name, author, price, quantity, description } =
@@ -186,7 +200,7 @@ const bookController = {
   },
   getComments: async (req, res) => {
     try {
-      const book = await Books.findById(req.body.bookId);
+      const book = await Books.findById(req.query.i);
 
       // check if book exists
       if (!book) {
