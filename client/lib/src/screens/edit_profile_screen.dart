@@ -1,9 +1,8 @@
-import 'package:client/src/constants/constants.dart' as constants;
-import 'package:client/src/utils/validators.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+
+import '../constants/constants.dart' as constants;
+import '../utils/validators.dart';
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({Key? key}) : super(key: key);

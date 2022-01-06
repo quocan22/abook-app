@@ -16,7 +16,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    double _mobileBackgroundImageHeight = 312;
+    double _mobileBackgroundImageHeight = 240;
     double _mobileSpaceBetweenLogoAndWelcomeTitle = 50;
     double _mobileLeftPadding = 25;
     double _mobileRightPadding = 25;

@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+//import 'package:google_sign_in/google_sign_in.dart';
 
 import '../blocs/login/login_bloc.dart';
 import '../blocs/login/login_state.dart';
 import '../config/app_constants.dart' as app_constants;
 import '../constants/constants.dart' as constants;
 import '../utils/validators.dart';
+
+// GoogleSignIn _googleSignIn = GoogleSignIn(
+//   scopes: <String>[
+//     'email',
+//     'https://www.googleapis.com/auth/contacts.readonly',
+//   ],
+// );
 
 class LoginForm extends StatefulWidget {
   final String? defaultEmail;
@@ -41,12 +49,30 @@ class _LoginFormState extends State<LoginForm> {
     return password.isEmpty || !Validators.isValidPassword(password);
   }
 
+  void signInWithGoogle() async {
+    // await _googleSignIn.signIn().then((result) {
+    //   result!.authentication.then((googleKey) {
+    //     print(googleKey);
+    //     print(googleKey);
+    //     print(_googleSignIn.currentUser!.displayName);
+    //   }).catchError((err) {
+    //     print('inner error');
+    //   });
+    // }).catchError((err) {
+    //   print(err.toString());
+    // });
+  }
+
+  void signOutWithGoogle() async {
+    //await _googleSignIn.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     double _spacingAboveOfTexts = 15;
     double _spacingBelowOfTexts = 5;
     double _buttonHeight = 57;
-    double _loginTitleSpacingBelow = 65;
+    double _loginTitleSpacingBelow = 30;
     double _loginTitleSpacingAbove = 5;
     double _emailTextFormFieldSectionAndPasswordTextFormFieldSectionSpacing =
         35;
@@ -94,17 +120,6 @@ class _LoginFormState extends State<LoginForm> {
               children: [
                 SizedBox(
                   height: _loginTitleSpacingAbove,
-                ),
-                Text(
-                  constants.LoginScreenConstants.loginTitle,
-                  style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                        color: constants.LoginScreenConstants.loginTitleColor,
-                        fontSize: _loginTitleFontSize,
-                        fontWeight: _loginTitleFontWeight,
-                      ),
-                ),
-                SizedBox(
-                  height: _loginTitleSpacingBelow,
                 ),
                 Text(
                   constants.LoginScreenConstants.emailTitle,
@@ -246,6 +261,112 @@ class _LoginFormState extends State<LoginForm> {
                                       fontSize: _loginButtonFontSize,
                                       fontWeight: _loginButtonFontWeight,
                                     ),
+                          ),
+                  ),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: _buttonHeight,
+                  child: TextButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        side: BorderSide(
+                            color: constants.ColorsConstant.primaryColor),
+                        borderRadius: BorderRadius.circular(8),
+                      )),
+                    ),
+                    onPressed: () async => signInWithGoogle(),
+                    child: state is LoginInProgress
+                        ? CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image(
+                                    image: AssetImage(
+                                        'assets/icons/google_icon.png'),
+                                    width: 24,
+                                    height: 24,
+                                  ),
+                                  SizedBox(
+                                    width: 16.0,
+                                  ),
+                                  Text(
+                                    'Sign in with Google',
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1!
+                                        .copyWith(
+                                          color: constants
+                                              .ColorsConstant.primaryColor,
+                                          fontSize: _loginButtonFontSize,
+                                          fontWeight: _loginButtonFontWeight,
+                                        ),
+                                  ),
+                                ]),
+                          ),
+                  ),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                Center(
+                  child: Text(
+                    'Or',
+                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          color:
+                              constants.LoginScreenConstants.signUpTitleColor,
+                          fontSize: _signUpTitleFontSize,
+                          fontWeight: _signUpTitleFontWeight,
+                        ),
+                  ),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: _buttonHeight,
+                  child: TextButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        side: BorderSide(
+                            color: constants.ColorsConstant.primaryColor),
+                        borderRadius: BorderRadius.circular(8),
+                      )),
+                    ),
+                    onPressed: () => Navigator.of(context)
+                        .pushNamedAndRemoveUntil(
+                            app_constants.RouteNames.navigation,
+                            (route) => false),
+                    child: state is LoginInProgress
+                        ? CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Continue as Guest',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1!
+                                  .copyWith(
+                                    color:
+                                        constants.ColorsConstant.primaryColor,
+                                    fontSize: _loginButtonFontSize,
+                                    fontWeight: _loginButtonFontWeight,
+                                  ),
+                            ),
                           ),
                   ),
                 ),

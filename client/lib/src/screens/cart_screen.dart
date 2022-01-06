@@ -1,7 +1,6 @@
-import 'package:client/src/constants/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
+
+import '../constants/constants.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -10,28 +9,36 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white.withOpacity(0.95),
           automaticallyImplyLeading: false,
-          title: Text(
-            'Cart',
-            style: Theme.of(context).textTheme.headline4?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: ColorsConstant.primaryColor,
-                ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Image(
+                image: AssetImage('assets/images/app_logo_no_bg.png'),
+                width: 24,
+                height: 24,
+              ),
+              Text(
+                'Cart',
+                style: Theme.of(context).textTheme.headline4?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: ColorsConstant.primaryColor,
+                    ),
+              ),
+              InkWell(
+                  onTap: () {}, child: Icon(Icons.search, color: Colors.black))
+            ],
           ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-                onPressed: () {}, icon: Icon(Icons.search, color: Colors.black))
-          ],
         ),
         body: Stack(children: [
           Container(
               height: MediaQuery.of(context).size.height,
               width: double.infinity,
-              padding: const EdgeInsets.all(25),
+              padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
               child: ListView.separated(
                   itemBuilder: (context, index) => Container(
                         padding: const EdgeInsets.all(8.0),

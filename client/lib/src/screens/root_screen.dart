@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../config/app_constants.dart' as route_names;
 import '../constants/constants.dart' as constants;
 
 class RootScreen extends StatelessWidget {

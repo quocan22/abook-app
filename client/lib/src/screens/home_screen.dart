@@ -1,41 +1,132 @@
-import 'package:client/src/constants/constants.dart';
-import 'package:client/src/widgets/book_search_delegate.dart';
+import 'package:client/src/blocs/category/category_bloc.dart';
+import 'package:client/src/blocs/category/category_event.dart';
+import 'package:client/src/blocs/category/category_state.dart';
+import 'package:client/src/widgets/category_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'book_detail_screen.dart';
+import '../blocs/book/book_bloc.dart';
+import '../blocs/book/book_event.dart';
+import '../blocs/book/book_state.dart';
+import '../constants/constants.dart';
+import '../widgets/book_search_delegate.dart';
+import '../widgets/squared_book_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
+  Widget _buildBookList() {
+    return BlocBuilder<BookBloc, BookState>(
+      builder: (context, state) {
+        if (state is BookLoadInProgress) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.red,
+            ),
+          );
+        }
+        if (state is BookLoadFailure) {
+          return const Center(child: Text('fail'));
+        }
+        if (state is BookLoadSuccess) {
+          if (state.books != null) {
+            //state.books!.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+            return GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, childAspectRatio: 0.8),
+              itemCount: state.books!.length,
+              itemBuilder: (context, index) => SquaredBookCard(
+                book: state.books![index],
+              ),
+            );
+          } else {
+            //temp screen
+            return const Center(
+              child: Text('BOOKS NULL'),
+            );
+          }
+        }
+        //temp screen
+        return const Center(
+          child: Text('BLOC NO STATE'),
+        );
+      },
+    );
+  }
+
+  Widget _buildCategoryList() {
+    return BlocBuilder<CategoryBloc, CategoryState>(
+      builder: (context, state) {
+        if (state is CategoryLoadInProgress) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.red,
+            ),
+          );
+        }
+        if (state is CategoryLoadFailure) {
+          return const Center(child: Text('fail'));
+        }
+        if (state is CategoryLoadSuccess) {
+          if (state.categories != null) {
+            return ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemCount: state.categories!.length,
+              itemBuilder: (BuildContext context, int index) =>
+                  CategoryCard(category: state.categories![index]),
+            );
+          } else {
+            //temp screen
+            return const Center(
+              child: Text('CATEGORIES NULL'),
+            );
+          }
+        }
+        //temp screen
+        return const Center(
+          child: Text('BLOC NO STATE'),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    context.read<BookBloc>().add(BookRequested());
+    context.read<CategoryBloc>().add(CategoryRequested());
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
           automaticallyImplyLeading: false,
-          title: Text(
-            AppConstants.appName,
-            style: Theme.of(context).textTheme.headline4?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: ColorsConstant.primaryColor,
-                ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Image(
+                image: AssetImage('assets/images/app_logo_no_bg.png'),
+                width: 24,
+                height: 24,
+              ),
+              Text(
+                AppConstants.appName,
+                style: Theme.of(context).textTheme.headline4?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: ColorsConstant.primaryColor,
+                    ),
+              ),
+              InkWell(
+                  onTap: () {
+                    showSearch(
+                        context: context, delegate: BookSearchDelegate());
+                  },
+                  child: Icon(Icons.search, color: Colors.black))
+            ],
           ),
-          centerTitle: true,
-          leading: IconButton(
-              onPressed: () {}, icon: Icon(Icons.menu, color: Colors.black)),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  showSearch(context: context, delegate: BookSearchDelegate());
-                },
-                icon: Icon(Icons.search, color: Colors.black))
-          ],
         ),
         body: Padding(
-          padding: const EdgeInsets.all(25),
+          padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -47,35 +138,7 @@ class HomeScreen extends StatelessWidget {
                     ),
               ),
               SizedBox(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 10,
-                  itemBuilder: (BuildContext context, int index) => Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Image.network(
-                                'https://media.istockphoto.com/photos/colorful-vegetables-and-fruits-vegan-food-in-rainbow-colors-picture-id1284690585?b=1&k=20&m=1284690585&s=170667a&w=0&h=HlEPBNsYMVuu-SsohPliBWHJy-IhW9y-fl8dS9KnBBo=',
-                                width: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text('Food')
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                child: _buildCategoryList(),
                 height: 150,
               ),
               Text(
@@ -85,57 +148,7 @@ class HomeScreen extends StatelessWidget {
                       color: Colors.black,
                     ),
               ),
-              Expanded(
-                  child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
-                itemCount: 15,
-                itemBuilder: (BuildContext context, int index) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => BookDetailScreen()));
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.network(
-                              'https://images.unsplash.com/photo-1621351183012-e2f9972dd9bf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGJvb2slMjBjb3ZlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60',
-                              width: 200,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Icon(Icons.star, color: Colors.yellow, size: 15),
-                            Icon(Icons.star, color: Colors.yellow, size: 15),
-                            Icon(Icons.star, color: Colors.yellow, size: 15),
-                            Icon(Icons.star, color: Colors.yellow, size: 15),
-                            Icon(Icons.star_border,
-                                color: Colors.yellow, size: 15),
-                          ],
-                        ),
-                        Text(
-                          'The two towers',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          '250 000 VNĐ',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              )),
+              Expanded(child: _buildBookList()),
             ],
           ),
         ),

@@ -12,7 +12,7 @@ class SignUpScreen extends StatelessWidget {
     final _mobileBackroundImagePadding = EdgeInsets.fromLTRB(25, 60, 0, 0);
     final _mobileSignUpFormPadding =
         EdgeInsets.fromLTRB(25.0, 20.0, 25.0, 25.0);
-    final double _heightBackgroundMobile = 285;
+    final double _heightBackgroundMobile = 240;
     final double _heightFromLogoToWellcomeTitleMobile = 45;
 
     return Scaffold(

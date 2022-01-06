@@ -1,9 +1,10 @@
-import 'package:client/src/constants/constants.dart';
-import 'package:client/src/screens/cart_screen.dart';
-import 'package:client/src/screens/favorite_screen.dart';
-import 'package:client/src/screens/home_screen.dart';
-import 'package:client/src/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
+
+import '../constants/constants.dart';
+import '../screens/cart_screen.dart';
+import '../screens/favorite_screen.dart';
+import '../screens/home_screen.dart';
+import '../screens/profile_screen.dart';
 
 class BottomNavigator extends StatefulWidget {
   @override
@@ -28,10 +29,15 @@ class _BottomNavigator extends State<BottomNavigator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      backgroundColor: Colors.white,
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        type: BottomNavigationBarType.fixed,
         elevation: 0,
         showSelectedLabels: false,
         showUnselectedLabels: false,

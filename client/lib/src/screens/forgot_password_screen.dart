@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '/../src/widgets/logo.dart';
-import '/../src/widgets/reset_password_form.dart';
-import '/../src/constants/constants.dart' as constant;
+import '../constants/constants.dart' as constant;
+import '../widgets/logo.dart';
+import '../widgets/reset_password_form.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   final double loginFormWidth = 425;
   final double loginFormHeight = 467;
-  final double mobileBackgroundImageHeight = 285;
+  final double mobileBackgroundImageHeight = 240;
   final double spaceBetweenLogoAndWelcomeTitle = 45;
   final double loginFormPadding = 50;
   final double loginFormBorder = 8;

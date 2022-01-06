@@ -1,9 +1,8 @@
-import 'package:client/src/config/app_constants.dart';
-import 'package:client/src/constants/constants.dart';
-import 'package:client/src/screens/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
+
+import '../config/app_constants.dart';
+import '../constants/constants.dart';
+import './edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -12,29 +11,40 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white.withOpacity(0.95),
           automaticallyImplyLeading: false,
-          title: Text(
-            'Profile',
-            style: Theme.of(context).textTheme.headline4?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: ColorsConstant.primaryColor,
-                ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Image(
+                image: AssetImage('assets/images/app_logo_no_bg.png'),
+                width: 24,
+                height: 24,
+              ),
+              Text(
+                'My Profile',
+                style: Theme.of(context).textTheme.headline4?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: ColorsConstant.primaryColor,
+                    ),
+              ),
+              InkWell(
+                  onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                      RouteNames.login, (route) => false),
+                  child: Icon(Icons.logout, color: Colors.black))
+            ],
           ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                    RouteNames.login, (route) => false),
-                icon: Icon(Icons.logout_rounded, color: Colors.black))
-          ],
         ),
         body: SingleChildScrollView(
           physics: ScrollPhysics(),
           child: Column(
             children: [
+              SizedBox(
+                height: AppBar().preferredSize.height,
+              ),
               Stack(
                 alignment: Alignment.topCenter,
                 children: <Widget>[

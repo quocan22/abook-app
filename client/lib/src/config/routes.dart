@@ -1,3 +1,7 @@
+import 'package:client/src/models/book.dart';
+import 'package:client/src/models/category.dart';
+import 'package:client/src/screens/book_detail_screen.dart';
+import 'package:client/src/screens/book_list_by_category_screen.dart';
 import 'package:client/src/widgets/bottom_navigator.dart';
 import 'package:flutter/material.dart';
 
@@ -39,6 +43,24 @@ class Routes {
         return MaterialPageRoute(
           builder: (_) => BottomNavigator(),
         );
+      case app_constants.RouteNames.bookDetail:
+        if (settings.arguments != null) {
+          return MaterialPageRoute(
+              builder: (_) => BookDetailScreen(
+                    book: settings.arguments as Book,
+                  ));
+        } else {
+          throw Exception();
+        }
+      case app_constants.RouteNames.bookListByCategory:
+        if (settings.arguments != null) {
+          return MaterialPageRoute(
+              builder: (_) => BookListByCategoryScreen(
+                    category: settings.arguments as Category,
+                  ));
+        } else {
+          throw Exception();
+        }
       default:
         throw Exception();
     }
