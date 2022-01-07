@@ -230,9 +230,9 @@ export default function OtherSettings() {
                         <TableRow hover tabIndex={-1} key={index}>
                           <TableCell align="center">{index + 1}</TableCell>
                           <TableCell align="left">{row.code}</TableCell>
-                          <TableCell align="right">{fCurrency(row.value)}</TableCell>
+                          <TableCell align="right">{fCurrency(row.value)}&#8363;</TableCell>
                           <TableCell align="right">
-                            {dateFormat(row.expiredDate, 'dd/mm/yyyy')}
+                            {dateFormat(row.expiredDate, 'HH:MM - dd/mm/yyyy')}
                           </TableCell>
                           <TableCell align="right">
                             <DiscountMenu

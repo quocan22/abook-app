@@ -11,7 +11,7 @@ import {
   TextField
 } from '@mui/material';
 import en from 'date-fns/locale/en-US';
-import { LocalizationProvider, DatePicker, LoadingButton } from '@mui/lab';
+import { LocalizationProvider, LoadingButton, DateTimePicker } from '@mui/lab';
 import AdapterDateDns from '@mui/lab/AdapterDateFns';
 import { validatePrice } from '../../../utils/validate';
 
@@ -116,7 +116,7 @@ export default function EditDiscountDialog({ selectedDiscount, open, handleClose
             onChange={handleChange('value')}
           />
           <LocalizationProvider dateAdapter={AdapterDateDns} locale={en}>
-            <DatePicker
+            <DateTimePicker
               variant="outlined"
               label="Expired Date"
               mask="__/__/____"

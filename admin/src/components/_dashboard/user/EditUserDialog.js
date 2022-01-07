@@ -15,6 +15,7 @@ import {
   CardMedia
 } from '@mui/material';
 import { toast } from 'react-toastify';
+import { LoadingButton } from '@mui/lab';
 
 import { UserService } from '../../../services';
 
@@ -22,14 +23,14 @@ EditUserDialog.propTypes = {
   idOnEdit: PropTypes.string,
   openEditDialog: PropTypes.bool,
   handleCloseEditDialog: PropTypes.func,
-  handleEditUser: PropTypes.func
+  onChange: PropTypes.func
 };
 
 export default function EditUserDialog({
   idOnEdit,
   openEditDialog,
   handleCloseEditDialog,
-  handleEditUser
+  onChange
 }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState();
@@ -90,8 +91,18 @@ export default function EditUserDialog({
     userFormData.append('phoneNumber', user.phoneNumber);
     userFormData.append('address', user.address);
     if (selectedFile) userFormData.append('image', selectedFile);
-    handleEditUser(idOnEdit, userFormData);
-    handleClose();
+
+    setLoading(true);
+    UserService.updateUserInfo(idOnEdit, userFormData)
+      .then((res) => {
+        toast.success(res.data.msg);
+        onChange();
+        handleClose();
+      })
+      .catch((err) => {
+        if (err.response) toast.error(err.response.data.msg);
+        setLoading(false);
+      });
   };
 
   const handleChangeUser = (prop) => (event) => {
@@ -161,11 +172,11 @@ export default function EditUserDialog({
         </DialogContent>
       )}
       <DialogActions sx={{ mr: 2, mb: 2 }}>
+        <LoadingButton variant="contained" loading={loading} onClick={confirmClick}>
+          Confirm
+        </LoadingButton>
         <Button color="error" variant="outlined" onClick={handleClose}>
           Cancel
-        </Button>
-        <Button variant="contained" onClick={confirmClick}>
-          Confirm
         </Button>
       </DialogActions>
     </Dialog>
