@@ -1,5 +1,6 @@
 import 'package:client/src/blocs/authentication/authentication_bloc.dart';
 import 'package:client/src/blocs/book_by_category/book_by_category_bloc.dart';
+import 'package:client/src/blocs/profile/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart' as dio;
@@ -33,6 +34,9 @@ class App extends StatelessWidget {
           BlocProvider(create: (context) => AuthenticationBloc()),
           BlocProvider(
             create: (context) => SignupBloc(userService: _userService),
+          ),
+          BlocProvider(
+            create: (context) => ProfileBloc(userService: _userService),
           ),
           BlocProvider(
             create: (context) => LoginBloc(userService: _userService),

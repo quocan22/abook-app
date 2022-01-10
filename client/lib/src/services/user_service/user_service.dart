@@ -12,4 +12,7 @@ abstract class UserService {
   Future<String> register(String email, String password, String fullName);
 
   Future<String> login(String email, String password);
+
+  Future<String> updateProfile(
+      String userId, String fullName, String address, String phoneNumber);
 }

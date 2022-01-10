@@ -1,29 +1,34 @@
+import 'package:client/src/blocs/profile/profile_bloc.dart';
+import 'package:client/src/blocs/profile/profile_event.dart';
+import 'package:client/src/blocs/profile/profile_state.dart';
+import 'package:client/src/blocs/user_claim/user_claim_bloc.dart';
+import 'package:client/src/blocs/user_claim/user_claim_event.dart';
+import 'package:client/src/blocs/user_claim/user_claim_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../constants/constants.dart' as constants;
 import '../utils/validators.dart';
 
-class EditProfileScreen extends StatelessWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+class EditProfileScreen extends StatefulWidget {
+  final String userId;
+
+  const EditProfileScreen({Key? key, required this.userId}) : super(key: key);
+
+  @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  String _fullName = '';
+  String _address = '';
+  String _phone = '';
+  final _formKey = GlobalKey<FormState>();
 
   String? fullNameValidate(String? value) {
     if (value == null || value.trim().isEmpty) {
       return constants.FailureProcess.invalidFullName;
-    }
-    return null;
-  }
-
-  String? emailValidate(String? value) {
-    if (!Validators.isValidEmail(value!)) {
-      return constants.FailureProcess.invalidEmail;
-    }
-    return null;
-  }
-
-  String? passwordValidate(String? value) {
-    if (!Validators.isValidPassword(value!)) {
-      return constants.FailureProcess.invalidPassword;
     }
     return null;
   }
@@ -38,7 +43,19 @@ class EditProfileScreen extends StatelessWidget {
 
     FontWeight _titleTextFormFieldFontWeight = FontWeight.w300;
 
-    return SafeArea(
+    context
+        .read<UserClaimBloc>()
+        .add(UserClaimRequested(userId: widget.userId));
+
+    return BlocListener<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state is ProfileUpdateSuccess) {
+          context
+              .read<UserClaimBloc>()
+              .add(UserClaimRequested(userId: widget.userId));
+          Navigator.of(context).maybePop();
+        }
+      },
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -55,141 +72,210 @@ class EditProfileScreen extends StatelessWidget {
           centerTitle: true,
         ),
         body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(
-                  height: 50.0,
-                ),
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 8.0,
-                        offset: Offset(0.0, 5.0),
-                      )
+            child: BlocBuilder<UserClaimBloc, UserClaimState>(
+          builder: (context, state) {
+            if (state is UserClaimLoadSuccess) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(
+                        height: 50.0,
+                      ),
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 8.0,
+                              offset: Offset(0.0, 5.0),
+                            )
+                          ],
+                        ),
+                        child: CircleAvatar(
+                            radius: 50.0,
+                            backgroundImage:
+                                NetworkImage(state.userClaim!.avatarUrl)),
+                      ),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(constants.SignUpScreenConstants.fullName,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(
+                                      color: constants
+                                          .ColorsConstant.textFieldTitle,
+                                      fontSize: _titleTextFormFieldFontSize,
+                                      fontWeight:
+                                          _titleTextFormFieldFontWeight)),
+                          TextFormField(
+                            initialValue: state.userClaim!.displayName,
+                            onChanged: (value) => _fullName = value,
+                            autofocus: true,
+                            validator: (value) => fullNameValidate(value),
+                            textInputAction: TextInputAction.next,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(constants
+                                  .SignUpScreenConstants.fullNameTextLimit),
+                              FilteringTextInputFormatter.allow(
+                                  Validators.textOnlyRegExp)
+                            ],
+                            cursorColor: constants.ColorsConstant.primaryColor,
+                            decoration: InputDecoration(
+                              contentPadding: _textFieldContentPadding,
+                              errorStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(
+                                    color: Colors.red,
+                                  ),
+                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(
+                                    color: constants.ColorsConstant.textField,
+                                    fontSize: _textFormFieldFontSize),
+                          ),
+                          const SizedBox(height: _signUpFormSpacing),
+                          Text('Address',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(
+                                      color: constants
+                                          .ColorsConstant.textFieldTitle,
+                                      fontSize: _titleTextFormFieldFontSize,
+                                      fontWeight:
+                                          _titleTextFormFieldFontWeight)),
+                          TextFormField(
+                            initialValue: state.userClaim!.address,
+                            onChanged: (value) => _address = value,
+                            textInputAction: TextInputAction.next,
+                            cursorColor: constants.ColorsConstant.primaryColor,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(constants
+                                  .SignUpScreenConstants.fullNameTextLimit),
+                              FilteringTextInputFormatter.allow(
+                                  Validators.textOnlyRegExp)
+                            ],
+                            decoration: InputDecoration(
+                              contentPadding: _textFieldContentPadding,
+                              errorStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(
+                                    color: Colors.red,
+                                  ),
+                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(
+                                    color: constants.ColorsConstant.textField,
+                                    fontSize: _textFormFieldFontSize),
+                          ),
+                          const SizedBox(height: _signUpFormSpacing),
+                          Text('Phone Number',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(
+                                      color: constants
+                                          .ColorsConstant.textFieldTitle,
+                                      fontSize: _titleTextFormFieldFontSize,
+                                      fontWeight:
+                                          _titleTextFormFieldFontWeight)),
+                          TextFormField(
+                            initialValue: state.userClaim!.phoneNumber,
+                            onChanged: (value) => _phone = value,
+                            keyboardType: TextInputType.number,
+                            textInputAction: TextInputAction.done,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(constants
+                                  .SignUpScreenConstants.fullNameTextLimit),
+                              FilteringTextInputFormatter.allow(
+                                  Validators.numberOnlyRegExp)
+                            ],
+                            cursorColor: constants.ColorsConstant.primaryColor,
+                            decoration: InputDecoration(
+                              contentPadding: _textFieldContentPadding,
+                              errorStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2!
+                                  .copyWith(
+                                    color: Colors.red,
+                                  ),
+                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(
+                                    color: constants.ColorsConstant.textField,
+                                    fontSize: _textFormFieldFontSize),
+                          ),
+                          SizedBox(
+                            height: 16.0,
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: TextButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        constants.ColorsConstant.primaryColor),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                )),
+                              ),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  context.read<ProfileBloc>().add(
+                                      ProfileUpdated(
+                                          fullName: _fullName,
+                                          address: _address,
+                                          phoneNumber: _phone,
+                                          userId: widget.userId));
+                                }
+                              },
+                              child: Text(
+                                'Update',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6!
+                                    .copyWith(
+                                      color: Colors.white,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-                  child: const CircleAvatar(
-                      radius: 50.0,
-                      backgroundImage: NetworkImage(
-                          'https://images.unsplash.com/photo-1617975251517-b90ff061b52e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80')),
                 ),
-                SizedBox(
-                  height: 50,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(constants.SignUpScreenConstants.fullName,
-                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                            color: constants.ColorsConstant.textFieldTitle,
-                            fontSize: _titleTextFormFieldFontSize,
-                            fontWeight: _titleTextFormFieldFontWeight)),
-                    TextFormField(
-                      autofocus: true,
-                      validator: (value) => fullNameValidate(value),
-                      textInputAction: TextInputAction.next,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(
-                            constants.SignUpScreenConstants.fullNameTextLimit),
-                        FilteringTextInputFormatter.allow(
-                            Validators.textOnlyRegExp)
-                      ],
-                      cursorColor: constants.ColorsConstant.primaryColor,
-                      decoration: InputDecoration(
-                        contentPadding: _textFieldContentPadding,
-                        errorStyle:
-                            Theme.of(context).textTheme.bodyText2!.copyWith(
-                                  color: Colors.red,
-                                ),
-                      ),
-                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                          color: constants.ColorsConstant.textField,
-                          fontSize: _textFormFieldFontSize),
-                    ),
-                    const SizedBox(height: _signUpFormSpacing),
-                    Text(constants.SignUpScreenConstants.password,
-                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                            color: constants.ColorsConstant.textFieldTitle,
-                            fontSize: _titleTextFormFieldFontSize,
-                            fontWeight: _titleTextFormFieldFontWeight)),
-                    TextFormField(
-                      obscureText: true,
-                      validator: (value) => passwordValidate(value),
-                      textInputAction: TextInputAction.done,
-                      cursorColor: constants.ColorsConstant.primaryColor,
-                      decoration: InputDecoration(
-                        contentPadding: _textFieldContentPadding,
-                        errorStyle:
-                            Theme.of(context).textTheme.bodyText2!.copyWith(
-                                  color: Colors.red,
-                                ),
-                      ),
-                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                          color: constants.ColorsConstant.textField,
-                          fontSize: _textFormFieldFontSize),
-                    ),
-                    const SizedBox(height: _signUpFormSpacing),
-                    Text('Confirm Password',
-                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                            color: constants.ColorsConstant.textFieldTitle,
-                            fontSize: _titleTextFormFieldFontSize,
-                            fontWeight: _titleTextFormFieldFontWeight)),
-                    TextFormField(
-                      obscureText: true,
-                      validator: (value) => passwordValidate(value),
-                      textInputAction: TextInputAction.done,
-                      cursorColor: constants.ColorsConstant.primaryColor,
-                      decoration: InputDecoration(
-                        contentPadding: _textFieldContentPadding,
-                        errorStyle:
-                            Theme.of(context).textTheme.bodyText2!.copyWith(
-                                  color: Colors.red,
-                                ),
-                      ),
-                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                          color: constants.ColorsConstant.textField,
-                          fontSize: _textFormFieldFontSize),
-                    ),
-                    SizedBox(
-                      height: 16.0,
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              constants.ColorsConstant.primaryColor),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          )),
-                        ),
-                        onPressed: () {},
-                        child: Text(
-                          'Update',
-                          style:
-                              Theme.of(context).textTheme.headline6!.copyWith(
-                                    color: Colors.white,
-                                  ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        )),
       ),
     );
   }

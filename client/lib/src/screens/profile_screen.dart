@@ -18,6 +18,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<UserClaimBloc>().add(UserClaimRequested(userId: userId));
+
     return SafeArea(
       child: Scaffold(
         extendBodyBehindAppBar: true,
@@ -186,7 +187,9 @@ class ProfileScreen extends StatelessWidget {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (_) =>
-                                                      EditProfileScreen()));
+                                                      EditProfileScreen(
+                                                        userId: userId,
+                                                      )));
                                         },
                                         icon: Icon(Icons.settings)),
                                   )

@@ -6,6 +6,7 @@ class Validators {
     r'^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}$',
   );
   static final RegExp textOnlyRegExp = RegExp('[a-zA-Z ]');
+  static final RegExp numberOnlyRegExp = RegExp('[0-9]');
 
   static isValidEmail(String email) {
     return _emailRegExp.hasMatch(email);

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:client/src/config/app_constants.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -98,6 +96,31 @@ class UserServiceImpl implements UserService {
         return responseMsg;
       } else
         throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<String> updateProfile(String userId, String fullName, String address,
+      String phoneNumber) async {
+    final uri =
+        Uri.http(AppConstants.HOST_NAME, '${AppConstants.USERS}/$userId');
+
+    try {
+      dio.Response response = await dioClient.put(uri.toString(), data: {
+        "displayName": fullName,
+        "address": address,
+        "phoneNumber": phoneNumber
+      });
+
+      if (response.statusCode == 200) {
+        String responseMsg = response.data['msg'];
+
+        return responseMsg;
+      } else {
+        throw Exception('Error when update info');
+      }
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 }
