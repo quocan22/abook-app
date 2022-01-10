@@ -1,4 +1,6 @@
+import 'package:client/src/config/app_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/constants.dart';
 import '../screens/cart_screen.dart';
@@ -20,10 +22,65 @@ class _BottomNavigator extends State<BottomNavigator> {
     ProfileScreen()
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  Future<void> _onItemTapped(int index) async {
+    if (index != 0) {
+      bool isLoggedIn = await _checkLogin();
+      if (isLoggedIn) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      } else {
+        _showLoginDialog();
+      }
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
+
+  Future<bool> _checkLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('accessToken');
+    if (token == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  Future<void> _showLoginDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('You need to login before using this feature'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Go to Login'),
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    RouteNames.login, (route) => false);
+              },
+            ),
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

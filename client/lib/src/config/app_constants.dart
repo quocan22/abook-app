@@ -14,4 +14,7 @@ class AppConstants {
   static const String BOOKS = '/api/books';
   static const String CATEGORIES = '/api/categories';
   static const String BOOKSBYCATE = '/api/books/cate';
+  static const String USERS = '/api/users';
+  static const String REGISTERUSER = '/api/users/register';
+  static const String LOGIN = '/api/auth/login';
 }

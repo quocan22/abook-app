@@ -9,7 +9,14 @@ class SignupInitial extends SignupState {}
 
 class SignupInProgress extends SignupState {}
 
-class SignupSuccess extends SignupState {}
+class SignupSuccess extends SignupState {
+  final String email;
+
+  SignupSuccess({required this.email});
+
+  @override
+  List<Object?> get props => [email];
+}
 
 class SignupFailure extends SignupState {
   final String? email;

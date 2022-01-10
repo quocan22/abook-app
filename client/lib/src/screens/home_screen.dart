@@ -127,29 +127,35 @@ class HomeScreen extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Categories',
-                style: Theme.of(context).textTheme.headline4?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-              ),
-              SizedBox(
-                child: _buildCategoryList(),
-                height: 150,
-              ),
-              Text(
-                'Recommended',
-                style: Theme.of(context).textTheme.headline4?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-              ),
-              Expanded(child: _buildBookList()),
-            ],
+          child: RefreshIndicator(
+            onRefresh: () async {
+              context.read<BookBloc>().add(BookRequested());
+              context.read<CategoryBloc>().add(CategoryRequested());
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Categories',
+                  style: Theme.of(context).textTheme.headline4?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                ),
+                SizedBox(
+                  child: _buildCategoryList(),
+                  height: 150,
+                ),
+                Text(
+                  'Recommended',
+                  style: Theme.of(context).textTheme.headline4?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                ),
+                Expanded(child: _buildBookList()),
+              ],
+            ),
           ),
         ),
       ),

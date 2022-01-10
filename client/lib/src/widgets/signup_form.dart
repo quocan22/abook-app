@@ -83,7 +83,8 @@ class _SignUpFormState extends State<SignUpForm> {
     return BlocListener<SignupBloc, SignupState>(
         listener: (context, state) {
           if (state is SignupSuccess) {
-            Navigator.of(context).pushReplacementNamed(RouteNames.login);
+            Navigator.of(context)
+                .pushReplacementNamed(RouteNames.login, arguments: state.email);
           }
         },
         child: Form(
@@ -172,7 +173,10 @@ class _SignUpFormState extends State<SignUpForm> {
             const SizedBox(height: _signUpFormSpacing / 2),
             BlocBuilder<SignupBloc, SignupState>(builder: (context, state) {
               return Visibility(
-                visible: (state is SignupFailure) ? true : false,
+                visible: (state is SignupFailure &&
+                        state.errorMessage == "This email already existed")
+                    ? true
+                    : false,
                 child: Row(
                   children: [
                     Text(

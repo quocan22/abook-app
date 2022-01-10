@@ -1,4 +1,8 @@
+import 'package:client/src/blocs/user_claim/user_claim_bloc.dart';
+import 'package:client/src/blocs/user_claim/user_claim_event.dart';
+import 'package:client/src/blocs/user_claim/user_claim_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../constants/constants.dart';
 import '../models/book.dart';
@@ -209,97 +213,117 @@ class BookDetailScreen extends StatelessWidget {
                 ),
                 ListView.separated(
                     physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) => Container(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 40,
-                                height: 40,
-                                child: CircleAvatar(
-                                    radius: 50.0,
-                                    backgroundImage:
-                                        NetworkImage('userInfo.avatarUrl')),
-                              ),
-                              SizedBox(
-                                width: 16.0,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'userInfo.displayName',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline4
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                    ),
-                                    Text(
-                                      book.comments[index]['review'],
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline5
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.normal,
-                                            color: Colors.black,
-                                          ),
-                                    ),
-                                    Row(
+                    itemBuilder: (context, index) {
+                      context.read<UserClaimBloc>().add(UserClaimRequested(
+                          userId: book.comments[index]['userId']));
+                      return BlocBuilder<UserClaimBloc, UserClaimState>(
+                        builder: (context, state) {
+                          if (state is UserClaimLoadSuccess) {
+                            return Container(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    child: CircleAvatar(
+                                        radius: 50.0,
+                                        backgroundImage: NetworkImage(
+                                            state.userClaim!.avatarUrl)),
+                                  ),
+                                  SizedBox(
+                                    width: 16.0,
+                                  ),
+                                  Expanded(
+                                    child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.end,
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Icon(
-                                          (book.comments[index]['rate'] >= 1)
-                                              ? Icons.star
-                                              : Icons.star_border,
-                                          color: Colors.yellow,
-                                          size: 17,
+                                        Text(
+                                          state.userClaim!.displayName,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline4
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
                                         ),
-                                        Icon(
-                                            (book.comments[index]['rate'] >= 2)
-                                                ? Icons.star
-                                                : Icons.star_border,
-                                            color: Colors.yellow,
-                                            size: 17),
-                                        Icon(
-                                            (book.comments[index]['rate'] >= 3)
-                                                ? Icons.star
-                                                : Icons.star_border,
-                                            color: Colors.yellow,
-                                            size: 17),
-                                        Icon(
-                                            (book.comments[index]['rate'] >= 4)
-                                                ? Icons.star
-                                                : Icons.star_border,
-                                            color: Colors.yellow,
-                                            size: 17),
-                                        Icon(
-                                            (book.comments[index]['rate'] == 5)
-                                                ? Icons.star
-                                                : Icons.star_border,
-                                            color: Colors.yellow,
-                                            size: 17),
+                                        Text(
+                                          book.comments[index]['review'],
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline5
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.normal,
+                                                color: Colors.black,
+                                              ),
+                                        ),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Icon(
+                                              (book.comments[index]['rate'] >=
+                                                      1)
+                                                  ? Icons.star
+                                                  : Icons.star_border,
+                                              color: Colors.yellow,
+                                              size: 17,
+                                            ),
+                                            Icon(
+                                                (book.comments[index]['rate'] >=
+                                                        2)
+                                                    ? Icons.star
+                                                    : Icons.star_border,
+                                                color: Colors.yellow,
+                                                size: 17),
+                                            Icon(
+                                                (book.comments[index]['rate'] >=
+                                                        3)
+                                                    ? Icons.star
+                                                    : Icons.star_border,
+                                                color: Colors.yellow,
+                                                size: 17),
+                                            Icon(
+                                                (book.comments[index]['rate'] >=
+                                                        4)
+                                                    ? Icons.star
+                                                    : Icons.star_border,
+                                                color: Colors.yellow,
+                                                size: 17),
+                                            Icon(
+                                                (book.comments[index]['rate'] ==
+                                                        5)
+                                                    ? Icons.star
+                                                    : Icons.star_border,
+                                                color: Colors.yellow,
+                                                size: 17),
+                                          ],
+                                        ),
+                                        Text(
+                                          commentDate(book.comments[index]
+                                              ['commentDate']),
+                                          style: TextStyle(
+                                              fontStyle: FontStyle.italic),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ],
                                     ),
-                                    Text(
-                                      commentDate(
-                                          book.comments[index]['commentDate']),
-                                      style: TextStyle(
-                                          fontStyle: FontStyle.italic),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
+                            );
+                          } else {
+                            return const Center(
+                              child: Text('BLOC NO STATE'),
+                            );
+                          }
+                        },
+                      );
+                    },
                     separatorBuilder: (context, index) {
                       return Divider();
                     },

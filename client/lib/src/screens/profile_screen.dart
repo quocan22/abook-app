@@ -1,4 +1,7 @@
+import 'package:client/src/blocs/authentication/authentication_bloc.dart';
+import 'package:client/src/blocs/authentication/authentication_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../config/app_constants.dart';
 import '../constants/constants.dart';
@@ -32,8 +35,13 @@ class ProfileScreen extends StatelessWidget {
                     ),
               ),
               InkWell(
-                  onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                      RouteNames.login, (route) => false),
+                  onTap: () {
+                    context
+                        .read<AuthenticationBloc>()
+                        .add(AuthenticationLoggedOut());
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        RouteNames.login, (route) => false);
+                  },
                   child: Icon(Icons.logout, color: Colors.black))
             ],
           ),

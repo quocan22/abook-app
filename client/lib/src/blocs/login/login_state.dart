@@ -8,9 +8,9 @@ abstract class LoginState extends Equatable {
 class LoginInitial extends LoginState {}
 
 class LoginFailure extends LoginState {
-  final String? errorMessage;
+  final String errorMessage;
   LoginFailure({
-    this.errorMessage,
+    required this.errorMessage,
   });
 
   @override

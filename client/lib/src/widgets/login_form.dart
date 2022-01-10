@@ -1,3 +1,4 @@
+import 'package:client/src/blocs/login/login_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
@@ -46,7 +47,7 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   bool isInvalidPassword(String password) {
-    return password.isEmpty || !Validators.isValidPassword(password);
+    return password.isEmpty;
   }
 
   void signInWithGoogle() async {
@@ -63,30 +64,23 @@ class _LoginFormState extends State<LoginForm> {
     // });
   }
 
-  void signOutWithGoogle() async {
-    //await _googleSignIn.signOut();
-  }
-
   @override
   Widget build(BuildContext context) {
     double _spacingAboveOfTexts = 15;
     double _spacingBelowOfTexts = 5;
     double _buttonHeight = 57;
-    double _loginTitleSpacingBelow = 30;
     double _loginTitleSpacingAbove = 5;
     double _emailTextFormFieldSectionAndPasswordTextFormFieldSectionSpacing =
         35;
     double _passwordTextFormFieldSectionAndLogginButtonSpacing = 35;
     double _logginButtonAndSignUpTitleSpacing = 35;
     double _passwordTitleAndpasswordTextFormFieldSpacing = 5;
-    double _loginTitleFontSize = 16;
     double _titleTextFormFieldFontSize = 15.5;
     double _textFormFieldFontSize = 19;
     double _forgotPasswordFontSize = 16;
     double _loginButtonFontSize = 18;
     double _signUpTitleFontSize = 16;
     double _signUpTextFontSize = 19;
-    FontWeight _loginTitleFontWeight = FontWeight.w300;
     FontWeight _titleTextFormFieldFontWeight = FontWeight.w300;
     FontWeight _forgotPasswordFontWeight = FontWeight.w500;
     FontWeight _loginButtonFontWeight = FontWeight.w400;
@@ -100,7 +94,7 @@ class _LoginFormState extends State<LoginForm> {
             ..showSnackBar(
               SnackBar(
                 content: Text(
-                  constants.LoginScreenConstants.loginFailNotification,
+                  state.errorMessage,
                   style: TextStyle(color: Colors.red),
                 ),
               ),
@@ -108,7 +102,7 @@ class _LoginFormState extends State<LoginForm> {
         }
         if (state is LoginSuccess) {
           Navigator.of(context).pushNamedAndRemoveUntil(
-              app_constants.RouteNames.home, (route) => false);
+              app_constants.RouteNames.navigation, (route) => false);
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(
@@ -200,7 +194,7 @@ class _LoginFormState extends State<LoginForm> {
                 TextFormField(
                   controller: _passwordController,
                   validator: (password) => isInvalidPassword(password!)
-                      ? constants.FailureProcess.invalidPassword
+                      ? "Password can't be null"
                       : null,
                   textInputAction: TextInputAction.done,
                   obscureText: true,
@@ -244,10 +238,13 @@ class _LoginFormState extends State<LoginForm> {
                         borderRadius: BorderRadius.circular(8),
                       )),
                     ),
-                    onPressed: () => Navigator.of(context)
-                        .pushNamedAndRemoveUntil(
-                            app_constants.RouteNames.navigation,
-                            (route) => false),
+                    onPressed: () {
+                      if (_logginformKey.currentState!.validate()) {
+                        context.read<LoginBloc>().add(LoginRequested(
+                            _emailController.text.trim(),
+                            _passwordController.text));
+                      }
+                    },
                     child: state is LoginInProgress
                         ? CircularProgressIndicator(
                             color: Colors.white,

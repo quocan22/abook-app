@@ -17,7 +17,7 @@ class Routes {
     switch (settings.name) {
       case app_constants.RouteNames.initial:
         return MaterialPageRoute(
-          builder: (_) => const RootScreen(),
+          builder: (_) => RootScreen(),
         );
       case app_constants.RouteNames.home:
         return MaterialPageRoute(

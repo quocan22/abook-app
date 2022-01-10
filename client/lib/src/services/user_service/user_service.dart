@@ -8,4 +8,8 @@ abstract class UserService {
   UserService({required this.dioClient});
 
   Future<UserClaim>? fetchUserInfoById(String userId);
+
+  Future<String> register(String email, String password, String fullName);
+
+  Future<String> login(String email, String password);
 }
