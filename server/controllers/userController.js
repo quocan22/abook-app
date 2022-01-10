@@ -440,7 +440,7 @@ const userController = {
       const user = await Users.findById(req.params.id);
 
       if (!user) {
-        return res.status(404).json({ msg: "User does not exist" });
+        return res.status(404).json({ msg: "Cannot find this user" });
       }
 
       // return user claim information
@@ -460,6 +460,58 @@ const userController = {
         msg: "Get all users successfully",
         result: users.length,
         users,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  addBookToFav: async (req, res) => {
+    try {
+      const { userId, bookId } = req.body;
+
+      const user = await Users.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ msg: "Cannot find this user" });
+      }
+
+      if (user.userClaim.favorite.includes(bookId)) {
+        return res
+          .status(400)
+          .json({ msg: "This book has already been in favorite list" });
+      }
+
+      user.userClaim.favorite.push(bookId);
+
+      await user.save();
+
+      res.json({
+        msg: "Add book to favorite successfully",
+        data: user,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  removeBookFromFav: async (req, res) => {
+    try {
+      const { userId, bookId } = req.body;
+
+      const user = await Users.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ msg: "Cannot find this user" });
+      }
+
+      const result = user.userClaim.favorite.filter((b) => b !== bookId);
+
+      user.userClaim.favorite = result;
+
+      await user.save();
+
+      res.json({
+        msg: "Remove book from favorite successfully",
+        data: user,
       });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
