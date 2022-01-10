@@ -15,11 +15,12 @@ class BottomNavigator extends StatefulWidget {
 
 class _BottomNavigator extends State<BottomNavigator> {
   int _selectedIndex = 0;
+  String? userId;
+
   static List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     FavoriteScreen(),
     CartScreen(),
-    ProfileScreen()
   ];
 
   Future<void> _onItemTapped(int index) async {
@@ -45,6 +46,7 @@ class _BottomNavigator extends State<BottomNavigator> {
     if (token == null) {
       return false;
     } else {
+      userId = prefs.getString('id');
       return true;
     }
   }
@@ -88,10 +90,13 @@ class _BottomNavigator extends State<BottomNavigator> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
+          height: double.infinity,
+          width: double.infinity,
+          child: (_selectedIndex != 3)
+              ? _widgetOptions.elementAt(_selectedIndex)
+              : ProfileScreen(
+                  userId: userId.toString(),
+                )),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
