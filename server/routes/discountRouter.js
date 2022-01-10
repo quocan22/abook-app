@@ -6,8 +6,18 @@ const authenticationEmployee = require("../middlewares/authenticationEmployee");
 
 router.get("/available", discountController.getAvailableDiscounts);
 router.get("/", discountController.getAllDiscounts);
-router.post("/", discountController.createDiscount);
-router.put("/", discountController.updateDiscount);
+router.post(
+  "/",
+  authentication,
+  authenticationEmployee.authenticationStaff,
+  discountController.createDiscount
+);
+router.put(
+  "/",
+  authentication,
+  authenticationEmployee.authenticationStaff,
+  discountController.updateDiscount
+);
 
 router.delete(
   "/:id",

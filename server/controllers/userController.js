@@ -150,7 +150,9 @@ const userController = {
       // verify the refresh token
       jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) {
-          return res.status(404).json({ msg: "Verifying failed" });
+          return res
+            .status(404)
+            .json({ msg: "Login session is expired, please login again" });
         }
 
         // if refresh token has been verified, create a new access token
