@@ -53,4 +53,46 @@ class BookServiceImpl implements BookService {
       throw Exception(e.toString());
     }
   }
+
+  @override
+  Future<String> addBookToFav(String bookId, String userId) async {
+    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.ADDFAV);
+
+    try {
+      dio.Response response = await dioClient
+          .post(uri.toString(), data: {"bookId": bookId, "userId": userId});
+
+      if (response.statusCode == 200) {
+        String responseMsg = response.data['msg'];
+
+        return responseMsg;
+      } else {
+        throw Exception('Error when add fav');
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<String> removeBookFromFav(String bookId, String userId) async {
+    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.REMOVEFAV);
+
+    try {
+      dio.Response response = await dioClient
+          .post(uri.toString(), data: {"bookId": bookId, "userId": userId});
+
+      if (response.statusCode == 200) {
+        String responseMsg = response.data['msg'];
+
+        return responseMsg;
+      } else {
+        throw Exception('Error when remove fav');
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e.toString());
+    }
+  }
 }

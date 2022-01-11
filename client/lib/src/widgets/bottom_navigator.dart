@@ -17,12 +17,6 @@ class _BottomNavigator extends State<BottomNavigator> {
   int _selectedIndex = 0;
   String? userId;
 
-  static List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
-    FavoriteScreen(),
-    CartScreen(),
-  ];
-
   Future<void> _onItemTapped(int index) async {
     if (index != 0) {
       bool isLoggedIn = await _checkLogin();
@@ -93,7 +87,11 @@ class _BottomNavigator extends State<BottomNavigator> {
           height: double.infinity,
           width: double.infinity,
           child: (_selectedIndex != 3)
-              ? _widgetOptions.elementAt(_selectedIndex)
+              ? ((_selectedIndex != 1)
+                  ? ((_selectedIndex != 2) ? HomeScreen() : CartScreen())
+                  : FavoriteScreen(
+                      userId: userId.toString(),
+                    ))
               : ProfileScreen(
                   userId: userId.toString(),
                 )),

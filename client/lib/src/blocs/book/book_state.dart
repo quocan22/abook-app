@@ -30,3 +30,11 @@ class BookLoadSuccess extends BookState {
   @override
   List<Object?> get props => [books];
 }
+
+class BookAddFavSuccess extends BookState {}
+
+class BookAddFavFailure extends BookState {}
+
+class BookRemoveFavSuccess extends BookState {}
+
+class BookRemoveFavFailure extends BookState {}

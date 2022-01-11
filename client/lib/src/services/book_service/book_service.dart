@@ -9,4 +9,6 @@ abstract class BookService {
 
   Future<List<Book>>? fetchBookList();
   Future<List<Book>>? fetchBookListByCategoryId(String categoryId);
+  Future<String> addBookToFav(String bookId, String userId);
+  Future<String> removeBookFromFav(String bookId, String userId);
 }

@@ -1,8 +1,12 @@
+import 'package:client/src/blocs/book/book_bloc.dart';
+import 'package:client/src/blocs/book/book_event.dart';
 import 'package:client/src/blocs/user_claim/user_claim_bloc.dart';
 import 'package:client/src/blocs/user_claim/user_claim_event.dart';
 import 'package:client/src/blocs/user_claim/user_claim_state.dart';
+import 'package:client/src/config/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/constants.dart';
 import '../models/book.dart';
@@ -29,6 +33,53 @@ class BookDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? userId;
+
+    Future<bool> _checkLogin() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('accessToken');
+      if (token == null) {
+        return false;
+      } else {
+        userId = prefs.getString('id');
+        return true;
+      }
+    }
+
+    Future<void> _showLoginDialog() async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: const <Widget>[
+                  Text('You need to login before using this feature'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Go to Login'),
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      RouteNames.login, (route) => false);
+                },
+              ),
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -170,15 +221,42 @@ class BookDetailScreen extends StatelessWidget {
                     SizedBox(
                       width: 5,
                     ),
-                    MaterialButton(
-                      onPressed: () {},
-                      color: ColorsConstant.primaryColor,
-                      textColor: Colors.white,
-                      child: Icon(
-                        Icons.favorite_border,
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                    BlocBuilder<UserClaimBloc, UserClaimState>(
+                      builder: (context, state) {
+                        return MaterialButton(
+                          onPressed: () async {
+                            bool isLoggedIn = await _checkLogin();
+                            if (isLoggedIn == false) {
+                              _showLoginDialog();
+                              return;
+                            }
+
+                            if (state is UserClaimLoadSuccess) {
+                              if (state.userClaim!.favorite.contains(book.id)) {
+                                context
+                                    .read<BookBloc>()
+                                    .add(BookRemovedFav(bookId: book.id));
+                              } else {
+                                context
+                                    .read<BookBloc>()
+                                    .add(BookAddedFav(bookId: book.id));
+                              }
+                              Navigator.maybePop(context, true);
+                            }
+                          },
+                          color: ColorsConstant.primaryColor,
+                          textColor: Colors.white,
+                          child: Icon(
+                            (state is UserClaimLoadSuccess)
+                                ? ((state.userClaim!.favorite.contains(book.id))
+                                    ? Icons.favorite
+                                    : Icons.favorite_border)
+                                : Icons.favorite_border,
+                          ),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                        );
+                      },
                     ),
                   ],
                 ),

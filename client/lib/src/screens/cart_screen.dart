@@ -40,87 +40,9 @@ class CartScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
               child: ListView.separated(
-                  itemBuilder: (context, index) => Container(
-                        padding: const EdgeInsets.all(8.0),
-                        height: 100,
-                        child: InkWell(
-                            onTap: () {},
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Image.network(
-                                    'https://images.unsplash.com/photo-1621351183012-e2f9972dd9bf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGJvb2slMjBjb3ZlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60',
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 16.0,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'The two towers',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline4
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                    ),
-                                    Text(
-                                      'Tolkien',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline5
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.normal,
-                                            color: Colors.black,
-                                          ),
-                                    ),
-                                    Spacer(),
-                                    Text(
-                                      '250 000 VNĐ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                                Spacer(),
-                                Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {},
-                                      child: Icon(
-                                        Icons.add_circle_outline,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    Text(
-                                      '1',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                    InkWell(
-                                      onTap: () {},
-                                      child: Icon(
-                                        Icons.remove_circle_outline,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
-                                    )
-                                  ],
-                                )
-                              ],
-                            )),
-                      ),
+                  itemBuilder: (context, index) {
+                    return BookCartItem();
+                  },
                   separatorBuilder: (context, index) {
                     return Divider();
                   },
@@ -201,6 +123,106 @@ class CartScreen extends StatelessWidget {
               ))
         ]),
       ),
+    );
+  }
+}
+
+class BookCartItem extends StatefulWidget {
+  const BookCartItem({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<BookCartItem> createState() => _BookCartItemState();
+}
+
+class _BookCartItemState extends State<BookCartItem> {
+  int quantity = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      height: 100,
+      child: InkWell(
+          onTap: () {},
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.network(
+                  'https://images.unsplash.com/photo-1621351183012-e2f9972dd9bf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGJvb2slMjBjb3ZlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              SizedBox(
+                width: 16.0,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'The two towers',
+                    style: Theme.of(context).textTheme.headline4?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                  ),
+                  Text(
+                    'Tolkien',
+                    style: Theme.of(context).textTheme.headline5?.copyWith(
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black,
+                        ),
+                  ),
+                  Spacer(),
+                  Text(
+                    '250 000 VNĐ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+              Spacer(),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        quantity++;
+                      });
+                    },
+                    child: Icon(
+                      Icons.add_circle_outline,
+                      color: Colors.grey,
+                      size: 20,
+                    ),
+                  ),
+                  Text(
+                    quantity.toString(),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        if (quantity > 0) {
+                          quantity--;
+                        }
+                      });
+                    },
+                    child: Icon(
+                      Icons.remove_circle_outline,
+                      color: Colors.grey,
+                      size: 20,
+                    ),
+                  )
+                ],
+              )
+            ],
+          )),
     );
   }
 }

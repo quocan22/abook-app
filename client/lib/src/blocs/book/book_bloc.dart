@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/book.dart';
 import '../../services/book_service/book_service.dart';
@@ -20,6 +21,20 @@ class BookBloc extends Bloc<BookEvent, BookState> {
       } catch (e) {
         emit(BookLoadFailure(errorMessage: e.toString()));
       }
+    });
+    on<BookAddedFav>((event, emit) async {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? userId = prefs.getString('id');
+        await service.addBookToFav(event.bookId, userId!);
+      } catch (e) {}
+    });
+    on<BookRemovedFav>((event, emit) async {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? userId = prefs.getString('id');
+        await service.removeBookFromFav(event.bookId, userId!);
+      } catch (e) {}
     });
   }
 }
