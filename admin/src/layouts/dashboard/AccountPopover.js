@@ -47,7 +47,7 @@ export default function AccountPopover() {
   };
 
   const logOut = () => {
-    localStorage.removeItem('a');
+    localStorage.removeItem('user');
     navigate('/login', { replace: true });
   };
 

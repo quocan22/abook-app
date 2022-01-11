@@ -19,4 +19,8 @@ router.post("/signup", userController.signup);
 
 router.post("/change_password", userController.changePassword);
 
+router.post("/fav/add", userController.addBookToFav);
+
+router.post("/fav/remove", userController.removeBookFromFav);
+
 module.exports = router;

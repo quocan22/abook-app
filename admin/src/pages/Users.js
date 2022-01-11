@@ -32,6 +32,7 @@ import {
   AddUserDialog,
   EditUserDialog
 } from '../components/_dashboard/user';
+import { formatString } from '../utils/formatString';
 // ----------------------------------------------------------------------
 import { UserService } from '../services';
 
@@ -103,33 +104,6 @@ export default function Users() {
       });
   }, [change]);
 
-  // api calling
-  const handleAddUser = (user) => {
-    setLoading(true);
-    UserService.addNewUser(user)
-      .then((res) => {
-        toast.success(res.data.message);
-        setChange(!change);
-      })
-      .catch((err) => {
-        if (err.response) toast.error(err.response.data.msg);
-        setLoading(false);
-      });
-  };
-
-  const handleEditUser = (userId, userClaim) => {
-    setLoading(true);
-    UserService.updateUserInfo(userId, userClaim)
-      .then((res) => {
-        toast.success(res.data.message);
-        setChange(!change);
-      })
-      .catch((err) => {
-        if (err.response) toast.error(err.response.data.msg);
-        setLoading(false);
-      });
-  };
-
   // function
   const convertRole = (role) => {
     // convert role from number to string
@@ -163,6 +137,10 @@ export default function Users() {
 
   const handleFilterByEmail = (event) => {
     setFilterEmail(event.target.value);
+  };
+
+  const onChange = () => {
+    setChange(!change);
   };
 
   const handleAddClick = () => {
@@ -203,14 +181,14 @@ export default function Users() {
         <AddUserDialog
           openAddDialog={openAddDialog}
           handleCloseAddDialog={handleCloseAddDialog}
-          handleAddUser={handleAddUser}
+          onChange={onChange}
         />
 
         <EditUserDialog
           idOnEdit={idOnEdit}
           openEditDialog={openEditDialog}
           handleCloseEditDialog={handleCloseEditDialog}
-          handleEditUser={handleEditUser}
+          onChange={onChange}
         />
 
         <Card>
@@ -251,7 +229,7 @@ export default function Users() {
                               <Stack direction="row" alignItems="center" spacing={2}>
                                 <Avatar alt={userClaim.displayName} src={userClaim.avatarUrl} />
                                 <Typography variant="subtitle2" noWrap>
-                                  {userClaim.displayName}
+                                  {formatString(userClaim.displayName)}
                                 </Typography>
                               </Stack>
                             </TableCell>
@@ -269,8 +247,10 @@ export default function Users() {
                                 {convertRole(role)}
                               </Label>
                             </TableCell>
-                            <TableCell align="left">{userClaim.phoneNumber}</TableCell>
-                            <TableCell align="left">{userClaim.address}</TableCell>
+                            <TableCell align="left">
+                              {formatString(userClaim.phoneNumber)}
+                            </TableCell>
+                            <TableCell align="left">{formatString(userClaim.address)}</TableCell>
                             <TableCell align="right">
                               <UserMoreMenu
                                 userId={_id}

@@ -37,8 +37,6 @@ instance.interceptors.response.use(
 
           const { accessToken } = rs.data;
 
-          console.log(rs);
-
           TokenService.updateLocalAccessToken(accessToken);
 
           return instance(originalConfig);

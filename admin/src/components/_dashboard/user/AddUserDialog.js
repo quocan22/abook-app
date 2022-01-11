@@ -14,8 +14,11 @@ import {
   Stack,
   InputLabel
 } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import { toast } from 'react-toastify';
 
 import { validateEmail, validatePassword } from '../../../utils/validate';
+import { UserService } from '../../../services';
 
 // role of account
 // 1: user, 2: staff, 3: admin
@@ -52,10 +55,11 @@ const initialUser = {
 AddUserDialog.propTypes = {
   openAddDialog: PropTypes.bool,
   handleCloseAddDialog: PropTypes.func,
-  handleAddUser: PropTypes.func
+  onChange: PropTypes.func
 };
 
-export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, handleAddUser }) {
+export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, onChange }) {
+  const [loading, setLoading] = useState(false);
   const [invalid, setInvalid] = useState(initialInvalid);
   const [user, setUser] = useState(initialUser);
 
@@ -111,8 +115,18 @@ export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, han
     if (selectedFile) {
       userFormData.append('image', selectedFile);
     }
-    handleAddUser(userFormData);
-    handleClose();
+
+    setLoading(true);
+    UserService.addNewUser(userFormData)
+      .then((res) => {
+        toast.success(res.data.msg);
+        handleClose();
+        onChange();
+      })
+      .catch((err) => {
+        if (err.response) toast.error(err.response.data.msg);
+        setLoading(false);
+      });
   };
 
   const handleChangeUser = (prop) => (event) => {
@@ -213,9 +227,9 @@ export default function AddUserDialog({ openAddDialog, handleCloseAddDialog, han
         </Box>
       </DialogContent>
       <DialogActions sx={{ mr: 2, mb: 2 }}>
-        <Button variant="contained" onClick={confirmAdd}>
+        <LoadingButton variant="contained" loading={loading} onClick={confirmAdd}>
           Confirm
-        </Button>
+        </LoadingButton>
         <Button color="error" variant="outlined" onClick={handleClose}>
           Cancel
         </Button>
