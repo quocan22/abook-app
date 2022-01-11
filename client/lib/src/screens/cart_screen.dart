@@ -1,3 +1,4 @@
+import 'package:client/src/widgets/book_search_delegate.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
@@ -30,7 +31,11 @@ class CartScreen extends StatelessWidget {
                     ),
               ),
               InkWell(
-                  onTap: () {}, child: Icon(Icons.search, color: Colors.black))
+                  onTap: () {
+                    showSearch(
+                        context: context, delegate: BookSearchDelegate());
+                  },
+                  child: Icon(Icons.search, color: Colors.black))
             ],
           ),
         ),

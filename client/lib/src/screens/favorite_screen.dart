@@ -5,6 +5,7 @@ import 'package:client/src/blocs/user_claim/user_claim_event.dart';
 import 'package:client/src/blocs/user_claim/user_claim_state.dart';
 import 'package:client/src/models/book.dart';
 import 'package:client/src/screens/book_detail_screen.dart';
+import 'package:client/src/widgets/book_search_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -49,7 +50,11 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                     ),
               ),
               InkWell(
-                  onTap: () {}, child: Icon(Icons.search, color: Colors.black))
+                  onTap: () {
+                    showSearch(
+                        context: context, delegate: BookSearchDelegate());
+                  },
+                  child: Icon(Icons.search, color: Colors.black))
             ],
           ),
         ),
