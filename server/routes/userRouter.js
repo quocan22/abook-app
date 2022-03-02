@@ -7,11 +7,15 @@ const userController = require("../controllers/userController");
 
 router.get("/activate/:token", userController.activateEmail);
 
+router.get("/address_book", userController.getAddressBooks);
+
 router.get("/:id", userController.getUserInfo);
 
 router.get("/", userController.getAllUser);
 
 router.put("/:id", upload.single("image"), userController.updateInfo);
+
+router.post("/address_book", userController.addAddress);
 
 router.post("/register", upload.single("image"), userController.register);
 

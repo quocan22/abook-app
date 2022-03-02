@@ -6,3 +6,4 @@ export { default as CategoryService } from './CategoryService';
 export { default as OrderService } from './OrderService';
 export { default as FeedbackService } from './FeedbackService';
 export { default as DiscountService } from './DiscountService';
+export { default as ReportService } from './ReportService';

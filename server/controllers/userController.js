@@ -465,6 +465,56 @@ const userController = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  addAddress: async (req, res) => {
+    try {
+      const { userId, name, company, phoneNumber, address, city, zipCode } =
+        req.body;
+
+      const user = await Users.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ msg: "Cannot find this user" });
+      }
+
+      const addressBook = {
+        name,
+        company,
+        phoneNumber,
+        address,
+        city,
+        zipCode,
+      };
+
+      user.userClaim.addressBook.push(addressBook);
+
+      await user.save();
+
+      res.json({
+        msg: "Add address to address book successfully",
+        data: addressBook,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  getAddressBooks: async (req, res) => {
+    try {
+      const userId = req.query.id;
+
+      const user = await Users.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ msg: "Cannot find this user" });
+      }
+
+      res.json({
+        msg: "Get address book successfully",
+        data: user.userClaim.addressBook,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
   addBookToFav: async (req, res) => {
     try {
       const { userId, bookId } = req.body;
@@ -544,7 +594,7 @@ const createRefreshToken = (payload) => {
 };
 
 function validEmail(email) {
-  // regex to check if email is valid
+  // regex for checking if email is valid
   const regex =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g;
 

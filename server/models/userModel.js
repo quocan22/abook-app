@@ -44,6 +44,10 @@ const userSchema = new mongoose.Schema(
           type: String,
         },
       ],
+      addressBook: {
+        type: Array,
+        default: [],
+      },
     },
   },
   {

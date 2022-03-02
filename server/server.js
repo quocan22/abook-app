@@ -20,6 +20,7 @@ app.use("/api/orders", require("./routes/orderRouter"));
 app.use("/api/discounts", require("./routes/discountRouter"));
 app.use("/api/feedbacks", require("./routes/feedbackRouter"));
 app.use("/api/asset", require("./routes/assetRouter"));
+app.use("/api/report", require("./routes/reportRouter"));
 
 app.listen(port, () => {
   console.log(`Server is running at port ${port}`);

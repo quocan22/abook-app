@@ -22,6 +22,10 @@ const orderSchema = new mongoose.Schema(
       type: Number, // 1: pending, 2: completed, 3: cancelled
       default: 1,
     },
+    purchaseDate: {
+      type: Date,
+      default: Date.now,
+    },
     details: {
       type: Array,
       default: [],

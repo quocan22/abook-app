@@ -13,6 +13,7 @@ import Orders from './pages/Orders';
 import NotFound from './pages/Page404';
 import OtherSettings from './pages/OtherSettings';
 import Feedbacks from './pages/Feedbacks';
+import Report from './pages/Report';
 
 // ----------------------------------------------------------------------
 
@@ -35,7 +36,8 @@ export default function Router() {
         { path: 'orders', element: <Orders /> },
         { path: 'other_settings', element: <OtherSettings /> },
         { path: 'feedbacks', element: <Feedbacks /> },
-        { path: 'report', element: <Blog /> }
+        { path: 'report', element: <Report /> },
+        { path: 'blog', element: <Blog /> }
       ]
     },
     {

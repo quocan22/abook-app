@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-// import pieChart2Fill from '@iconify/icons-eva/pie-chart-2-fill';
+import pieChart2Fill from '@iconify/icons-eva/pie-chart-2-fill';
 import peopleFill from '@iconify/icons-eva/people-fill';
 import shoppingBagFill from '@iconify/icons-eva/shopping-bag-fill';
 import carFill from '@iconify/icons-eva/car-fill';
@@ -40,6 +40,11 @@ const sidebarConfig = [
     title: 'Feedbacks',
     path: '/dashboard/feedbacks',
     icon: getIcon(messageFill)
+  },
+  {
+    title: 'Report',
+    path: '/dashboard/report',
+    icon: getIcon(pieChart2Fill)
   }
 ];
 

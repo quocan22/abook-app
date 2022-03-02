@@ -160,6 +160,116 @@ const orderController = {
       }
     );
   },
+  getAnnualRevenueReport: async (req, res) => {
+    try {
+      const year = req.query.y;
+
+      if (!validYear(year)) {
+        return res.status(400).json({ msg: "Invalid year" });
+      }
+
+      // initializing 1st Jan that year and 1st Jan the next year
+      const from = new Date(year, 0, 1);
+      const to = new Date(parseInt(year) + 1, 0, 1);
+
+      const orderInYear = await Orders.find({
+        purchaseDate: {
+          $gte: from,
+          $lt: to,
+        },
+      });
+
+      var result = new Array();
+
+      // initializing an array with 12 elements represent for 12 months in a year
+      for (let i = 0; i < 12; i++) {
+        result.push({ revenue: 0, order: 0 });
+      }
+
+      orderInYear.forEach((order) => {
+        if (order.paidStatus === 2) {
+          // getMonth() in javascript starts at 0, so it equals to the index of array
+          result[order.purchaseDate.getMonth()].revenue += order.totalPrice;
+          result[order.purchaseDate.getMonth()].order++;
+        }
+      });
+
+      res.status(201).json({
+        msg: "Get annual revenue report successfully",
+        data: result,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  getMonthlyRevenueReport: async (req, res) => {
+    try {
+      const month = req.query.m;
+      const year = req.query.y;
+
+      if (!validMonth(month) || !validYear(year)) {
+        return res.status(400).json({ msg: "Invalid month" });
+      }
+
+      // initializing 1st day that month and 1st day the next month
+      const from = new Date(year, month - 1, 1);
+      var to = new Date(year, month, 1);
+
+      // if the month reporting is Dec, the upper bound must be 1st Jan of the next year
+      if (parseInt(month) === 12) {
+        to = new Date(parseInt(year) + 1, 0, 1);
+      }
+
+      const orderInMonth = await Orders.find({
+        purchaseDate: {
+          $gte: from,
+          $lt: to,
+        },
+      });
+
+      var result = new Array();
+
+      // initializing an array with {days in month} elements represent for days in month
+      for (let i = 0; i < daysOfMonth(month, year); i++) {
+        result.push({ revenue: 0, order: 0 });
+      }
+
+      orderInMonth.forEach((order) => {
+        if (order.paidStatus === 2) {
+          result[order.purchaseDate.getDate() - 1].revenue += order.totalPrice;
+          result[order.purchaseDate.getDate() - 1].order++;
+        }
+      });
+
+      res.status(201).json({
+        msg: "Get monthly revenue report successfully",
+        data: result,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
 };
+
+function validYear(year) {
+  // regex for checking if year is valid
+  const regex = /\b(19|20)\d\d\b/g;
+
+  return regex.test(year);
+}
+
+function validMonth(month) {
+  // regex for checking if month is valid
+  const regex = /^([1-9]|[1][0-2]?)$/g;
+
+  return regex.test(month);
+}
+
+function daysOfMonth(month, year) {
+  // month in javascript starts at 0 (Jan is 0, Feb is 1), but by using 0 as the day
+  // it will give us the last day of previous month, so passing 0 as day and month as
+  // month will return the last day of that month
+  return new Date(year, month, 0).getDate();
+}
 
 module.exports = orderController;
