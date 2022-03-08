@@ -5,7 +5,7 @@ const authenticationEmployee = require("../middlewares/authenticationEmployee");
 const orderController = require("../controllers/orderController");
 
 router.get("/:id", orderController.getOrderInfo);
-router.get("/", orderController.getAllOrdersNotDetails);
+router.get("/", orderController.getAllOrdersGeneralInfo);
 router.post("/", authentication, orderController.createOrder);
 router.post(
   "/shipping_status",

@@ -24,9 +24,9 @@ ReportMenu.propTypes = {
 };
 
 export default function ReportMenu({ showMonthlyReport, showAnnualReport }) {
-  const [type, setType] = useState('annual');
-  const [month, setMonth] = useState(1);
-  const [year, setYear] = useState('');
+  const [type, setType] = useState('monthly');
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [year, setYear] = useState(new Date().getFullYear());
 
   const showReport = () => {
     if (type === 'monthly') {

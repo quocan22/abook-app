@@ -60,7 +60,7 @@ const orderController = {
       return res.status(500).json({ msg: err.message });
     }
   },
-  getAllOrdersNotDetails: async (req, res) => {
+  getAllOrdersGeneralInfo: async (req, res) => {
     try {
       const orders = await Orders.find().sort({ createdAt: -1 });
 
@@ -124,15 +124,14 @@ const orderController = {
         booksRes[i].isAvailable = isAvailable;
       }
 
-      const user = await Users.findById(order.userId);
+      const { userClaim } = await Users.findById(order.userId);
 
-      const claim = user.userClaim;
-
+      // order is a MongoDB document, so it must be converted to an object
       var orderRes = order.toObject();
       orderRes.details = booksRes;
-      orderRes.customerName = claim.displayName;
-      orderRes.customerPhone = claim.phoneNumber;
-      orderRes.customerAddress = claim.address;
+      orderRes.customerName = userClaim.displayName;
+      orderRes.customerPhone = userClaim.phoneNumber;
+      orderRes.customerAddress = userClaim.address;
 
       res.status(200).json({
         msg: "Get order information successfully",
@@ -249,6 +248,128 @@ const orderController = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  getAnnualBookReport: async (req, res) => {
+    try {
+      const year = req.query.y;
+
+      if (!validYear(year)) {
+        return res.status(400).json({ msg: "Invalid year" });
+      }
+
+      // initializing 1st Jan that year and 1st Jan the next year
+      const from = new Date(year, 0, 1);
+      const to = new Date(parseInt(year) + 1, 0, 1);
+
+      const orderInYear = await Orders.find({
+        purchaseDate: {
+          $gte: from,
+          $lt: to,
+        },
+      });
+
+      var tempResult = new Array();
+
+      orderInYear.forEach((order) => {
+        if (order.paidStatus === 2) {
+          order.details.forEach((detail) => {
+            const matchedIndex = tempResult.findIndex((d) => {
+              return d.bookId === detail.bookId;
+            });
+
+            if (matchedIndex === -1) {
+              tempResult.push(detail);
+            } else {
+              tempResult[matchedIndex].quantity += detail.quantity;
+            }
+          });
+        }
+      });
+
+      var result = new Array();
+
+      for (const temp of tempResult) {
+        const { name, author, imageUrl, isAvailable, price } =
+          await getBookInfo(temp.bookId);
+
+        result.push({ ...temp, name, author, imageUrl, isAvailable, price });
+      }
+
+      result.sort((a, b) => {
+        return b.quantity - a.quantity;
+      });
+
+      res.status(201).json({
+        msg: "Get annual book report successfully",
+        data: result,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  getMonthlyBookReport: async (req, res) => {
+    try {
+      const month = req.query.m;
+      const year = req.query.y;
+
+      if (!validMonth(month) || !validYear(year)) {
+        return res.status(400).json({ msg: "Invalid month" });
+      }
+
+      // initializing 1st day that month and 1st day the next month
+      const from = new Date(year, month - 1, 1);
+      var to = new Date(year, month, 1);
+
+      // if the month reporting is Dec, the upper bound must be 1st Jan of the next year
+      if (parseInt(month) === 12) {
+        to = new Date(parseInt(year) + 1, 0, 1);
+      }
+
+      const orderInMonth = await Orders.find({
+        purchaseDate: {
+          $gte: from,
+          $lt: to,
+        },
+      });
+
+      var tempResult = new Array();
+
+      orderInMonth.forEach((order) => {
+        if (order.paidStatus === 2) {
+          order.details.forEach((detail) => {
+            const matchedIndex = tempResult.findIndex((d) => {
+              return d.bookId === detail.bookId;
+            });
+
+            if (matchedIndex === -1) {
+              tempResult.push(detail);
+            } else {
+              tempResult[matchedIndex].quantity += detail.quantity;
+            }
+          });
+        }
+      });
+
+      var result = new Array();
+
+      for (const temp of tempResult) {
+        const { name, author, imageUrl, isAvailable, price } =
+          await getBookInfo(temp.bookId);
+
+        result.push({ ...temp, name, author, imageUrl, isAvailable, price });
+      }
+
+      result.sort((a, b) => {
+        return b.quantity - a.quantity;
+      });
+
+      res.status(201).json({
+        msg: "Get monthly book report successfully",
+        data: result,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
 };
 
 function validYear(year) {
@@ -270,6 +391,14 @@ function daysOfMonth(month, year) {
   // it will give us the last day of previous month, so passing 0 as day and month as
   // month will return the last day of that month
   return new Date(year, month, 0).getDate();
+}
+
+async function getBookInfo(bookId) {
+  const { name, author, imageUrl, isAvailable, price } = await Books.findById(
+    bookId
+  );
+
+  return { name, author, imageUrl, isAvailable, price };
 }
 
 module.exports = orderController;
