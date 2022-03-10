@@ -4,7 +4,12 @@ const discountController = require("../controllers/discountController");
 const authentication = require("../middlewares/authentication");
 const authenticationEmployee = require("../middlewares/authenticationEmployee");
 
-router.get("/available", discountController.getAvailableDiscounts);
+router.get(
+  "/available",
+  authentication,
+  authenticationEmployee.authenticationStaff,
+  discountController.getAvailableDiscounts
+);
 router.get("/", discountController.getAllDiscounts);
 router.post(
   "/",

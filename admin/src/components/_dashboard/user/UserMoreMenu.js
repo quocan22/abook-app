@@ -1,21 +1,27 @@
 import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
 import { Icon } from '@iconify/react';
 import { useRef, useState } from 'react';
 import editFill from '@iconify/icons-eva/edit-fill';
-import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import lockFill from '@iconify/icons-eva/lock-fill';
+import unlockFill from '@iconify/icons-eva/unlock-fill';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
 
+import { UserService } from '../../../services';
+
 // ----------------------------------------------------------------------
 
 UserMoreMenu.propTypes = {
+  isLocked: PropTypes.bool,
   userId: PropTypes.string,
   handleEditClick: PropTypes.func,
-  setIdOnEdit: PropTypes.func
+  setIdOnEdit: PropTypes.func,
+  onChange: PropTypes.func
 };
 
-export default function UserMoreMenu({ userId, handleEditClick, setIdOnEdit }) {
+export default function UserMoreMenu({ isLocked, userId, handleEditClick, setIdOnEdit, onChange }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -23,6 +29,23 @@ export default function UserMoreMenu({ userId, handleEditClick, setIdOnEdit }) {
     setIdOnEdit(userId);
     handleEditClick();
     setIsOpen(false);
+  };
+
+  const changeLockStatus = () => {
+    const status = !isLocked;
+
+    console.log(status);
+
+    UserService.changeLockStatus({ userId, status })
+      .then((res) => {
+        toast.success(res.data.msg);
+        setIsOpen(false);
+        onChange();
+      })
+      .catch((err) => {
+        if (err.response) toast.error(err.response.data.msg);
+        setIsOpen(false);
+      });
   };
 
   return (
@@ -48,11 +71,14 @@ export default function UserMoreMenu({ userId, handleEditClick, setIdOnEdit }) {
           <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem sx={{ color: 'text.secondary' }}>
+        <MenuItem onClick={changeLockStatus} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
-            <Icon icon={trash2Outline} width={24} height={24} />
+            <Icon icon={(isLocked && unlockFill) || lockFill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText
+            primary={(isLocked && 'Unlock') || 'Lock'}
+            primaryTypographyProps={{ variant: 'body2' }}
+          />
         </MenuItem>
       </Menu>
     </>

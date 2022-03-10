@@ -2,6 +2,7 @@ import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
+import lockFill from '@iconify/icons-eva/lock-fill';
 // material
 import {
   Card,
@@ -221,7 +222,7 @@ export default function Users() {
                     {filteredUsers
                       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       .map((row) => {
-                        const { _id, email, role, userClaim } = row;
+                        const { _id, email, role, isLocked, userClaim } = row;
 
                         return (
                           <TableRow hover key={_id} tabIndex={-1} role="checkbox">
@@ -231,6 +232,7 @@ export default function Users() {
                                 <Typography variant="subtitle2" noWrap>
                                   {formatString(userClaim.displayName)}
                                 </Typography>
+                                {isLocked && <Icon icon={lockFill} width={22} height={22} />}
                               </Stack>
                             </TableCell>
                             <TableCell align="left">{email}</TableCell>
@@ -253,9 +255,11 @@ export default function Users() {
                             <TableCell align="left">{formatString(userClaim.address)}</TableCell>
                             <TableCell align="right">
                               <UserMoreMenu
+                                isLocked={isLocked}
                                 userId={_id}
                                 handleEditClick={handleEditClick}
                                 setIdOnEdit={setIdOnEdit}
+                                onChange={onChange}
                               />
                             </TableCell>
                           </TableRow>

@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema(
       type: Number, // 1: user, 2: staff, 3: admin
       default: 1,
     },
+    isLocked: {
+      type: Boolean,
+      default: false,
+    },
     userClaim: {
       displayName: {
         type: String,
