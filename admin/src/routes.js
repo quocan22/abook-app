@@ -14,6 +14,7 @@ import NotFound from './pages/Page404';
 import OtherSettings from './pages/OtherSettings';
 import Feedbacks from './pages/Feedbacks';
 import Report from './pages/Report';
+import BookDetails from './pages/BookDetails';
 
 // ----------------------------------------------------------------------
 
@@ -37,6 +38,7 @@ export default function Router() {
         { path: 'other_settings', element: <OtherSettings /> },
         { path: 'feedbacks', element: <Feedbacks /> },
         { path: 'report', element: <Report /> },
+        { path: 'details/:bookId', element: <BookDetails /> },
         { path: 'blog', element: <Blog /> }
       ]
     },

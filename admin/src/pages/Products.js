@@ -91,7 +91,7 @@ export default function Products() {
           onFilterCate={handleFilterByCate}
         />
 
-        {isBookNotFound && <SearchNotFound searchQuery={filterName} />}
+        {isBookNotFound && <SearchNotFound searching searchQuery={filterName} />}
 
         <ProductList products={filteredBooks} onChange={onProductChange} />
       </Container>

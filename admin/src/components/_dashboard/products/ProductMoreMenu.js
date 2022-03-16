@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { useRef, useState } from 'react';
 import downloadFill from '@iconify/icons-eva/download-fill';
 import editFill from '@iconify/icons-eva/edit-fill';
-import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import infoFill from '@iconify/icons-eva/info-fill';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
@@ -11,11 +12,12 @@ import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/mat
 // ----------------------------------------------------------------------
 
 ProductMoreMenu.propTypes = {
+  id: PropTypes.string,
   handleEditClick: PropTypes.func,
   handleReceiveClick: PropTypes.func
 };
 
-export default function ProductMoreMenu({ handleEditClick, handleReceiveClick }) {
+export default function ProductMoreMenu({ id, handleEditClick, handleReceiveClick }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -59,11 +61,11 @@ export default function ProductMoreMenu({ handleEditClick, handleReceiveClick })
           <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem sx={{ color: 'text.secondary' }}>
+        <MenuItem component={Link} to={`/dashboard/details/${id}`} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
-            <Icon icon={trash2Outline} width={24} height={24} />
+            <Icon icon={infoFill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary="Details" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
       </Menu>
     </>

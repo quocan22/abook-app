@@ -26,6 +26,13 @@ const bookController = {
         return res.status(404).json({ msg: "Cannot find this book" });
       }
 
+      for (let i = 0; i < book.comments.length; i++) {
+        const { email, userClaim } = await getUserInfo(book.comments[i].userId);
+
+        book.comments[i].email = email;
+        book.comments[i].owner = userClaim.displayName;
+      }
+
       res.json({
         msg: "Get 1 book successfully",
         data: book,
@@ -173,10 +180,16 @@ const bookController = {
       const { bookId, userId, rate, review } = req.body;
 
       // get book by id
-      const book = await Books.findOne({ _id: bookId });
+      const book = await Books.findById(bookId);
       // check if book exists
       if (!book) {
         return res.status(400).json({ msg: "This book does not exist" });
+      }
+
+      // check if user exists
+      const user = await Users.findById(userId);
+      if (!user) {
+        return res.status(400).json({ msg: "Cannot find this user" });
       }
 
       // create a new comment
@@ -226,6 +239,28 @@ const bookController = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  deleteComment: async (req, res) => {
+    try {
+      const { bookId, deleteIndex } = req.body;
+
+      const book = await Books.findById(bookId);
+
+      // check if book exists
+      if (!book) {
+        return res.status(400).json({ msg: "This book does not exist" });
+      }
+
+      book.comments.splice(deleteIndex, 1);
+
+      book.save();
+
+      res.status(200).json({
+        msg: "Delete comment successfully",
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
   deleteBook: async (req, res) => {
     try {
       const book = await Books.findById(req.params.id);
@@ -250,7 +285,7 @@ const bookController = {
   },
 };
 
-const updateAvgRate = (comments) => {
+function updateAvgRate(comments) {
   var total = 0;
 
   // calc avg rate
@@ -258,6 +293,12 @@ const updateAvgRate = (comments) => {
     total += comments[i].rate;
   }
   return total / comments.length;
-};
+}
+
+async function getUserInfo(userId) {
+  const { email, userClaim } = await Users.findById(userId);
+
+  return { email, userClaim };
+}
 
 module.exports = bookController;

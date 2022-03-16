@@ -23,6 +23,7 @@ router
 
 router
   .route("/:id")
+  .get(categoryController.getCategoryById)
   .delete(
     authentication,
     authenticationEmployee.authenticationStaff,

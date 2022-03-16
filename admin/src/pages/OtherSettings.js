@@ -22,6 +22,8 @@ import dateFormat from 'dateformat';
 import { toast } from 'react-toastify';
 import { Icon } from '@iconify/react';
 import plusFill from '@iconify/icons-eva/plus-fill';
+
+import SearchNotFound from '../components/SearchNotFound';
 import Page from '../components/Page';
 import {
   DiscountMenu,
@@ -168,6 +170,8 @@ export default function OtherSettings() {
     setOpenDeleteCateDialog(false);
   };
 
+  const isDiscountNotFound = discounts.length === 0;
+
   return (
     <Page title="Other Settings | ABook">
       <Container>
@@ -245,6 +249,15 @@ export default function OtherSettings() {
                         </TableRow>
                       ))}
                     </TableBody>
+                    {isDiscountNotFound && (
+                      <TableBody>
+                        <TableRow>
+                          <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                            <SearchNotFound />
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    )}
                   </Table>
                 )}
               </TableContainer>

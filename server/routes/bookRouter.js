@@ -7,8 +7,9 @@ const authenticationEmployee = require("../middlewares/authenticationEmployee");
 
 router.get("/comment", bookController.getComments);
 router.get("/cate", bookController.getBooksByCate);
-router.patch("/comment", authentication, bookController.addComment);
+router.patch("/comment", bookController.addComment);
 router.put("/receive", bookController.receiveBook);
+router.put("/comment", authentication, bookController.deleteComment);
 
 router
   .route("/")

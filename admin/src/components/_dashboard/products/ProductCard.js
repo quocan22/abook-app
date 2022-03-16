@@ -27,7 +27,7 @@ ProductCard.propTypes = {
 };
 
 export default function ProductCard({ product, onChange }) {
-  const { name, author, imageUrl, price, quantity, avgRate, isAvailable } = product;
+  const { _id, name, author, imageUrl, price, quantity, avgRate, isAvailable } = product;
 
   const [onPreview, setOnPreview] = useState(false);
 
@@ -90,6 +90,7 @@ export default function ProductCard({ product, onChange }) {
             <Rating readOnly value={avgRate} />
           </Stack>
           <ProductMoreMenu
+            id={_id}
             handleEditClick={handleEditClick}
             handleReceiveClick={handleReceiveClick}
           />

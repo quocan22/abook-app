@@ -16,6 +16,23 @@ const categoryController = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  getCategoryById: async (req, res) => {
+    try {
+      const cate = await Categories.findById(req.params.id);
+
+      // check if book exists
+      if (!cate) {
+        return res.status(404).json({ msg: "Cannot find this category" });
+      }
+
+      res.json({
+        msg: "Get 1 category successfully",
+        data: cate,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
   createCategory: async (req, res) => {
     try {
       const { categoryName } = req.body;

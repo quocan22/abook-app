@@ -3,42 +3,31 @@ import { toast } from 'react-toastify';
 import { Icon } from '@iconify/react';
 import { useRef, useState } from 'react';
 import editFill from '@iconify/icons-eva/edit-fill';
-import lockFill from '@iconify/icons-eva/lock-fill';
-import unlockFill from '@iconify/icons-eva/unlock-fill';
+import trashFill from '@iconify/icons-eva/trash-fill';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
 
-import { UserService } from '../../../services';
+import { BookService } from '../../../services';
 
 // ----------------------------------------------------------------------
 
-UserMoreMenu.propTypes = {
-  isLocked: PropTypes.bool,
-  userId: PropTypes.string,
-  handleEditClick: PropTypes.func,
-  setIdOnEdit: PropTypes.func,
+DetailMoreMenu.propTypes = {
+  bookId: PropTypes.bool,
+  index: PropTypes.string,
   onChange: PropTypes.func
 };
 
-export default function UserMoreMenu({ isLocked, userId, handleEditClick, setIdOnEdit, onChange }) {
+export default function DetailMoreMenu({ bookId, index, onChange }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const editClick = () => {
-    setIdOnEdit(userId);
-    handleEditClick();
-    setIsOpen(false);
-  };
-
-  const changeLockStatus = () => {
-    const status = !isLocked;
-
-    UserService.changeLockStatus({ userId, status })
+  const deleteComment = () => {
+    BookService.deleteComment({ bookId, deleteIndex: index })
       .then((res) => {
         toast.success(res.data.msg);
         setIsOpen(false);
-        onChange();
+        onChange(index);
       })
       .catch((err) => {
         if (err.response) toast.error(err.response.data.msg);
@@ -62,21 +51,18 @@ export default function UserMoreMenu({ isLocked, userId, handleEditClick, setIdO
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem onClick={editClick} sx={{ color: 'text.secondary' }}>
+        <MenuItem sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>
           <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem onClick={changeLockStatus} sx={{ color: 'text.secondary' }}>
+        <MenuItem onClick={deleteComment} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
-            <Icon icon={(isLocked && unlockFill) || lockFill} width={24} height={24} />
+            <Icon icon={trashFill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText
-            primary={(isLocked && 'Unlock') || 'Lock'}
-            primaryTypographyProps={{ variant: 'body2' }}
-          />
+          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
       </Menu>
     </>

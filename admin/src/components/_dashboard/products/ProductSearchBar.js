@@ -87,7 +87,7 @@ export default function ProductSearchBar({ filterName, onFilterName, filterCate,
         onClick={onFilterCate}
         endIcon={<Icon icon={closeCircleFill} />}
       >
-        Clear sort
+        Clear
       </Button>
     </RootStyle>
   );

@@ -275,7 +275,7 @@ export default function Users() {
                     <TableBody>
                       <TableRow>
                         <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                          <SearchNotFound searchQuery={filterEmail} />
+                          <SearchNotFound searching searchQuery={filterEmail} />
                         </TableCell>
                       </TableRow>
                     </TableBody>

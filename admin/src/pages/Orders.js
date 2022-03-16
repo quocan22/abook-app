@@ -270,7 +270,7 @@ export default function Orders() {
                     <TableBody>
                       <TableRow>
                         <TableCell align="center" colSpan={8} sx={{ py: 3 }}>
-                          <SearchNotFound searchQuery={searchValue} />
+                          <SearchNotFound searching searchQuery={searchValue} />
                         </TableCell>
                       </TableRow>
                     </TableBody>
