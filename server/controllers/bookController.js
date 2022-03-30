@@ -3,13 +3,26 @@ const Books = require("../models/bookModel");
 const Users = require("../models/userModel");
 
 const bookController = {
-  getAllBook: async (req, res) => {
+  getAllBooks: async (req, res) => {
     try {
       const books = await Books.find().sort({ createdAt: -1 });
 
       // return data after get all books
       res.json({
         msg: "Get all books successfully",
+        result: books.length,
+        data: books,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  getAllBooksGeneralInfo: async (req, res) => {
+    try {
+      const books = await Books.find().select("-comments").sort({ name: 1 });
+
+      res.json({
+        msg: "Get all books general info successfully",
         result: books.length,
         data: books,
       });

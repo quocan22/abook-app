@@ -7,3 +7,4 @@ export { default as OrderService } from './OrderService';
 export { default as FeedbackService } from './FeedbackService';
 export { default as DiscountService } from './DiscountService';
 export { default as ReportService } from './ReportService';
+export { default as BookReceiptService } from './BookReceiptService';

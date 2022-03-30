@@ -15,6 +15,7 @@ import OtherSettings from './pages/OtherSettings';
 import Feedbacks from './pages/Feedbacks';
 import Report from './pages/Report';
 import BookDetails from './pages/BookDetails';
+import BookReceipt from './pages/BookReceipt';
 
 // ----------------------------------------------------------------------
 
@@ -39,6 +40,7 @@ export default function Router() {
         { path: 'feedbacks', element: <Feedbacks /> },
         { path: 'report', element: <Report /> },
         { path: 'details/:bookId', element: <BookDetails /> },
+        { path: 'book_receipt', element: <BookReceipt /> },
         { path: 'blog', element: <Blog /> }
       ]
     },

@@ -29,7 +29,7 @@ const bookSchema = new mongoose.Schema(
     },
     price: {
       type: Number,
-      required: true,
+      default: 0,
     },
     quantity: {
       type: Number,

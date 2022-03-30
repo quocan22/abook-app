@@ -1,5 +1,6 @@
 const Carts = require("../models/cartModel");
 const Users = require("../models/userModel");
+const Books = require("../models/bookModel");
 
 const cartController = {
   getCartByUserId: async (req, res) => {
@@ -10,7 +11,7 @@ const cartController = {
 
       // check if user exists
       if (!useCheck) {
-        return res.status(404).json({ msg: "Cannot found this user" });
+        return res.status(404).json({ msg: "Cannot find this user" });
       }
 
       const cart = await Carts.findOne({ userId });
@@ -36,7 +37,7 @@ const cartController = {
 
       // check if user exists
       if (!useCheck) {
-        return res.status(404).json({ msg: "Cannot found this user" });
+        return res.status(404).json({ msg: "Cannot find this user" });
       }
 
       const cart = await Carts.findOne({ userId });
@@ -60,18 +61,30 @@ const cartController = {
       const userId = req.query.userId;
       const { bookId, quantity } = req.body;
 
+      const selectedBook = await Books.findById(bookId);
+
+      if (!selectedBook) {
+        return res.status(404).json({ msg: "Cannot find this book" });
+      }
+
+      if (selectedBook.quantity < quantity) {
+        return res
+          .status(400)
+          .json({ msg: "This book quantity is not enough" });
+      }
+
       const useCheck = await Users.findById(userId);
 
       // check if user exists
       if (!useCheck) {
-        return res.status(404).json({ msg: "Cannot found this user" });
+        return res.status(404).json({ msg: "Cannot find this user" });
       }
 
       const cart = await Carts.findOne({ userId });
 
       // check if cart exists
       if (!cart) {
-        return res.status(404).json({ msg: "Cannot found this cart" });
+        return res.status(404).json({ msg: "Cannot find this cart" });
       }
 
       // create a new cart detail
@@ -98,14 +111,14 @@ const cartController = {
 
       // check if user exists
       if (!useCheck) {
-        return res.status(404).json({ msg: "Cannot found this user" });
+        return res.status(404).json({ msg: "Cannot find this user" });
       }
 
       const cart = await Carts.findOne({ userId });
 
       // check if cart exists
       if (!cart) {
-        return res.status(404).json({ msg: "Cannot found this cart" });
+        return res.status(404).json({ msg: "Cannot find this cart" });
       }
 
       res.status(200).json({

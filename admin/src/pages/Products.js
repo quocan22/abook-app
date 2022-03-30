@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { filter } from 'lodash';
+import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 // material
 import { Button, Container, Stack, Typography } from '@mui/material';
 import { Icon } from '@iconify/react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { toast } from 'react-toastify';
+import downloadFill from '@iconify/icons-eva/download-fill';
 // components
 import Page from '../components/Page';
 import SearchNotFound from '../components/SearchNotFound';
@@ -69,13 +71,25 @@ export default function Products() {
           <Typography variant="h4" gutterBottom>
             Products
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Icon icon={plusFill} />}
-            onClick={() => setOpenAddDialog(true)}
-          >
-            New Book
-          </Button>
+          <Stack direction="row" alignItems="center" justifyContent="flex-end">
+            <Button
+              sx={{ mr: 2 }}
+              variant="contained"
+              startIcon={<Icon icon={downloadFill} />}
+              component={Link}
+              to="/dashboard/book_receipt"
+              color="secondary"
+            >
+              Receive Book
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<Icon icon={plusFill} />}
+              onClick={() => setOpenAddDialog(true)}
+            >
+              New Book
+            </Button>
+          </Stack>
         </Stack>
 
         <AddBookDialog

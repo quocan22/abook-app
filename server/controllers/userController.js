@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fetch = require("node-fetch");
-const jwt_decode = require("jwt-decode");
 
 const { cloudinary } = require("../utils/cloudinary");
 const { mailService } = require("../utils/mailService");
@@ -576,19 +575,14 @@ const userController = {
     try {
       const { userId, status } = req.body;
 
-      const bearerHeader = req.header("Authorization");
-      const bearer = bearerHeader.split(" ");
-      const token = bearer[1];
-      const decoded = jwt_decode(token);
-
-      if (status && userId === decoded.id) {
-        return res.status(400).json({ msg: "You cannot lock yourself" });
-      }
-
       const user = await Users.findById(userId);
 
       if (!user) {
         return res.status(404).json({ msg: "Cannot find this user" });
+      }
+
+      if (user.role === 3) {
+        return res.status(400).json({ msg: "Cannot lock admin account" });
       }
 
       user.isLocked = status;

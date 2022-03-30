@@ -40,10 +40,11 @@ const initialInvalid = {
 AddBookDialog.propTypes = {
   open: PropTypes.bool,
   handleClose: PropTypes.func,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  addInfoOnly: PropTypes.bool
 };
 
-export default function AddBookDialog({ open, handleClose, onChange }) {
+export default function AddBookDialog({ open, handleClose, onChange, addInfoOnly }) {
   const [book, setBook] = useState(initialBook);
   const [cates, setCates] = useState([]);
   const [invalid, setInvalid] = useState(initialInvalid);
@@ -89,8 +90,8 @@ export default function AddBookDialog({ open, handleClose, onChange }) {
     if (
       !book.categoryId ||
       !book.name ||
-      !validatePrice(book.price) ||
-      !validatePrice(book.quantity) ||
+      (!addInfoOnly && !validatePrice(book.price)) ||
+      (!addInfoOnly && !validatePrice(book.quantity)) ||
       !book.description
     ) {
       setInvalid({
@@ -110,8 +111,10 @@ export default function AddBookDialog({ open, handleClose, onChange }) {
     bookFormData.append('categoryId', book.categoryId);
     bookFormData.append('name', book.name);
     bookFormData.append('author', book.author);
-    bookFormData.append('price', parseInt(book.price, 10));
-    bookFormData.append('quantity', parseInt(book.quantity, 10));
+    if (!addInfoOnly) {
+      bookFormData.append('price', parseInt(book.price, 10));
+      bookFormData.append('quantity', parseInt(book.quantity, 10));
+    }
     bookFormData.append('description', book.description);
     if (selectedFile) {
       bookFormData.append('image', selectedFile);
@@ -143,7 +146,7 @@ export default function AddBookDialog({ open, handleClose, onChange }) {
 
   return (
     <Dialog open={open} onClose={cancelClick}>
-      <DialogTitle>Edit Book Information</DialogTitle>
+      <DialogTitle>Create A Book</DialogTitle>
       <DialogContent>
         {loading ? (
           <Box
@@ -219,26 +222,30 @@ export default function AddBookDialog({ open, handleClose, onChange }) {
                 </MenuItem>
               ))}
             </TextField>
-            <TextField
-              variant="outlined"
-              label="Price"
-              type="number"
-              error={invalid.price}
-              helperText={invalid.price && 'Invalid price'}
-              onFocus={() => setInvalid({ ...invalid, price: false })}
-              value={book.price}
-              onChange={handleChangeBook('price')}
-            />
-            <TextField
-              variant="outlined"
-              label="Quantity"
-              type="number"
-              error={invalid.quantity}
-              helperText={invalid.quantity && 'Invalid quantity'}
-              onFocus={() => setInvalid({ ...invalid, quantity: false })}
-              value={book.quantity}
-              onChange={handleChangeBook('quantity')}
-            />
+            {!addInfoOnly && (
+              <TextField
+                variant="outlined"
+                label="Price"
+                type="number"
+                error={invalid.price}
+                helperText={invalid.price && 'Invalid price'}
+                onFocus={() => setInvalid({ ...invalid, price: false })}
+                value={book.price}
+                onChange={handleChangeBook('price')}
+              />
+            )}
+            {!addInfoOnly && (
+              <TextField
+                variant="outlined"
+                label="Quantity"
+                type="number"
+                error={invalid.quantity}
+                helperText={invalid.quantity && 'Invalid quantity'}
+                onFocus={() => setInvalid({ ...invalid, quantity: false })}
+                value={book.quantity}
+                onChange={handleChangeBook('quantity')}
+              />
+            )}
             <TextField
               variant="outlined"
               label="Description"

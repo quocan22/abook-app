@@ -142,22 +142,41 @@ const orderController = {
     }
   },
   updateShippingStatus: async (req, res) => {
-    const { id, status } = req.body;
+    try {
+      const { id, status } = req.body;
 
-    Orders.findByIdAndUpdate(
-      id,
-      { shippingStatus: status },
-      function (err, result) {
-        if (err) {
-          res.status(400).json({ msg: err.message });
-        } else {
-          res.status(201).json({
-            msg: "Update order shipping status successfully",
-            id: result._id,
-          });
+      const order = Orders.findById(id);
+
+      if (!order) {
+        return res.status(400).json({ msg: "Cannot find this order" });
+      }
+
+      order.shippingStatus = status;
+
+      if (status === 2) {
+        for (let i = 0; i < order.details.length; i++) {
+          let result = await deliveredBook(
+            order.details[i].bookId,
+            order.details[i].quantity
+          );
+
+          if (result === false) {
+            return res.status(400).json({
+              msg: "Something went wrong",
+            });
+          }
         }
       }
-    );
+
+      await order.save();
+
+      res.status(201).json({
+        msg: "Update order shipping status successfully",
+        id: result._id,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
   },
   getAnnualRevenueReport: async (req, res) => {
     try {
@@ -371,6 +390,17 @@ const orderController = {
     }
   },
 };
+
+async function deliveredBook(bookId, deliveredQuantity) {
+  const book = await Books.findById(bookId);
+
+  if (!book || book.quantity < deliveredQuantity) {
+    return false;
+  }
+
+  book.quantity -= deliveredQuantity;
+  return true;
+}
 
 function validYear(year) {
   // regex for checking if year is valid
