@@ -2,6 +2,7 @@ const Orders = require("../models/orderModel");
 const Users = require("../models/userModel");
 const Books = require("../models/bookModel");
 const Carts = require("../models/cartModel");
+const dateTimeFunc = require("../utils/dateTimeFunc");
 
 const orderController = {
   createOrder: async (req, res) => {
@@ -182,7 +183,7 @@ const orderController = {
     try {
       const year = req.query.y;
 
-      if (!validYear(year)) {
+      if (!dateTimeFunc.validYear(year)) {
         return res.status(400).json({ msg: "Invalid year" });
       }
 
@@ -225,7 +226,7 @@ const orderController = {
       const month = req.query.m;
       const year = req.query.y;
 
-      if (!validMonth(month) || !validYear(year)) {
+      if (!dateTimeFunc.validMonth(month) || !dateTimeFunc.validYear(year)) {
         return res.status(400).json({ msg: "Invalid month" });
       }
 
@@ -248,7 +249,7 @@ const orderController = {
       var result = new Array();
 
       // initializing an array with {days in month} elements represent for days in month
-      for (let i = 0; i < daysOfMonth(month, year); i++) {
+      for (let i = 0; i < dateTimeFunc.daysOfMonth(month, year); i++) {
         result.push({ revenue: 0, order: 0 });
       }
 
@@ -267,11 +268,11 @@ const orderController = {
       return res.status(500).json({ msg: err.message });
     }
   },
-  getAnnualBookReport: async (req, res) => {
+  getAnnualBookIssueReport: async (req, res) => {
     try {
       const year = req.query.y;
 
-      if (!validYear(year)) {
+      if (!dateTimeFunc.validYear(year)) {
         return res.status(400).json({ msg: "Invalid year" });
       }
 
@@ -318,19 +319,19 @@ const orderController = {
       });
 
       res.status(201).json({
-        msg: "Get annual book report successfully",
+        msg: "Get annual book issue report successfully",
         data: result,
       });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
   },
-  getMonthlyBookReport: async (req, res) => {
+  getMonthlyBookIssueReport: async (req, res) => {
     try {
       const month = req.query.m;
       const year = req.query.y;
 
-      if (!validMonth(month) || !validYear(year)) {
+      if (!dateTimeFunc.validMonth(month) || !dateTimeFunc.validYear(year)) {
         return res.status(400).json({ msg: "Invalid month" });
       }
 
@@ -382,7 +383,7 @@ const orderController = {
       });
 
       res.status(201).json({
-        msg: "Get monthly book report successfully",
+        msg: "Get monthly book issue report successfully",
         data: result,
       });
     } catch (err) {
@@ -400,27 +401,6 @@ async function deliveredBook(bookId, deliveredQuantity) {
 
   book.quantity -= deliveredQuantity;
   return true;
-}
-
-function validYear(year) {
-  // regex for checking if year is valid
-  const regex = /\b(19|20)\d\d\b/g;
-
-  return regex.test(year);
-}
-
-function validMonth(month) {
-  // regex for checking if month is valid
-  const regex = /^([1-9]|[1][0-2]?)$/g;
-
-  return regex.test(month);
-}
-
-function daysOfMonth(month, year) {
-  // month in javascript starts at 0 (Jan is 0, Feb is 1), but by using 0 as the day
-  // it will give us the last day of previous month, so passing 0 as day and month as
-  // month will return the last day of that month
-  return new Date(year, month, 0).getDate();
 }
 
 async function getBookInfo(bookId) {

@@ -7,7 +7,7 @@ import { styled } from '@mui/material/styles';
 import { fCurrency } from '../../../utils/formatNumber';
 //
 import Label from '../../Label';
-import { ProductMoreMenu, EditDialog, ReceiveDialog } from '.';
+import { ProductMoreMenu, EditDialog } from '.';
 
 // ----------------------------------------------------------------------
 
@@ -32,7 +32,6 @@ export default function ProductCard({ product, onChange }) {
   const [onPreview, setOnPreview] = useState(false);
 
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [openReceiveDialog, setOpenReceiveDialog] = useState(false);
 
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
@@ -40,14 +39,6 @@ export default function ProductCard({ product, onChange }) {
 
   const handleEditClick = () => {
     setOpenEditDialog(true);
-  };
-
-  const handleCloseReceiveDialog = () => {
-    setOpenReceiveDialog(false);
-  };
-
-  const handleReceiveClick = () => {
-    setOpenReceiveDialog(true);
   };
 
   return (
@@ -89,24 +80,13 @@ export default function ProductCard({ product, onChange }) {
             </Tooltip>
             <Rating readOnly value={avgRate} />
           </Stack>
-          <ProductMoreMenu
-            id={_id}
-            handleEditClick={handleEditClick}
-            handleReceiveClick={handleReceiveClick}
-          />
+          <ProductMoreMenu id={_id} handleEditClick={handleEditClick} />
         </Stack>
       </Stack>
 
       <EditDialog
         open={openEditDialog}
         handleClose={handleCloseEditDialog}
-        product={product}
-        onChange={onChange}
-      />
-
-      <ReceiveDialog
-        open={openReceiveDialog}
-        handleClose={handleCloseReceiveDialog}
         product={product}
         onChange={onChange}
       />

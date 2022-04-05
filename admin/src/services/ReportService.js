@@ -17,15 +17,30 @@ const getMonthlyRevenueReport = (month, year) =>
     }
   });
 
-const getAnnualBookReport = (year) =>
-  api.get(`${API_MODEL_URL}/book/annual`, {
+const getAnnualBookIssueReport = (year) =>
+  api.get(`${API_MODEL_URL}/book_issue/annual`, {
     params: {
       y: year
     }
   });
 
-const getMonthlyBookReport = (month, year) =>
-  api.get(`${API_MODEL_URL}/book/monthly`, {
+const getMonthlyBookIssueReport = (month, year) =>
+  api.get(`${API_MODEL_URL}/book_issue/monthly`, {
+    params: {
+      m: month,
+      y: year
+    }
+  });
+
+const getAnnualBookReceiptReport = (year) =>
+  api.get(`${API_MODEL_URL}/book_receipt/annual`, {
+    params: {
+      y: year
+    }
+  });
+
+const getMonthlyBookReceiptReport = (month, year) =>
+  api.get(`${API_MODEL_URL}/book_receipt/monthly`, {
     params: {
       m: month,
       y: year
@@ -35,8 +50,10 @@ const getMonthlyBookReport = (month, year) =>
 const ReportService = {
   getAnnualRevenueReport,
   getMonthlyRevenueReport,
-  getAnnualBookReport,
-  getMonthlyBookReport
+  getAnnualBookIssueReport,
+  getMonthlyBookIssueReport,
+  getAnnualBookReceiptReport,
+  getMonthlyBookReceiptReport
 };
 
 export default ReportService;

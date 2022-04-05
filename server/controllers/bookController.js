@@ -161,33 +161,6 @@ const bookController = {
       return res.status(500).json({ msg: err.message });
     }
   },
-  receiveBook: async (req, res) => {
-    try {
-      const { bookId, price, quantity } = req.body;
-
-      const book = await Books.findById(bookId);
-
-      if (!book) {
-        return res.status(400).json({ msg: "Cannot find this book" });
-      }
-
-      book.quantity += quantity;
-      if (price && price !== book.price) {
-        book.price = price;
-      }
-
-      await book.save();
-
-      res.status(200).json({
-        msg: "Receive book successfully",
-        id: bookId,
-        newPrice: book.price,
-        newQuantity: book.quantity,
-      });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
   addComment: async (req, res) => {
     try {
       const { bookId, userId, rate, review } = req.body;

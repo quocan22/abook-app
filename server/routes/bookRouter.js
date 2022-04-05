@@ -9,7 +9,6 @@ router.get("/comment", bookController.getComments);
 router.get("/cate", bookController.getBooksByCate);
 router.get("/general_info", bookController.getAllBooksGeneralInfo);
 router.patch("/comment", bookController.addComment);
-router.put("/receive", bookController.receiveBook);
 router.put("/comment", authentication, bookController.deleteComment);
 
 router

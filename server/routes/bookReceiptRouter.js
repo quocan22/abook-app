@@ -6,4 +6,6 @@ const authenticationEmployee = require("../middlewares/authenticationEmployee");
 
 router.post("/", bookReceiptController.receiveBooks);
 
+router.get("/:id", bookReceiptController.getBookReceiptDetails);
+
 module.exports = router;
