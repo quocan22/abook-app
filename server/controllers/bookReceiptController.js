@@ -12,7 +12,7 @@ const bookReceiptController = {
         return res.status(404).json({ msg: "Cannot find this book receipt" });
       }
 
-      var receiptDetails = bookReceipt.details;
+      let receiptDetails = bookReceipt.details;
 
       for (let i = 0; i < bookReceipt.details.length; i++) {
         const book = await Books.findById(bookReceipt.details[i].bookId);
@@ -104,7 +104,7 @@ const bookReceiptController = {
 
       // initializing 1st day that month and 1st day the next month
       const from = new Date(year, month - 1, 1);
-      var to = new Date(year, month, 1);
+      let to = new Date(year, month, 1);
 
       // if the month reporting is Dec, the upper bound must be 1st Jan of the next year
       if (parseInt(month) === 12) {

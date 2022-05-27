@@ -6,7 +6,7 @@ const cors = require("cors");
 
 dotenv.config({ path: "./config.env" });
 require("./db/conn");
-const port = process.env.PORT || 5000;
+const port = parseInt(process.env.PORT) || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -22,7 +22,8 @@ app.use("/api/discounts", require("./routes/discountRouter"));
 app.use("/api/feedbacks", require("./routes/feedbackRouter"));
 app.use("/api/asset", require("./routes/assetRouter"));
 app.use("/api/report", require("./routes/reportRouter"));
+app.use("/api/chatbot", require("./routes/chatbotRouter"));
 
 app.listen(port, () => {
-  console.log(`Server is running at port ${port}`);
+  console.log(`Server listening on port ${port}`);
 });

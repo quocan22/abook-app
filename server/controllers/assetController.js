@@ -67,7 +67,7 @@ const assetController = {
         return res.status(400).json({ msg: "Cannot find this user" });
       }
 
-      var result;
+      let result;
 
       if (user.userClaim.cloudinaryId !== process.env.DEFAULT_PUBLIC_ID) {
         // if old avatar is not default, delete it
@@ -105,7 +105,7 @@ const assetController = {
         return res.status(400).json({ msg: "Cannot find this book" });
       }
 
-      var result;
+      let result;
 
       if (book.cloudinaryId !== process.env.DEFAULT_BOOK_PUBLIC_ID) {
         // if old avatar is not default, delete it

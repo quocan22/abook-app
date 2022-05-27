@@ -206,7 +206,7 @@ const bookController = {
         return res.status(400).json({ msg: "This book does not exist" });
       }
 
-      var commentsRes = book.comments;
+      let commentsRes = book.comments;
 
       // Get info of comments owner
       for (let i = 0; i < book.comments.length; i++) {
@@ -272,10 +272,10 @@ const bookController = {
 };
 
 function updateAvgRate(comments) {
-  var total = 0;
+  let total = 0;
 
   // calc avg rate
-  for (var i = 0; i < comments.length; i++) {
+  for (let i = 0; i < comments.length; i++) {
     total += comments[i].rate;
   }
   return total / comments.length;

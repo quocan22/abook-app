@@ -36,6 +36,7 @@ import {
   DeleteDiscountDialog
 } from '../components/_dashboard/others';
 import { fCurrency } from '../utils/formatNumber';
+import { resizeScaleByWidth } from '../utils/resizeImageFromCloudinary';
 
 import { DiscountService, CategoryService } from '../services';
 
@@ -328,7 +329,10 @@ export default function OtherSettings() {
                           <TableCell align="center">{index + 1}</TableCell>
                           <TableCell component="th" scope="row">
                             <Stack direction="row" alignItems="center" spacing={2}>
-                              <Avatar alt={row.categoryName} src={row.imageUrl} />
+                              <Avatar
+                                alt={row.categoryName}
+                                src={resizeScaleByWidth(row.imageUrl, 100)}
+                              />
                               <Typography variant="subtitle2" noWrap>
                                 {row.categoryName}
                               </Typography>

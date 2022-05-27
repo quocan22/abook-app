@@ -19,8 +19,8 @@ const orderController = {
         return res.status(400).json({ msg: "This cart is empty" });
       }
 
-      var orderDetails = cart.details;
-      var totalPrice = 0;
+      let orderDetails = cart.details;
+      let totalPrice = 0;
 
       for (let i = 0; i < cart.details.length; i++) {
         let book = await Books.findById(cart.details[i].bookId);
@@ -72,7 +72,7 @@ const orderController = {
         });
       }
 
-      var ordersRes = [];
+      let ordersRes = [];
 
       for (let i = 0; i < orders.length; i++) {
         ordersRes[i] = orders[i].toObject();
@@ -113,7 +113,7 @@ const orderController = {
         return res.status(400).json({ msg: "Cannot find this order" });
       }
 
-      var booksRes = order.details;
+      let booksRes = order.details;
 
       for (let i = 0; i < order.details.length; i++) {
         const book = await Books.findById(order.details[i].bookId);
@@ -128,7 +128,7 @@ const orderController = {
       const { userClaim } = await Users.findById(order.userId);
 
       // order is a MongoDB document, so it must be converted to an object
-      var orderRes = order.toObject();
+      let orderRes = order.toObject();
       orderRes.details = booksRes;
       orderRes.customerName = userClaim.displayName;
       orderRes.customerPhone = userClaim.phoneNumber;
@@ -198,7 +198,7 @@ const orderController = {
         },
       });
 
-      var result = new Array();
+      let result = [];
 
       // initializing an array with 12 elements represent for 12 months in a year
       for (let i = 0; i < 12; i++) {
@@ -232,7 +232,7 @@ const orderController = {
 
       // initializing 1st day that month and 1st day the next month
       const from = new Date(year, month - 1, 1);
-      var to = new Date(year, month, 1);
+      let to = new Date(year, month, 1);
 
       // if the month reporting is Dec, the upper bound must be 1st Jan of the next year
       if (parseInt(month) === 12) {
@@ -246,7 +246,7 @@ const orderController = {
         },
       });
 
-      var result = new Array();
+      let result = [];
 
       // initializing an array with {days in month} elements represent for days in month
       for (let i = 0; i < dateTimeFunc.daysOfMonth(month, year); i++) {
@@ -287,7 +287,7 @@ const orderController = {
         },
       });
 
-      var tempResult = new Array();
+      let tempResult = [];
 
       orderInYear.forEach((order) => {
         if (order.paidStatus === 2) {
@@ -305,7 +305,7 @@ const orderController = {
         }
       });
 
-      var result = new Array();
+      let result = [];
 
       for (const temp of tempResult) {
         const { name, author, imageUrl, isAvailable, price } =
@@ -337,7 +337,7 @@ const orderController = {
 
       // initializing 1st day that month and 1st day the next month
       const from = new Date(year, month - 1, 1);
-      var to = new Date(year, month, 1);
+      let to = new Date(year, month, 1);
 
       // if the month reporting is Dec, the upper bound must be 1st Jan of the next year
       if (parseInt(month) === 12) {
@@ -351,7 +351,7 @@ const orderController = {
         },
       });
 
-      var tempResult = new Array();
+      let tempResult = [];
 
       orderInMonth.forEach((order) => {
         if (order.paidStatus === 2) {
@@ -369,7 +369,7 @@ const orderController = {
         }
       });
 
-      var result = new Array();
+      let result = [];
 
       for (const temp of tempResult) {
         const { name, author, imageUrl, isAvailable, price } =

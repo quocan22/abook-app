@@ -139,7 +139,7 @@ const cartController = {
 
       // if cart exist, update corresponding book
       if (cart) {
-        for (var i = 0; i < cart.details.length; i++) {
+        for (let i = 0; i < cart.details.length; i++) {
           if (cart.details[i].bookId === bookId) {
             cart.details[i].quantity = newQuantity;
             cart.markModified("details");

@@ -37,7 +37,7 @@ export default function AccountPopover() {
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
 
-  const { displayName, email, avatarUrl } = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const handleOpen = () => {
     setOpen(true);
@@ -73,7 +73,7 @@ export default function AccountPopover() {
           })
         }}
       >
-        <Avatar src={avatarUrl} alt="photoURL" />
+        <Avatar src={user && user.avatarUrl} alt="photoURL" />
       </IconButton>
 
       <MenuPopover
@@ -82,16 +82,18 @@ export default function AccountPopover() {
         anchorEl={anchorRef.current}
         sx={{ width: 220 }}
       >
-        <Box sx={{ my: 1.5, px: 2.5 }}>
-          <Typography variant="subtitle1" noWrap>
-            {displayName}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {email}
-          </Typography>
-        </Box>
+        {user && (
+          <Box sx={{ my: 1.5, px: 2.5 }}>
+            <Typography variant="subtitle1" noWrap>
+              {user.displayName}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+              {user.email}
+            </Typography>
+          </Box>
+        )}
 
-        <Divider sx={{ my: 1 }} />
+        {user && <Divider sx={{ my: 1 }} />}
 
         {MENU_OPTIONS.map((option) => (
           <MenuItem
@@ -117,7 +119,7 @@ export default function AccountPopover() {
 
         <Box sx={{ p: 2, pt: 1.5 }}>
           <Button fullWidth color="inherit" variant="outlined" onClick={logOut}>
-            Logout
+            {(user && 'Logout') || 'Login'}
           </Button>
         </Box>
       </MenuPopover>
