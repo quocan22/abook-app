@@ -14,3 +14,7 @@ export function validatePrice(value) {
 
   return regex.test(value);
 }
+
+export function validateDiscountRatio(discountRatio) {
+  return discountRatio <= 100 && discountRatio >= 0;
+}

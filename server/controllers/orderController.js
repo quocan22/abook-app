@@ -308,10 +308,18 @@ const orderController = {
       let result = [];
 
       for (const temp of tempResult) {
-        const { name, author, imageUrl, isAvailable, price } =
+        const { name, author, imageUrl, isAvailable, price, discountRatio } =
           await getBookInfo(temp.bookId);
 
-        result.push({ ...temp, name, author, imageUrl, isAvailable, price });
+        result.push({
+          ...temp,
+          name,
+          author,
+          imageUrl,
+          isAvailable,
+          price,
+          discountRatio,
+        });
       }
 
       result.sort((a, b) => {
@@ -372,10 +380,18 @@ const orderController = {
       let result = [];
 
       for (const temp of tempResult) {
-        const { name, author, imageUrl, isAvailable, price } =
+        const { name, author, imageUrl, isAvailable, price, discountRatio } =
           await getBookInfo(temp.bookId);
 
-        result.push({ ...temp, name, author, imageUrl, isAvailable, price });
+        result.push({
+          ...temp,
+          name,
+          author,
+          imageUrl,
+          isAvailable,
+          price,
+          discountRatio,
+        });
       }
 
       result.sort((a, b) => {
@@ -404,11 +420,10 @@ async function deliveredBook(bookId, deliveredQuantity) {
 }
 
 async function getBookInfo(bookId) {
-  const { name, author, imageUrl, isAvailable, price } = await Books.findById(
-    bookId
-  );
+  const { name, author, imageUrl, isAvailable, price, discountRatio } =
+    await Books.findById(bookId);
 
-  return { name, author, imageUrl, isAvailable, price };
+  return { name, author, imageUrl, isAvailable, price, discountRatio };
 }
 
 module.exports = orderController;

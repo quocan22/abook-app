@@ -18,17 +18,19 @@ import {
   Card,
   CardMedia,
   FormControl,
-  FormLabel
+  FormLabel,
+  InputAdornment
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import { BookService, CategoryService } from '../../../services';
-import { validatePrice } from '../../../utils/validate';
+import { validateDiscountRatio, validatePrice } from '../../../utils/validate';
 
 const initialInvalid = {
   categoryId: false,
   name: false,
   author: false,
   price: false,
+  discountRatio: false,
   quantity: false,
   description: false
 };
@@ -48,6 +50,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
     author: product.author,
     isAvailable: product.isAvailable,
     price: product.price,
+    discountRatio: product.discountRatio,
     quantity: product.quantity,
     description: product.description
   });
@@ -66,6 +69,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
       author: product.author,
       isAvailable: product.isAvailable,
       price: product.price,
+      discountRatio: product.discountRatio,
       quantity: product.quantity,
       description: product.description
     });
@@ -107,6 +111,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
       !book.name ||
       !book.author ||
       !validatePrice(book.price) ||
+      !validateDiscountRatio(book.discountRatio) ||
       !validatePrice(book.quantity) ||
       !book.description
     ) {
@@ -115,6 +120,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
         name: !book.name,
         author: !book.author,
         price: !validatePrice(book.price),
+        discountRatio: !validateDiscountRatio(book.discountRatio),
         quantity: !validatePrice(book.quantity),
         description: !book.description
       });
@@ -130,6 +136,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
     bookFormData.append('author', book.author);
     bookFormData.append('isAvailable', book.isAvailable);
     bookFormData.append('price', parseInt(book.price, 10));
+    bookFormData.append('discountRatio', parseInt(book.discountRatio, 10));
     bookFormData.append('quantity', parseInt(book.quantity, 10));
     bookFormData.append('description', book.description);
     if (selectedFile) {
@@ -157,6 +164,7 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
       author: product.author,
       isAvailable: product.isAvailable,
       price: product.price,
+      discountRatio: product.discountRatio,
       quantity: product.quantity,
       description: product.description
     });
@@ -272,6 +280,19 @@ export default function EditDialog({ product, open, handleClose, onChange }) {
               onFocus={() => setInvalid({ ...invalid, quantity: false })}
               value={book.quantity}
               onChange={handleChangeBook('quantity')}
+            />
+            <TextField
+              variant="outlined"
+              label="Discount Ratio"
+              type="number"
+              error={invalid.discountRatio}
+              helperText={invalid.discountRatio && 'Invalid discount ratio'}
+              onFocus={() => setInvalid({ ...invalid, discountRatio: false })}
+              value={book.discountRatio}
+              onChange={handleChangeBook('discountRatio')}
+              InputProps={{
+                endAdornment: <InputAdornment position="end">%</InputAdornment>
+              }}
             />
             <TextField
               variant="outlined"

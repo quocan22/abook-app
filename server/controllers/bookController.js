@@ -70,8 +70,15 @@ const bookController = {
   },
   createBook: async (req, res) => {
     try {
-      const { categoryId, name, author, price, quantity, description } =
-        req.body;
+      const {
+        categoryId,
+        name,
+        author,
+        price,
+        discountRatio,
+        quantity,
+        description,
+      } = req.body;
 
       const book = await Books.findOne({ name });
 
@@ -86,6 +93,7 @@ const bookController = {
         name,
         author,
         price,
+        discountRatio,
         quantity,
         description,
       });
@@ -117,6 +125,7 @@ const bookController = {
         author,
         isAvailable,
         price,
+        discountRatio,
         quantity,
         description,
       } = req.body;
@@ -147,6 +156,7 @@ const bookController = {
       if (name) book.name = name;
       if (author) book.author = author;
       if (price) book.price = price;
+      if (discountRatio) book.discountRatio = discountRatio;
       if (quantity) book.quantity = quantity;
       if (description) book.description = description;
       book.isAvailable = isAvailable;

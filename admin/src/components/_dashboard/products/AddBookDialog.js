@@ -13,17 +13,19 @@ import {
   Stack,
   InputLabel,
   Card,
-  CardMedia
+  CardMedia,
+  InputAdornment
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import { BookService, CategoryService } from '../../../services';
-import { validatePrice } from '../../../utils/validate';
+import { validateDiscountRatio, validatePrice } from '../../../utils/validate';
 
 const initialBook = {
   categoryId: '',
   name: '',
   author: '',
   price: '',
+  discountRatio: '',
   quantity: '',
   description: ''
 };
@@ -33,6 +35,7 @@ const initialInvalid = {
   name: false,
   author: false,
   price: false,
+  discountRatio: false,
   quantity: false,
   description: false
 };
@@ -91,14 +94,16 @@ export default function AddBookDialog({ open, handleClose, onChange, addInfoOnly
       !book.categoryId ||
       !book.name ||
       (!addInfoOnly && !validatePrice(book.price)) ||
+      (!addInfoOnly && !validateDiscountRatio(book.discountRatio)) ||
       (!addInfoOnly && !validatePrice(book.quantity)) ||
       !book.description
     ) {
       setInvalid({
         categoryId: !book.categoryId,
         name: !book.name,
-        price: !validatePrice(book.price),
-        quantity: !validatePrice(book.quantity),
+        price: !addInfoOnly && !validatePrice(book.price),
+        discountRatio: !addInfoOnly && !validateDiscountRatio(book.discountRatio),
+        quantity: !addInfoOnly && !validatePrice(book.quantity),
         description: !book.description
       });
       return;
@@ -113,6 +118,7 @@ export default function AddBookDialog({ open, handleClose, onChange, addInfoOnly
     bookFormData.append('author', book.author);
     if (!addInfoOnly) {
       bookFormData.append('price', parseInt(book.price, 10));
+      bookFormData.append('discountRatio', parseInt(book.discountRatio, 10));
       bookFormData.append('quantity', parseInt(book.quantity, 10));
     }
     bookFormData.append('description', book.description);
@@ -244,6 +250,21 @@ export default function AddBookDialog({ open, handleClose, onChange, addInfoOnly
                 onFocus={() => setInvalid({ ...invalid, quantity: false })}
                 value={book.quantity}
                 onChange={handleChangeBook('quantity')}
+              />
+            )}
+            {!addInfoOnly && (
+              <TextField
+                variant="outlined"
+                label="Discount Ratio"
+                type="number"
+                error={invalid.discountRatio}
+                helperText={invalid.discountRatio && 'Invalid discount ratio'}
+                onFocus={() => setInvalid({ ...invalid, discountRatio: false })}
+                value={book.discountRatio}
+                onChange={handleChangeBook('discountRatio')}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">%</InputAdornment>
+                }}
               />
             )}
             <TextField

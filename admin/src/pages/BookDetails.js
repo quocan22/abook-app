@@ -119,9 +119,17 @@ export default function BookDetails() {
               <Typography>{book.categoryName}</Typography>
             </Stack>
             <Stack direction="column">
-              <Typography>{`Price: ${fCurrency(book.price)} VNĐ`}</Typography>
-              <Typography>{`Quantity: ${book.quantity}`}</Typography>
+              <Typography>
+                <strong>Price</strong>: {fCurrency(book.price)} VNĐ
+              </Typography>
+              <Typography>
+                <strong>Discount Ratio</strong>: {book.discountRatio} %
+              </Typography>
+              <Typography>
+                <strong>Quantity</strong>: {book.quantity}
+              </Typography>
               <Label
+                sx={{ width: 100, height: 30 }}
                 variant="ghost"
                 color={
                   (book.isAvailable && 'secondary') || (!book.isAvailable && 'error') || 'default'

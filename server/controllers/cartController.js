@@ -73,10 +73,10 @@ const cartController = {
           .json({ msg: "This book quantity is not enough" });
       }
 
-      const useCheck = await Users.findById(userId);
+      const userCheck = await Users.findById(userId);
 
       // check if user exists
-      if (!useCheck) {
+      if (!userCheck) {
         return res.status(404).json({ msg: "Cannot find this user" });
       }
 
@@ -84,19 +84,16 @@ const cartController = {
 
       // check if cart exists
       if (!cart) {
-        return res.status(404).json({ msg: "Cannot find this cart" });
+        const newCart = new Carts({ userId });
+        newCart.details.push({ bookId, quantity });
+
+        await newCart.save();
+      } else {
+        // push detail to array
+        cart.details.push({ bookId, quantity });
+
+        await cart.save();
       }
-
-      // create a new cart detail
-      const newDetail = {
-        bookId,
-        quantity,
-      };
-
-      // push detail to array
-      cart.details.push(newDetail);
-
-      await cart.save();
 
       res.status(200).json({ msg: "Add boook to cart successfully" });
     } catch (err) {
