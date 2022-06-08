@@ -3,7 +3,7 @@ const upload = require("../utils/multer");
 
 const assetController = require("../controllers/assetController");
 const authentication = require("../middlewares/authentication");
-const authenticationEmployee = require("../middlewares/authenticationEmployee");
+const authenticationAdmin = require("../middlewares/authenticationEmployee");
 
 router
   .route("/avatar")
@@ -14,7 +14,7 @@ router
   .put(
     upload.single("image"),
     authentication,
-    authenticationEmployee.authenticationStaff,
+    authenticationAdmin,
     assetController.updateBookImage
   );
 

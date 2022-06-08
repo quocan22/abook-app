@@ -108,13 +108,11 @@ export default function Users() {
   // function
   const convertRole = (role) => {
     // convert role from number to string
-    // 1: user, 2: staff, 3: admin
+    // 1: user, 2: admin
     switch (role) {
       case 1:
         return 'User';
       case 2:
-        return 'Staff';
-      case 3:
         return 'Admin';
       default:
         return 'Unknown';
@@ -241,8 +239,7 @@ export default function Users() {
                                 variant="ghost"
                                 color={
                                   (role === 1 && 'default') ||
-                                  (role === 2 && 'primary') ||
-                                  (role === 3 && 'secondary') ||
+                                  (role === 2 && 'secondary') ||
                                   'error'
                                 }
                               >

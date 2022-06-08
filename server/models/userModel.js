@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
     role: {
-      type: Number, // 1: user, 2: staff, 3: admin
+      type: Number, // 1: user, 2: admin
       default: 1,
     },
     isLocked: {

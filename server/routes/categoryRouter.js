@@ -3,7 +3,7 @@ const upload = require("../utils/multer");
 
 const categoryController = require("../controllers/categoryController");
 const authentication = require("../middlewares/authentication");
-const authenticationEmployee = require("../middlewares/authenticationEmployee");
+const authenticationAdmin = require("../middlewares/authenticationEmployee");
 
 router
   .route("/")
@@ -11,13 +11,13 @@ router
   .post(
     upload.single("image"),
     authentication,
-    authenticationEmployee.authenticationStaff,
+    authenticationAdmin,
     categoryController.createCategory
   )
   .put(
     upload.single("image"),
     authentication,
-    authenticationEmployee.authenticationStaff,
+    authenticationAdmin,
     categoryController.updateCategory
   );
 
@@ -26,7 +26,7 @@ router
   .get(categoryController.getCategoryById)
   .delete(
     authentication,
-    authenticationEmployee.authenticationStaff,
+    authenticationAdmin,
     categoryController.deleteCategory
   );
 

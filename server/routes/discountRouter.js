@@ -2,32 +2,32 @@ const router = require("express").Router();
 
 const discountController = require("../controllers/discountController");
 const authentication = require("../middlewares/authentication");
-const authenticationEmployee = require("../middlewares/authenticationEmployee");
+const authenticationAdmin = require("../middlewares/authenticationEmployee");
 
 router.get(
   "/available",
   authentication,
-  authenticationEmployee.authenticationStaff,
+  authenticationAdmin,
   discountController.getAvailableDiscounts
 );
 router.get("/", discountController.getAllDiscounts);
 router.post(
   "/",
   authentication,
-  authenticationEmployee.authenticationStaff,
+  authenticationAdmin,
   discountController.createDiscount
 );
 router.put(
   "/",
   authentication,
-  authenticationEmployee.authenticationStaff,
+  authenticationAdmin,
   discountController.updateDiscount
 );
 
 router.delete(
   "/:id",
   authentication,
-  authenticationEmployee.authenticationStaff,
+  authenticationAdmin,
   discountController.deleteDiscount
 );
 

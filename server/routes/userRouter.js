@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const upload = require("../utils/multer");
 const authentication = require("../middlewares/authentication");
-const authenticationEmployee = require("../middlewares/authenticationEmployee");
+const authenticationAdmin = require("../middlewares/authenticationEmployee");
 
 const userController = require("../controllers/userController");
 
@@ -30,7 +30,7 @@ router.post("/fav/remove", authentication, userController.removeBookFromFav);
 router.post(
   "/lock",
   authentication,
-  authenticationEmployee.authenticationAdmin,
+  authenticationAdmin,
   userController.changeLockStatus
 );
 

@@ -3,7 +3,7 @@ const upload = require("../utils/multer");
 
 const bookController = require("../controllers/bookController");
 const authentication = require("../middlewares/authentication");
-const authenticationEmployee = require("../middlewares/authenticationEmployee");
+const authenticationAdmin = require("../middlewares/authenticationEmployee");
 
 router.get("/comment", bookController.getComments);
 router.get("/cate", bookController.getBooksByCate);
@@ -17,7 +17,7 @@ router
   .post(
     upload.single("image"),
     authentication,
-    authenticationEmployee.authenticationStaff,
+    authenticationAdmin,
     bookController.createBook
   );
 
@@ -25,10 +25,6 @@ router
   .route("/:id")
   .get(bookController.getBookById)
   .put(upload.single("image"), bookController.updateInfo)
-  .delete(
-    authentication,
-    authenticationEmployee.authenticationStaff,
-    bookController.deleteBook
-  );
+  .delete(authentication, authenticationAdmin, bookController.deleteBook);
 
 module.exports = router;

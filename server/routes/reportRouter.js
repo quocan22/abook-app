@@ -1,7 +1,7 @@
 const router = require("express").Router();
 
 const authentication = require("../middlewares/authentication");
-const authenticationEmployee = require("../middlewares/authenticationEmployee");
+const authenticationAdmin = require("../middlewares/authenticationEmployee");
 const orderController = require("../controllers/orderController");
 const bookReceiptController = require("../controllers/bookReceiptController");
 

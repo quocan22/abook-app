@@ -29,10 +29,6 @@ const roles = [
   },
   {
     value: 2,
-    label: 'Staff'
-  },
-  {
-    value: 3,
     label: 'Admin'
   }
 ];
