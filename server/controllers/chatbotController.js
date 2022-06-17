@@ -18,6 +18,7 @@ const BEST_SELLING_ACTION = "bestSell";
 const NEW_ARRIVALS_ACTION = "newArrivals";
 const CATEGORY_SEARCH_ACTION = "categorySearch";
 const SEARCH_BOOK_BY_CATEGORY = "searchBookByCate";
+const BEST_DISCOUNT_ACTION = "bestDiscount";
 //#endregion
 
 const chatbotController = {
@@ -50,6 +51,9 @@ const chatbotController = {
         break;
       case SEARCH_BOOK_BY_CATEGORY:
         searchBookByCate(res, responses);
+        break;
+      case BEST_DISCOUNT_ACTION:
+        bestDiscount(res, responses);
         break;
       case "makeOrder":
         makeOrder(res, responses);
@@ -197,6 +201,25 @@ async function searchBookByCate(res, responses) {
       type: 2,
       text: "We recommend some books for you.",
       data: books,
+    });
+  }
+}
+
+async function bestDiscount(res) {
+  const bestDiscountBooks = await Books.find()
+    .sort({ discountRatio: -1, createdAt: 1 })
+    .limit(5);
+
+  if (bestDiscountBooks.length < 1) {
+    res.status(200).json({
+      type: 1,
+      text: "Sorry, we don't have enough data to show you.",
+    });
+  } else {
+    res.status(200).json({
+      type: 2,
+      text: "These are best discount books on ABook Store.",
+      data: bestDiscountBooks,
     });
   }
 }
