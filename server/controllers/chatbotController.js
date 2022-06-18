@@ -10,7 +10,10 @@ const projectId = dialogflowCredentials.projectId;
 const languageCode = dialogflowCredentials.sessionLanguageCode;
 const sessionId = uuid.v4();
 
-const sessionClient = new dialogflow.SessionsClient();
+const googleCredentials = JSON.parse(process.env.GOOGLE_CREDENTIALS.toString());
+const sessionClient = new dialogflow.SessionsClient({
+  credentials: googleCredentials,
+});
 const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 
 //#region Action definement
