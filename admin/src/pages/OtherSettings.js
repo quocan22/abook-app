@@ -180,7 +180,7 @@ export default function OtherSettings() {
           Other Settings
         </Typography>
 
-        <Stack direction="row" justifyContent="space-between" spacing={2}>
+        <Grid container columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={7}>
             <Card>
               <Stack direction="row" alignItems="center" justifyContent="space-between" mr={2}>
@@ -284,6 +284,7 @@ export default function OtherSettings() {
               />
             </Card>
           </Grid>
+
           <Grid item xs={5}>
             <Card>
               <Stack direction="row" alignItems="center" justifyContent="space-between" mr={2}>
@@ -374,7 +375,7 @@ export default function OtherSettings() {
               />
             </Card>
           </Grid>
-        </Stack>
+        </Grid>
       </Container>
     </Page>
   );

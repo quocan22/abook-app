@@ -1,8 +1,10 @@
+const googleCredentials = JSON.parse(process.env.GOOGLE_CREDENTIALS.toString());
+
 const dialogflowCredentials = {
-  projectId: process.env.PROJECT_ID,
-  sessionLanguageCode: process.env.SESSION_LANGUAGE_CODE,
-  clientEmail: process.env.CLIENT_EMAIL,
-  privateKey: process.env.PRIVATE_KEY,
+  projectId: googleCredentials.project_id,
+  sessionLanguageCode: "en-US",
+  clientEmail: googleCredentials.client_email,
+  privateKey: googleCredentials.private_key,
 };
 
 module.exports = dialogflowCredentials;

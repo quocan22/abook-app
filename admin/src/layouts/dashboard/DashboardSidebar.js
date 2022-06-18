@@ -34,7 +34,7 @@ const AccountStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 function displayRole(role) {
-  return (role === 1 && 'User') || (role === 2 && 'Staff') || (role === 3 && 'Admin') || 'Unknown';
+  return (role === 1 && 'User') || (role === 2 && 'Admin') || 'Unknown';
 }
 
 DashboardSidebar.propTypes = {
