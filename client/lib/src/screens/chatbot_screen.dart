@@ -270,6 +270,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   void onSendMessage(String text) {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (text.trim() != '') {
       setState(() {
         messageWidgetList.insert(
@@ -278,8 +279,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         _textEditingController.clear();
       });
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Nothing to send')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Nothing to send'),
+        duration: Duration(seconds: 1),
+      ));
     }
   }
 }

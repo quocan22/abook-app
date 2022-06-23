@@ -23,9 +23,9 @@ router.post("/signup", userController.signup);
 
 router.post("/change_password", authentication, userController.changePassword);
 
-router.post("/fav/add", authentication, userController.addBookToFav);
+router.post("/fav/add", userController.addBookToFav);
 
-router.post("/fav/remove", authentication, userController.removeBookFromFav);
+router.post("/fav/remove", userController.removeBookFromFav);
 
 router.post(
   "/lock",

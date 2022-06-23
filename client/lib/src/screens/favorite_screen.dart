@@ -62,7 +62,13 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         ),
         body: BlocBuilder<UserClaimBloc, UserClaimState>(
           builder: (context, state) {
-            if (state is UserClaimLoadSuccess) {
+            if (state is UserClaimLoadInProgress) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.red,
+                ),
+              );
+            } else if (state is UserClaimLoadSuccess) {
               if (state.userClaim!.favorite.isEmpty) {
                 return Center(
                   child: Text('You don\'t have any book in your favorite'),

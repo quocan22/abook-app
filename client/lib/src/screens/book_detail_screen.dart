@@ -236,11 +236,26 @@ class BookDetailScreen extends StatelessWidget {
                                 context
                                     .read<BookBloc>()
                                     .add(BookRemovedFav(bookId: book.id));
+                                context
+                                    .read<UserClaimBloc>()
+                                    .add(UserClaimRequested(userId: userId!));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Removed from your favorite books')));
                               } else {
                                 context
                                     .read<BookBloc>()
                                     .add(BookAddedFav(bookId: book.id));
+                                context
+                                    .read<UserClaimBloc>()
+                                    .add(UserClaimRequested(userId: userId!));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Added to your favorite books')));
                               }
+
                               Navigator.maybePop(context, true);
                             }
                           },
