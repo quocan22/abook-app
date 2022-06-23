@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const fetch = require("node-fetch");
 
 const { cloudinary } = require("../utils/cloudinary");
-const { mailService } = require("../utils/mailService");
 const Users = require("../models/userModel");
 
 const {
