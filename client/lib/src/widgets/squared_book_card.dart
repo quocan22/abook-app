@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../config/app_constants.dart' as app_constants;
@@ -26,11 +27,19 @@ class SquaredBookCard extends StatelessWidget {
                 fit: StackFit.loose,
                 alignment: Alignment.bottomCenter,
                 children: [
-                  Image.network(
-                    book.imageUrl,
+                  CachedNetworkImage(
+                    imageUrl: book.imageUrl,
+                    placeholder: (context, url) =>
+                        Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
                     width: 150,
                     fit: BoxFit.cover,
                   ),
+                  // Image.network(
+                  //   book.imageUrl,
+                  //   width: 150,
+                  //   fit: BoxFit.cover,
+                  // ),
                   ColoredBox(
                     color: Colors.white.withOpacity(0.9),
                     child: SizedBox(

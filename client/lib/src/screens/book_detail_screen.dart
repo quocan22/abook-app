@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:client/src/blocs/book/book_bloc.dart';
 import 'package:client/src/blocs/book/book_event.dart';
 import 'package:client/src/blocs/user_claim/user_claim_bloc.dart';
@@ -109,11 +110,20 @@ class BookDetailScreen extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network(
-                          book.imageUrl,
+                        child: CachedNetworkImage(
+                          imageUrl: book.imageUrl,
                           width: 150,
                           fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                         ),
+                        // Image.network(
+                        //   book.imageUrl,
+                        //   width: 150,
+                        //   fit: BoxFit.cover,
+                        // ),
                       ),
                       SizedBox(
                         width: 16.0,

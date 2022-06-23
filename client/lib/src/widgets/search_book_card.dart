@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../config/app_constants.dart' as app_constants;
@@ -28,10 +29,16 @@ class SearchBookCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                  book.imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: book.imageUrl,
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                   fit: BoxFit.cover,
                 ),
+                // Image.network(
+                //   book.imageUrl,
+                //   fit: BoxFit.cover,
+                // ),
               ),
               SizedBox(
                 width: 16.0,

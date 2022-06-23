@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:client/src/blocs/book/book_bloc.dart';
 import 'package:client/src/blocs/book/book_event.dart';
 import 'package:client/src/blocs/book/book_state.dart';
@@ -113,11 +114,24 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(8.0),
-                                          child: Image.network(
-                                            favBook.elementAt(index).imageUrl,
+                                          child: CachedNetworkImage(
+                                            imageUrl: favBook
+                                                .elementAt(index)
+                                                .imageUrl,
                                             width: 200,
                                             fit: BoxFit.cover,
+                                            placeholder: (context, url) => Center(
+                                                child:
+                                                    CircularProgressIndicator()),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Icon(Icons.error),
                                           ),
+                                          // Image.network(
+                                          //   favBook.elementAt(index).imageUrl,
+                                          //   width: 200,
+                                          //   fit: BoxFit.cover,
+                                          // ),
                                         ),
                                       ),
                                       Row(

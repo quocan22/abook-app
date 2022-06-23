@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../config/app_constants.dart' as app_constants;
@@ -26,70 +27,19 @@ class AutoSlideBookCard extends StatelessWidget {
                 fit: StackFit.loose,
                 alignment: Alignment.bottomCenter,
                 children: [
-                  Image.network(
-                    book.imageUrl,
+                  CachedNetworkImage(
+                    imageUrl: book.imageUrl,
                     width: 200,
                     fit: BoxFit.cover,
+                    placeholder: (context, url) =>
+                        Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
-                  // ColoredBox(
-                  //   color: Colors.white.withOpacity(0.9),
-                  //   child: SizedBox(
-                  //     height: 61,
-                  //     child: Padding(
-                  //       padding: const EdgeInsets.all(4.0),
-                  //       child: Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           Row(
-                  //             children: [
-                  //               Icon(
-                  //                   (book.avgRate >= 1)
-                  //                       ? Icons.star
-                  //                       : Icons.star_border,
-                  //                   color: Colors.amber,
-                  //                   size: 15),
-                  //               Icon(
-                  //                   (book.avgRate >= 2)
-                  //                       ? Icons.star
-                  //                       : Icons.star_border,
-                  //                   color: Colors.amber,
-                  //                   size: 15),
-                  //               Icon(
-                  //                   (book.avgRate >= 3)
-                  //                       ? Icons.star
-                  //                       : Icons.star_border,
-                  //                   color: Colors.amber,
-                  //                   size: 15),
-                  //               Icon(
-                  //                   (book.avgRate >= 4)
-                  //                       ? Icons.star
-                  //                       : Icons.star_border,
-                  //                   color: Colors.amber,
-                  //                   size: 15),
-                  //               Icon(
-                  //                   (book.avgRate == 5)
-                  //                       ? Icons.star
-                  //                       : Icons.star_border,
-                  //                   color: Colors.amber,
-                  //                   size: 15),
-                  //             ],
-                  //           ),
-                  //           Text(
-                  //             book.name,
-                  //             maxLines: 1,
-                  //             overflow: TextOverflow.ellipsis,
-                  //           ),
-                  //           Text(
-                  //             '${book.price} VNĐ',
-                  //             style: TextStyle(fontWeight: FontWeight.bold),
-                  //             maxLines: 1,
-                  //             overflow: TextOverflow.ellipsis,
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // )
+                  // Image.network(
+                  //   book.imageUrl,
+                  //   width: 200,
+                  //   fit: BoxFit.cover,
+                  // ),
                 ],
               ))),
     );
