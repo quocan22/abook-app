@@ -1,7 +1,9 @@
 import 'package:client/src/blocs/authentication/authentication_bloc.dart';
 import 'package:client/src/blocs/book_by_category/book_by_category_bloc.dart';
+import 'package:client/src/blocs/chatbot/chatbot_bloc.dart';
 import 'package:client/src/blocs/feedback/feedback_bloc.dart';
 import 'package:client/src/blocs/profile/profile_bloc.dart';
+import 'package:client/src/services/chatbot_service/chatbot_service_impl.dart';
 import 'package:client/src/services/feedback_service/feedback_service_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,6 +35,9 @@ class App extends StatelessWidget {
     FeedbackServiceImpl _feedbackService =
         FeedbackServiceImpl(dioClient: dioClient);
 
+    ChatbotServiceImpl _chatbotService =
+        ChatbotServiceImpl(dioClient: dioClient);
+
     return MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => AuthenticationBloc()),
@@ -62,6 +67,9 @@ class App extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => FeedbackBloc(service: _feedbackService),
+          ),
+          BlocProvider(
+            create: (context) => ChatbotBloc(service: _chatbotService),
           ),
         ],
         child: MaterialApp(

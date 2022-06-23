@@ -4,6 +4,9 @@ import 'package:client/src/blocs/book/book_state.dart';
 import 'package:client/src/blocs/category/category_bloc.dart';
 import 'package:client/src/blocs/category/category_event.dart';
 import 'package:client/src/blocs/category/category_state.dart';
+import 'package:client/src/blocs/chatbot/chatbot_bloc.dart';
+import 'package:client/src/blocs/chatbot/chatbot_state.dart';
+import 'package:client/src/blocs/chatbot/chatbot_event.dart';
 import 'package:client/src/constants/constants.dart';
 import 'package:client/src/models/book.dart';
 import 'package:client/src/models/category.dart';
@@ -27,25 +30,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   @override
   void initState() {
-    messageWidgetList = [
-      // buildCategoryChatItem(text: 'abc', categoryIdList: [
-      //   '61ac6c718d6ffbc17cff576e',
-      //   '61ac6cbf8d6ffbc17cff5774',
-      //   '61ac6c788d6ffbc17cff5771'
-      // ]),
-      // buildCategoryChatItem(text: 'abc', categoryIdList: [
-      //   '61ac6c718d6ffbc17cff576e',
-      //   '61ac6cbf8d6ffbc17cff5774',
-      //   '61ac6c788d6ffbc17cff5771'
-      // ]),
-      // buildCategoryChatItem(text: 'abc', categoryIdList: [
-      //   '61ac6c718d6ffbc17cff576e',
-      //   '61ac6cbf8d6ffbc17cff5774',
-      //   '61ac6c788d6ffbc17cff5771'
-      // ]),
-      // buildTextChatItem(text: 'abc', yourMsg: true),
-      // buildTextChatItem(text: 'abc', yourMsg: false)
-    ];
+    messageWidgetList = [];
     super.initState();
   }
 
@@ -65,7 +50,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         iconTheme: IconThemeData(color: Colors.black),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            messageWidgetList.clear();
+            Navigator.of(context).maybePop();
+          },
+        ),
         title: Text(
           'ABook Chatbot',
           style: Theme.of(context).textTheme.headline4?.copyWith(
@@ -85,13 +77,59 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ),
       body: Column(
         children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) => messageWidgetList[index],
-              reverse: true,
-              itemCount: messageWidgetList.length,
-            ),
-          ),
+          Expanded(child: BlocBuilder<ChatbotBloc, ChatbotState>(
+            builder: (context, state) {
+              if (state is ChatbotLoadInProgress) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.red,
+                  ),
+                );
+              }
+              if (state is ChatbotLoadFailure) {
+                return const Center(child: Text('fail'));
+              }
+              if (state is ChatbotLoadSuccess) {
+                if (messageWidgetList.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child:
+                          Image.asset('assets/images/ABook_chatbot_logo.png'),
+                    ),
+                  );
+                } else {
+                  if (state.type == 1) {
+                    messageWidgetList.insert(0,
+                        buildTextChatItem(text: state.text!, yourMsg: false));
+                  } else if (state.type == 2) {
+                    messageWidgetList.insert(
+                        0,
+                        buildBookChatItem(
+                            text: state.text!, bookList: state.listBook!));
+                  } else {
+                    messageWidgetList.insert(
+                        0,
+                        buildCategoryChatItem(
+                            text: state.text!,
+                            categoryList: state.listCategory!));
+                  }
+                  return ListView.builder(
+                    itemBuilder: (context, index) => messageWidgetList[index],
+                    reverse: true,
+                    itemCount: messageWidgetList.length,
+                  );
+                }
+              }
+              //temp screen
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Image.asset('assets/images/ABook_chatbot_logo.png'),
+                ),
+              );
+            },
+          )),
           buildInput()
         ],
       ),
@@ -101,7 +139,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Widget buildInput() {
     return Container(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+        padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
         child: Row(
           children: <Widget>[
             // Edit text
@@ -114,7 +152,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   style: TextStyle(color: Colors.blue, fontSize: 15.0),
                   controller: _textEditingController,
                   decoration: InputDecoration.collapsed(
-                    hintText: 'Type your message...',
+                    hintText: '  Type your message...',
                     hintStyle: TextStyle(color: Colors.blue),
                   ),
                 ),
@@ -167,7 +205,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Widget buildBookChatItem(
-      {required String text, required List<String> bookIdList}) {
+      {required String text, required List<Book> bookList}) {
     return Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
       Container(
         child: Column(
@@ -179,46 +217,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             ),
             SizedBox(
               height: 150,
-              child: BlocBuilder<BookBloc, BookState>(
-                builder: (context, state) {
-                  if (state is BookLoadInProgress) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.red,
-                      ),
-                    );
-                  }
-                  if (state is BookLoadFailure) {
-                    return const Center(child: Text('fail'));
-                  }
-                  if (state is BookLoadSuccess) {
-                    if (state.books != null) {
-                      List<Book> bookList = [];
-                      for (var i = 0; i < state.books!.length; i++) {
-                        bookList.add(state.books![i]);
-                      }
-
-                      bookList.removeWhere((a) => !bookIdList.contains(a.id));
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: bookList.length,
-                        itemBuilder: (context, index) => SquaredBookCard(
-                          book: bookList[index],
-                        ),
-                      );
-                    } else {
-                      //temp screen
-                      return const Center(
-                        child: Text('BOOKS NULL'),
-                      );
-                    }
-                  }
-                  //temp screen
-                  return const Center(
-                    child: Text('BLOC NO STATE'),
-                  );
-                },
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: bookList.length,
+                itemBuilder: (context, index) => SquaredBookCard(
+                  book: bookList[index],
+                ),
               ),
             )
           ],
@@ -233,7 +238,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Widget buildCategoryChatItem(
-      {required String text, required List<String> categoryIdList}) {
+      {required String text, required List<Category> categoryList}) {
     return Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
       Container(
         child: Column(
@@ -245,47 +250,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             ),
             SizedBox(
               height: 150,
-              child: BlocBuilder<CategoryBloc, CategoryState>(
-                builder: (context, state) {
-                  if (state is CategoryLoadInProgress) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.red,
-                      ),
-                    );
-                  }
-                  if (state is CategoryLoadFailure) {
-                    return const Center(child: Text('fail'));
-                  }
-                  if (state is CategoryLoadSuccess) {
-                    if (state.categories != null) {
-                      List<Category> categoryList = [];
-                      for (var i = 0; i < state.categories!.length; i++) {
-                        categoryList.add(state.categories![i]);
-                      }
-
-                      categoryList
-                          .removeWhere((a) => !categoryIdList.contains(a.id));
-
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: categoryList.length,
-                        itemBuilder: (BuildContext context, int index) =>
-                            CategoryCard(category: categoryList[index]),
-                      );
-                    } else {
-                      //temp screen
-                      return const Center(
-                        child: Text('CATEGORIES NULL'),
-                      );
-                    }
-                  }
-                  //temp screen
-                  return const Center(
-                    child: Text('BLOC NO STATE'),
-                  );
-                },
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: categoryList.length,
+                itemBuilder: (BuildContext context, int index) =>
+                    CategoryCard(category: categoryList[index]),
               ),
             )
           ],
@@ -304,6 +274,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       setState(() {
         messageWidgetList.insert(
             0, buildTextChatItem(text: text, yourMsg: true));
+        context.read<ChatbotBloc>().add(ChatbotMessageSent(msg: text));
         _textEditingController.clear();
       });
     } else {
