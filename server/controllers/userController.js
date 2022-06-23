@@ -10,8 +10,6 @@ const {
   ACTIVATE_TOKEN_SECRET,
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
-  GOOGLE_SECRET,
-  FACEBOOK_SECRET,
   SERVER_URL,
 } = process.env;
 
@@ -113,36 +111,36 @@ const userController = {
       return res.status(500).json({ msg: err.message });
     }
   },
-  activateEmail: async (req, res) => {
-    try {
-      const token = req.params;
+  // activateEmail: async (req, res) => {
+  //   try {
+  //     const token = req.params;
 
-      const user = jwt.verify(token, ACTIVATE_TOKEN_SECRET);
+  //     const user = jwt.verify(token, ACTIVATE_TOKEN_SECRET);
 
-      const { email, password, role, userClaim } = user;
+  //     const { email, password, role, userClaim } = user;
 
-      const check = await Users.findOne({ email });
+  //     const check = await Users.findOne({ email });
 
-      if (check) {
-        return res.status(400).json({ msg: "This email already existed" });
-      }
+  //     if (check) {
+  //       return res.status(400).json({ msg: "This email already existed" });
+  //     }
 
-      const passwordHash = await bcrypt.hash(password, 10);
+  //     const passwordHash = await bcrypt.hash(password, 10);
 
-      const newUser = new Users({
-        email,
-        password: passwordHash,
-        role,
-        userClaim,
-      });
+  //     const newUser = new Users({
+  //       email,
+  //       password: passwordHash,
+  //       role,
+  //       userClaim,
+  //     });
 
-      await newUser.save();
+  //     await newUser.save();
 
-      res.json({ msg: "Account has been activated" });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
+  //     res.json({ msg: "Account has been activated" });
+  //   } catch (err) {
+  //     return res.status(500).json({ msg: err.message });
+  //   }
+  // },
   refreshToken: (req, res) => {
     try {
       const { refreshToken } = req.body;
@@ -287,158 +285,158 @@ const userController = {
       return res.status(500).json({ msg: err.message });
     }
   },
-  googleLogin: async (req, res) => {
-    try {
-      const { tokenId } = req.body;
+  // googleLogin: async (req, res) => {
+  //   try {
+  //     const { tokenId } = req.body;
 
-      // get user info payload
-      const { email_verified, email, name, picture } =
-        await mailService.googleLogin(tokenId);
+  //     // get user info payload
+  //     const { email_verified, email, name, picture } =
+  //       await mailService.googleLogin(tokenId);
 
-      // generate password
-      const password = email + GOOGLE_SECRET;
-      const passwordHash = await bcrypt.hash(password, 10);
+  //     // generate password
+  //     const password = email + GOOGLE_SECRET;
+  //     const passwordHash = await bcrypt.hash(password, 10);
 
-      if (!email_verified) {
-        return res.status(400).json({ msg: "Email verification failed" });
-      }
+  //     if (!email_verified) {
+  //       return res.status(400).json({ msg: "Email verification failed" });
+  //     }
 
-      const user = Users.findOne({ email }).select("+password");
+  //     const user = Users.findOne({ email }).select("+password");
 
-      if (user) {
-        // if user has already registered
-        const isMatch = await bcrypt.compare(password, user.password);
+  //     if (user) {
+  //       // if user has already registered
+  //       const isMatch = await bcrypt.compare(password, user.password);
 
-        if (!isMatch) {
-          return res.status(500).json({ msg: "Something went wrong" });
-        }
+  //       if (!isMatch) {
+  //         return res.status(500).json({ msg: "Something went wrong" });
+  //       }
 
-        // create a refresh token contains id and role
-        const refreshToken = createRefreshToken({
-          id: user._id,
-          role: user.role,
-        });
+  //       // create a refresh token contains id and role
+  //       const refreshToken = createRefreshToken({
+  //         id: user._id,
+  //         role: user.role,
+  //       });
 
-        res.status(200).json({
-          msg: "Login successfully",
-          keys: {
-            refreshToken,
-            maxAge: "21 days",
-          },
-        });
-      } else {
-        // if user login first time
-        const userClaim = {
-          displayName: name,
-          avatarUrl: picture,
-          cloudinaryId: "",
-        };
-        const role = 0;
+  //       res.status(200).json({
+  //         msg: "Login successfully",
+  //         keys: {
+  //           refreshToken,
+  //           maxAge: "21 days",
+  //         },
+  //       });
+  //     } else {
+  //       // if user login first time
+  //       const userClaim = {
+  //         displayName: name,
+  //         avatarUrl: picture,
+  //         cloudinaryId: "",
+  //       };
+  //       const role = 0;
 
-        const newUser = new Users({
-          email,
-          role,
-          passwordHash,
-          userClaim,
-        });
+  //       const newUser = new Users({
+  //         email,
+  //         role,
+  //         passwordHash,
+  //         userClaim,
+  //       });
 
-        await newUser.save();
+  //       await newUser.save();
 
-        // create a refresh token contains id and role
-        const refreshToken = createRefreshToken({
-          id: user._id,
-          role: user.role,
-        });
+  //       // create a refresh token contains id and role
+  //       const refreshToken = createRefreshToken({
+  //         id: user._id,
+  //         role: user.role,
+  //       });
 
-        res.status(200).json({
-          msg: "Login successfully",
-          keys: {
-            refreshToken,
-            maxAge: "21 days",
-          },
-        });
-      }
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
-  facebookLogin: async (req, res) => {
-    try {
-      const { accessToken, userId } = req.body;
+  //       res.status(200).json({
+  //         msg: "Login successfully",
+  //         keys: {
+  //           refreshToken,
+  //           maxAge: "21 days",
+  //         },
+  //       });
+  //     }
+  //   } catch (err) {
+  //     return res.status(500).json({ msg: err.message });
+  //   }
+  // },
+  // facebookLogin: async (req, res) => {
+  //   try {
+  //     const { accessToken, userId } = req.body;
 
-      // make Facebook graph URL to get data
-      const graphUrl = `https://graph.facebook.com/v4.0/${userId}/?fields=id,name,email,picture&access_token=${accessToken}`;
+  //     // make Facebook graph URL to get data
+  //     const graphUrl = `https://graph.facebook.com/v4.0/${userId}/?fields=id,name,email,picture&access_token=${accessToken}`;
 
-      // get user's data from graph URL
-      const data = await fetch(graphUrl)
-        .then((res) => res.json())
-        .then((res) => {
-          return res;
-        });
-      const { email, name, picture } = data;
+  //     // get user's data from graph URL
+  //     const data = await fetch(graphUrl)
+  //       .then((res) => res.json())
+  //       .then((res) => {
+  //         return res;
+  //       });
+  //     const { email, name, picture } = data;
 
-      // generate password
-      const password = email + FACEBOOK_SECRET;
-      const passwordHash = await bcrypt.hash(password, 10);
+  //     // generate password
+  //     const password = email + FACEBOOK_SECRET;
+  //     const passwordHash = await bcrypt.hash(password, 10);
 
-      const user = await Users.findOne({ email }).select("+password");
+  //     const user = await Users.findOne({ email }).select("+password");
 
-      if (user) {
-        const isMatch = await bcrypt.compare(password, user.password);
+  //     if (user) {
+  //       const isMatch = await bcrypt.compare(password, user.password);
 
-        if (!isMatch) {
-          return res.status(400).json({ msg: "Something went wrong" });
-        }
+  //       if (!isMatch) {
+  //         return res.status(400).json({ msg: "Something went wrong" });
+  //       }
 
-        // create a refresh token contains id and role
-        const refreshToken = createRefreshToken({
-          id: user._id,
-          role: user.role,
-        });
+  //       // create a refresh token contains id and role
+  //       const refreshToken = createRefreshToken({
+  //         id: user._id,
+  //         role: user.role,
+  //       });
 
-        res.status(200).json({
-          msg: "Login successfully",
-          keys: {
-            refreshToken: refreshToken,
-            maxAge: "21 days",
-          },
-        });
-      } else {
-        // if user login first time
-        const userClaim = {
-          displayName: name,
-          avatarUrl: picture,
-          cloudinaryId: "",
-        };
-        const role = 0;
+  //       res.status(200).json({
+  //         msg: "Login successfully",
+  //         keys: {
+  //           refreshToken: refreshToken,
+  //           maxAge: "21 days",
+  //         },
+  //       });
+  //     } else {
+  //       // if user login first time
+  //       const userClaim = {
+  //         displayName: name,
+  //         avatarUrl: picture,
+  //         cloudinaryId: "",
+  //       };
+  //       const role = 0;
 
-        const newUser = new Users({
-          email,
-          role,
-          passwordHash,
-          userClaim,
-        });
+  //       const newUser = new Users({
+  //         email,
+  //         role,
+  //         passwordHash,
+  //         userClaim,
+  //       });
 
-        await newUser.save();
+  //       await newUser.save();
 
-        // create a refresh token contains id and role
-        const refreshToken = createRefreshToken({
-          id: user._id,
-          role: user.role,
-        });
+  //       // create a refresh token contains id and role
+  //       const refreshToken = createRefreshToken({
+  //         id: user._id,
+  //         role: user.role,
+  //       });
 
-        res.status(200).json({
-          msg: "Login successfully",
-          keys: {
-            refreshToken: refreshToken,
-            maxAge: "21 days",
-          },
-        });
-      }
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
+  //       res.status(200).json({
+  //         msg: "Login successfully",
+  //         keys: {
+  //           refreshToken: refreshToken,
+  //           maxAge: "21 days",
+  //         },
+  //       });
+  //     }
+  //   } catch (err) {
+  //     return res.status(500).json({ msg: err.message });
+  //   }
+  // },
   getUserInfo: async (req, res) => {
     try {
       const user = await Users.findById(req.params.id);
