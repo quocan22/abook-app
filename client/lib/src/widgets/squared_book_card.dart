@@ -28,12 +28,13 @@ class SquaredBookCard extends StatelessWidget {
                 children: [
                   Image.network(
                     book.imageUrl,
-                    width: 200,
+                    width: 150,
                     fit: BoxFit.cover,
                   ),
                   ColoredBox(
                     color: Colors.white.withOpacity(0.9),
                     child: SizedBox(
+                      width: 150,
                       height: 61,
                       child: Padding(
                         padding: const EdgeInsets.all(4.0),

@@ -16,6 +16,7 @@ class Book extends Equatable {
   final DateTime updatedAt;
   final int iV;
   final String author;
+  final int discountRatio;
 
   const Book(
       {required this.id,
@@ -32,7 +33,8 @@ class Book extends Equatable {
       required this.createdAt,
       required this.updatedAt,
       required this.iV,
-      required this.author});
+      required this.author,
+      required this.discountRatio});
 
   Book.fromJson(Map<String, dynamic> json)
       : id = json['_id'],
@@ -49,7 +51,8 @@ class Book extends Equatable {
         createdAt = DateTime.parse(json['createdAt']),
         updatedAt = DateTime.parse(json['updatedAt']),
         iV = json['__v'],
-        author = json['author'];
+        author = json['author'],
+        discountRatio = json['discountRatio'];
 
   Map<String, dynamic> toJson() => {
         'categoryId': categoryId,
@@ -65,7 +68,8 @@ class Book extends Equatable {
         'createdAt': createdAt,
         'updatedAt': updatedAt,
         '__v': iV,
-        'author': author
+        'author': author,
+        'discountRatio': discountRatio
       };
 
   @override

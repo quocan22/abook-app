@@ -36,32 +36,35 @@ class SearchBookCard extends StatelessWidget {
               SizedBox(
                 width: 16.0,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    book.name,
-                    style: Theme.of(context).textTheme.headline4?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                  ),
-                  Text(
-                    book.author,
-                    style: Theme.of(context).textTheme.headline5?.copyWith(
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black,
-                        ),
-                  ),
-                  Spacer(),
-                  Text(
-                    '${book.price} VNĐ',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      book.name,
+                      style: Theme.of(context).textTheme.headline4?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                    ),
+                    Text(
+                      book.author,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.headline5?.copyWith(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                          ),
+                    ),
+                    Spacer(),
+                    Text(
+                      '${book.price} VNĐ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              )
             ],
           )),
     );

@@ -1,7 +1,12 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:client/src/blocs/category/category_bloc.dart';
 import 'package:client/src/blocs/category/category_event.dart';
 import 'package:client/src/blocs/category/category_state.dart';
+import 'package:client/src/models/book.dart';
+import 'package:client/src/screens/chatbot_screen.dart';
+import 'package:client/src/widgets/auto_slide_book_card.dart';
 import 'package:client/src/widgets/category_card.dart';
+import 'package:client/src/widgets/squared_book_card_with_discount.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,10 +15,53 @@ import '../blocs/book/book_event.dart';
 import '../blocs/book/book_state.dart';
 import '../constants/constants.dart';
 import '../widgets/book_search_delegate.dart';
-import '../widgets/squared_book_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  Widget _buildCarouselBookList() {
+    return BlocBuilder<BookBloc, BookState>(
+      builder: (context, state) {
+        if (state is BookLoadInProgress) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.red,
+            ),
+          );
+        }
+        if (state is BookLoadFailure) {
+          return const Center(child: Text('fail'));
+        }
+        if (state is BookLoadSuccess) {
+          if (state.books != null) {
+            //state.books!.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+            return CarouselSlider(
+              options: CarouselOptions(
+                aspectRatio: 2.0,
+                autoPlay: true,
+                enlargeCenterPage: true,
+                viewportFraction: 0.5,
+              ),
+              items: state.books!
+                  .map((i) => AutoSlideBookCard(
+                        book: i,
+                      ))
+                  .toList(),
+            );
+          } else {
+            //temp screen
+            return const Center(
+              child: Text('BOOKS NULL'),
+            );
+          }
+        }
+        //temp screen
+        return const Center(
+          child: Text('BLOC NO STATE'),
+        );
+      },
+    );
+  }
 
   Widget _buildBookList() {
     return BlocBuilder<BookBloc, BookState>(
@@ -30,13 +78,18 @@ class HomeScreen extends StatelessWidget {
         }
         if (state is BookLoadSuccess) {
           if (state.books != null) {
-            //state.books!.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-            return GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, childAspectRatio: 0.8),
-              itemCount: state.books!.length,
-              itemBuilder: (context, index) => SquaredBookCard(
-                book: state.books![index],
+            List<Book> bookList = [];
+            for (var i = 0; i < state.books!.length; i++) {
+              bookList.add(state.books![i]);
+            }
+            bookList.removeWhere((a) => (a.discountRatio == 0));
+            bookList.sort((a, b) => b.discountRatio.compareTo(a.discountRatio));
+            return ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemCount: bookList.length,
+              itemBuilder: (context, index) => SquaredBookCardWithDiscount(
+                book: bookList[index],
               ),
             );
           } else {
@@ -97,6 +150,13 @@ class HomeScreen extends StatelessWidget {
     context.read<CategoryBloc>().add(CategoryRequested());
     return SafeArea(
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => ChatbotScreen()));
+          },
+          child: Icon(Icons.question_answer),
+        ),
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
@@ -135,6 +195,7 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                _buildCarouselBookList(),
                 Text(
                   'Categories',
                   style: Theme.of(context).textTheme.headline4?.copyWith(

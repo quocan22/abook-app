@@ -1,6 +1,8 @@
 import 'package:client/src/blocs/authentication/authentication_bloc.dart';
 import 'package:client/src/blocs/book_by_category/book_by_category_bloc.dart';
+import 'package:client/src/blocs/feedback/feedback_bloc.dart';
 import 'package:client/src/blocs/profile/profile_bloc.dart';
+import 'package:client/src/services/feedback_service/feedback_service_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart' as dio;
@@ -28,6 +30,8 @@ class App extends StatelessWidget {
     CategoryServiceImpl _categoryService =
         CategoryServiceImpl(dioClient: dioClient);
     UserServiceImpl _userService = UserServiceImpl(dioClient: dioClient);
+    FeedbackServiceImpl _feedbackService =
+        FeedbackServiceImpl(dioClient: dioClient);
 
     return MultiBlocProvider(
         providers: [
@@ -55,6 +59,9 @@ class App extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => CategoryBloc(service: _categoryService),
+          ),
+          BlocProvider(
+            create: (context) => FeedbackBloc(service: _feedbackService),
           ),
         ],
         child: MaterialApp(

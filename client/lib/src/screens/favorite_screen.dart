@@ -1,4 +1,5 @@
 import 'package:client/src/blocs/book/book_bloc.dart';
+import 'package:client/src/blocs/book/book_event.dart';
 import 'package:client/src/blocs/book/book_state.dart';
 import 'package:client/src/blocs/user_claim/user_claim_bloc.dart';
 import 'package:client/src/blocs/user_claim/user_claim_event.dart';
@@ -26,6 +27,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     context
         .read<UserClaimBloc>()
         .add(UserClaimRequested(userId: widget.userId));
+    context.read<BookBloc>().add(BookRequested());
 
     return SafeArea(
       child: Scaffold(
@@ -81,7 +83,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2),
-                            itemCount: state.userClaim!.favorite.length,
+                            itemCount: favBook.length,
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -91,7 +93,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (_) => BookDetailScreen(
-                                                book: favBook[index])));
+                                                book:
+                                                    favBook.elementAt(index))));
                                     if (isFavChange != null) {
                                       if (isFavChange == true) {
                                         setState(() {});
@@ -105,7 +108,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                           borderRadius:
                                               BorderRadius.circular(8.0),
                                           child: Image.network(
-                                            favBook[index].imageUrl,
+                                            favBook.elementAt(index).imageUrl,
                                             width: 200,
                                             fit: BoxFit.cover,
                                           ),
