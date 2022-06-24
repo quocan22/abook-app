@@ -36,5 +36,22 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         emit(CartLoadFailure(errorMessage: e.toString()));
       }
     });
+    on<CartBookQuantityChanged>((event, emit) async {
+      emit(CartLoadInProgress());
+      try {
+        String? msg = await service.changeBookQuantity(
+            event.userId, event.bookId, event.newQuantity);
+
+        if (msg == 'Change quantity successfully') {
+          emit(CartLoadSuccess(
+              cartDetailList:
+                  await service.getCartDetailByUserId(event.userId)));
+        } else {
+          emit(CartLoadFailure(errorMessage: 'Add book to cart failed'));
+        }
+      } catch (e) {
+        emit(CartLoadFailure(errorMessage: e.toString()));
+      }
+    });
   }
 }

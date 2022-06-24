@@ -51,18 +51,17 @@ class CartServiceImpl implements CartService {
   @override
   Future<String> changeBookQuantity(
       String userId, String bookId, int newQuantity) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, '/api/carts');
+    final uri = Uri.http(AppConstants.HOST_NAME, '/api/carts/change_quantity');
 
     try {
-      dio.Response response =
-          await dioClient.post(uri.toString(), data: {'userId': userId});
+      dio.Response response = await dioClient.patch(uri.toString(),
+          queryParameters: {'userId': userId},
+          data: {'bookId': bookId, 'newQuantity': newQuantity});
 
       if (response.statusCode == 200) {
-        return response.data;
-        // print(responseMsg);
-        // return responseMsg;
+        return response.data['msg'];
       } else {
-        throw Exception('Error when createCart');
+        throw Exception('Error when add book to cart');
       }
     } catch (e) {
       print(e.toString());

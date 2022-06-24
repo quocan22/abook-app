@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:client/src/blocs/cart/cart_bloc.dart';
-import 'package:client/src/blocs/cart/cart_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../blocs/book/book_bloc.dart';
 import '../blocs/book/book_event.dart';
+import '../blocs/cart/cart_bloc.dart';
+import '../blocs/cart/cart_event.dart';
+import '../blocs/cart/cart_state.dart';
 import '../blocs/user_claim/user_claim_bloc.dart';
 import '../blocs/user_claim/user_claim_event.dart';
 import '../blocs/user_claim/user_claim_state.dart';
@@ -222,21 +223,55 @@ class BookDetailScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10)),
                     ),
                     Spacer(),
-                    MaterialButton(
-                      onPressed: () async {
-                        bool isLoggedIn = await _checkLogin();
-                        if (isLoggedIn == false) {
-                          _showLoginDialog();
-                          return;
+                    BlocBuilder<CartBloc, CartState>(
+                      builder: (context, state) {
+                        if (state is CartLoadSuccess &&
+                            state.cartDetailList!
+                                .map((e) => e['bookId'])
+                                .contains(book.id)) {
+                          return MaterialButton(
+                            onPressed: () async {
+                              bool isLoggedIn = await _checkLogin();
+                              if (isLoggedIn == false) {
+                                _showLoginDialog();
+                                return;
+                              }
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content: Text(
+                                      'This book is already added in your cart')));
+                            },
+                            color: ColorsConstant.primaryColor,
+                            textColor: Colors.white,
+                            child: Text('Buy'),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          );
+                        } else {
+                          return MaterialButton(
+                            onPressed: () async {
+                              bool isLoggedIn = await _checkLogin();
+                              if (isLoggedIn == false) {
+                                _showLoginDialog();
+                                return;
+                              }
+                              context.read<CartBloc>().add(CartBookAdded(
+                                  userId: userId!,
+                                  bookId: book.id,
+                                  quantity: 1));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text('Added book to your cart')));
+                              Navigator.of(context).maybePop();
+                            },
+                            color: ColorsConstant.primaryColor,
+                            textColor: Colors.white,
+                            child: Text('Buy'),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          );
                         }
-                        context.read<CartBloc>().add(CartBookAdded(
-                            userId: userId!, bookId: book.id, quantity: 1));
                       },
-                      color: ColorsConstant.primaryColor,
-                      textColor: Colors.white,
-                      child: Text('Buy'),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
                     ),
                     SizedBox(
                       width: 5,

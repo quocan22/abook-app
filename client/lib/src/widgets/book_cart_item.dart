@@ -1,15 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:client/src/models/book.dart';
+import 'package:client/src/blocs/cart/cart_bloc.dart';
+import 'package:client/src/blocs/cart/cart_event.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/src/provider.dart';
+
+import '../models/book.dart';
 
 class BookCartItem extends StatefulWidget {
   final Book book;
   final int quantity;
+  final String userId;
 
   const BookCartItem({
     Key? key,
     required this.book,
     required this.quantity,
+    required this.userId,
   }) : super(key: key);
 
   @override
@@ -68,10 +74,19 @@ class _BookCartItemState extends State<BookCartItem> {
                         Row(
                           children: [
                             InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                if (widget.quantity == 1) return;
+                                context.read<CartBloc>().add(
+                                    CartBookQuantityChanged(
+                                        userId: widget.userId,
+                                        bookId: widget.book.id,
+                                        newQuantity: widget.quantity - 1));
+                              },
                               child: Icon(
                                 Icons.remove_circle_outline,
-                                color: Colors.grey,
+                                color: widget.quantity == 1
+                                    ? Colors.black12
+                                    : Colors.black54,
                                 size: 20,
                               ),
                             ),
@@ -83,10 +98,16 @@ class _BookCartItemState extends State<BookCartItem> {
                             ),
                             SizedBox(width: 10),
                             InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                context.read<CartBloc>().add(
+                                    CartBookQuantityChanged(
+                                        userId: widget.userId,
+                                        bookId: widget.book.id,
+                                        newQuantity: widget.quantity + 1));
+                              },
                               child: Icon(
                                 Icons.add_circle_outline,
-                                color: Colors.grey,
+                                color: Colors.black54,
                                 size: 20,
                               ),
                             )

@@ -1,6 +1,11 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../blocs/cart/cart_bloc.dart';
+import '../blocs/cart/cart_event.dart';
+import '../blocs/cart/cart_state.dart';
 import '../config/app_constants.dart';
 import '../constants/constants.dart';
 import '../screens/cart_screen.dart';
@@ -119,10 +124,36 @@ class _BottomNavigator extends State<BottomNavigator> {
                       : ColorsConstant.inactiveTabButton),
               label: ''),
           BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart,
-                  color: _selectedIndex == 2
-                      ? ColorsConstant.activeTabButton
-                      : ColorsConstant.inactiveTabButton),
+              icon: BlocBuilder<CartBloc, CartState>(
+                builder: (context, state) {
+                  if (state is CartLoadSuccess) {
+                    if (state.cartDetailList!.isNotEmpty) {
+                      return Badge(
+                        animationType: BadgeAnimationType.scale,
+                        badgeContent: Text(
+                          state.cartDetailList!.length.toString(),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        badgeColor: Colors.redAccent,
+                        child: Icon(Icons.shopping_cart,
+                            color: _selectedIndex == 2
+                                ? ColorsConstant.activeTabButton
+                                : ColorsConstant.inactiveTabButton),
+                      );
+                    } else {
+                      return Icon(Icons.shopping_cart,
+                          color: _selectedIndex == 2
+                              ? ColorsConstant.activeTabButton
+                              : ColorsConstant.inactiveTabButton);
+                    }
+                  } else {
+                    return Icon(Icons.shopping_cart,
+                        color: _selectedIndex == 2
+                            ? ColorsConstant.activeTabButton
+                            : ColorsConstant.inactiveTabButton);
+                  }
+                },
+              ),
               label: ''),
           BottomNavigationBarItem(
               icon: Icon(Icons.person,
