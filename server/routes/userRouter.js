@@ -5,7 +5,7 @@ const authenticationAdmin = require("../middlewares/authenticationEmployee");
 
 const userController = require("../controllers/userController");
 
-router.get("/activate/:token", userController.activateEmail);
+// router.get("/activate/:token", userController.activateEmail);
 
 router.get("/address_book", authentication, userController.getAddressBooks);
 
