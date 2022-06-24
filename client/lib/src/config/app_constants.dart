@@ -11,7 +11,7 @@ class RouteNames {
 
 class AppConstants {
   static const String HOST_NAME = '10.0.2.2:5000';
-  // 'http://abook-app-backend.herokuapp.com';
+  // 'abook-app-backend.herokuapp.com';
   static const String BOOKS = '/api/books';
   static const String CATEGORIES = '/api/categories';
   static const String BOOKSBYCATE = '/api/books/cate';

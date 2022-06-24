@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:client/src/services/feedback_service/feedback_service.dart';
+
+import '../../services/feedback_service/feedback_service.dart';
 import './feedback_event.dart';
 import './feedback_state.dart';
 

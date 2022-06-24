@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:bloc/bloc.dart';
-import 'package:client/src/models/book.dart';
-import 'package:client/src/models/category.dart';
-import 'package:client/src/services/chatbot_service/chatbot_service.dart';
+
+import '../../models/book.dart';
+import '../../models/category.dart';
+import '../../services/chatbot_service/chatbot_service.dart';
 import './chatbot_event.dart';
 import './chatbot_state.dart';
 

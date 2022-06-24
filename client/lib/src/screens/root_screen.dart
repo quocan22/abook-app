@@ -1,10 +1,10 @@
-import 'package:client/src/blocs/authentication/authentication_bloc.dart';
-import 'package:client/src/blocs/authentication/authentication_event.dart';
-import 'package:client/src/blocs/authentication/authentication_state.dart';
-import 'package:client/src/config/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/authentication/authentication_bloc.dart';
+import '../blocs/authentication/authentication_event.dart';
+import '../blocs/authentication/authentication_state.dart';
+import '../config/app_constants.dart';
 import '../constants/constants.dart' as constants;
 
 class RootScreen extends StatefulWidget {

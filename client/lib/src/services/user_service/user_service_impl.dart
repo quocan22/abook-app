@@ -1,7 +1,7 @@
-import 'package:client/src/config/app_constants.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../config/app_constants.dart';
 import '../../models/user.dart';
 import './user_service.dart';
 

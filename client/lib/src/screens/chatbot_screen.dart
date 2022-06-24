@@ -1,21 +1,20 @@
-import 'package:client/src/blocs/book/book_bloc.dart';
-import 'package:client/src/blocs/book/book_event.dart';
-import 'package:client/src/blocs/book/book_state.dart';
-import 'package:client/src/blocs/category/category_bloc.dart';
-import 'package:client/src/blocs/category/category_event.dart';
-import 'package:client/src/blocs/category/category_state.dart';
-import 'package:client/src/blocs/chatbot/chatbot_bloc.dart';
-import 'package:client/src/blocs/chatbot/chatbot_state.dart';
-import 'package:client/src/blocs/chatbot/chatbot_event.dart';
-import 'package:client/src/constants/constants.dart';
-import 'package:client/src/models/book.dart';
-import 'package:client/src/models/category.dart';
-import 'package:client/src/screens/feedback_screen.dart';
-import 'package:client/src/widgets/category_card.dart';
-import 'package:client/src/widgets/squared_book_card.dart';
-import 'package:client/src/widgets/squared_book_card_with_discount.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../blocs/book/book_bloc.dart';
+import '../blocs/book/book_event.dart';
+import '../blocs/category/category_bloc.dart';
+import '../blocs/category/category_event.dart';
+import '../blocs/chatbot/chatbot_bloc.dart';
+import '../blocs/chatbot/chatbot_event.dart';
+import '../blocs/chatbot/chatbot_state.dart';
+import '../constants/constants.dart';
+import '../models/book.dart';
+import '../models/category.dart';
+import '../widgets/category_card.dart';
+import '../widgets/squared_book_card.dart';
+import '../widgets/squared_book_card_with_discount.dart';
+import './feedback_screen.dart';
 
 class ChatbotScreen extends StatefulWidget {
   const ChatbotScreen({Key? key}) : super(key: key);

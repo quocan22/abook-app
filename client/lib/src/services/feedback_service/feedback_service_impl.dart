@@ -1,6 +1,6 @@
-import 'package:client/src/config/app_constants.dart';
 import 'package:dio/dio.dart' as dio;
 
+import '../../config/app_constants.dart';
 import './feedback_service.dart';
 
 class FeedbackServiceImpl implements FeedbackService {

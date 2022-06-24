@@ -1,20 +1,20 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:client/src/blocs/category/category_bloc.dart';
-import 'package:client/src/blocs/category/category_event.dart';
-import 'package:client/src/blocs/category/category_state.dart';
-import 'package:client/src/models/book.dart';
-import 'package:client/src/screens/chatbot_screen.dart';
-import 'package:client/src/widgets/auto_slide_book_card.dart';
-import 'package:client/src/widgets/category_card.dart';
-import 'package:client/src/widgets/squared_book_card_with_discount.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/book/book_bloc.dart';
 import '../blocs/book/book_event.dart';
 import '../blocs/book/book_state.dart';
+import '../blocs/category/category_bloc.dart';
+import '../blocs/category/category_event.dart';
+import '../blocs/category/category_state.dart';
 import '../constants/constants.dart';
+import '../models/book.dart';
+import '../widgets/auto_slide_book_card.dart';
 import '../widgets/book_search_delegate.dart';
+import '../widgets/category_card.dart';
+import '../widgets/squared_book_card_with_discount.dart';
+import './chatbot_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -208,7 +208,7 @@ class HomeScreen extends StatelessWidget {
                   height: 150,
                 ),
                 Text(
-                  'Recommended',
+                  'On Sale',
                   style: Theme.of(context).textTheme.headline4?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.black,

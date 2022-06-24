@@ -1,7 +1,7 @@
-import 'package:client/src/config/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../config/app_constants.dart';
 import '../constants/constants.dart';
 import '../screens/cart_screen.dart';
 import '../screens/favorite_screen.dart';

@@ -1,6 +1,7 @@
-import 'package:client/src/models/book.dart';
-import 'package:client/src/models/category.dart';
 import 'package:equatable/equatable.dart';
+
+import '../../models/book.dart';
+import '../../models/category.dart';
 
 abstract class ChatbotState extends Equatable {
   const ChatbotState();

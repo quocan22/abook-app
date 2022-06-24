@@ -1,7 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:client/src/config/app_constants.dart';
-import 'package:client/src/models/category.dart';
 import 'package:flutter/material.dart';
+
+import '../config/app_constants.dart';
+import '../models/category.dart';
 
 class CategoryCard extends StatelessWidget {
   final Category category;

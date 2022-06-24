@@ -1,26 +1,26 @@
-import 'package:client/src/blocs/authentication/authentication_bloc.dart';
-import 'package:client/src/blocs/book_by_category/book_by_category_bloc.dart';
-import 'package:client/src/blocs/chatbot/chatbot_bloc.dart';
-import 'package:client/src/blocs/feedback/feedback_bloc.dart';
-import 'package:client/src/blocs/profile/profile_bloc.dart';
-import 'package:client/src/services/chatbot_service/chatbot_service_impl.dart';
-import 'package:client/src/services/feedback_service/feedback_service_impl.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dio/dio.dart' as dio;
 
+import './blocs/authentication/authentication_bloc.dart';
+import './blocs/book/book_bloc.dart';
+import './blocs/book_by_category/book_by_category_bloc.dart';
+import './blocs/category/category_bloc.dart';
+import './blocs/chatbot/chatbot_bloc.dart';
+import './blocs/feedback/feedback_bloc.dart';
+import './blocs/forgotpassword/forgotpassword_bloc.dart';
+import './blocs/login/login_bloc.dart';
+import './blocs/profile/profile_bloc.dart';
+import './blocs/signup/signup_bloc.dart';
+import './blocs/user_claim/user_claim_bloc.dart';
 import './config/app_constants.dart' as route_names;
 import './config/routes.dart';
 import './constants/app_theme.dart';
-import 'blocs/book/book_bloc.dart';
-import 'blocs/category/category_bloc.dart';
-import 'blocs/forgotpassword/forgotpassword_bloc.dart';
-import 'blocs/login/login_bloc.dart';
-import 'blocs/signup/signup_bloc.dart';
-import 'blocs/user_claim/user_claim_bloc.dart';
-import 'services/category_service/category_service_impl.dart';
-import 'services/book_service/book_service_impl.dart';
-import 'services/user_service/user_service_impl.dart';
+import './services/book_service/book_service_impl.dart';
+import './services/category_service/category_service_impl.dart';
+import './services/chatbot_service/chatbot_service_impl.dart';
+import './services/feedback_service/feedback_service_impl.dart';
+import './services/user_service/user_service_impl.dart';
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);

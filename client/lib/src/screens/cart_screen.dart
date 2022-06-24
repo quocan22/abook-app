@@ -1,7 +1,7 @@
-import 'package:client/src/widgets/book_search_delegate.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
+import '../widgets/book_search_delegate.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);

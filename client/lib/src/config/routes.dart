@@ -1,10 +1,10 @@
-import 'package:client/src/models/book.dart';
-import 'package:client/src/models/category.dart';
-import 'package:client/src/screens/book_detail_screen.dart';
-import 'package:client/src/screens/book_list_by_category_screen.dart';
-import 'package:client/src/widgets/bottom_navigator.dart';
 import 'package:flutter/material.dart';
 
+import '../models/book.dart';
+import '../models/category.dart';
+import '../screens/book_detail_screen.dart';
+import '../screens/book_list_by_category_screen.dart';
+import '../widgets/bottom_navigator.dart';
 import '../screens/forgot_password_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';

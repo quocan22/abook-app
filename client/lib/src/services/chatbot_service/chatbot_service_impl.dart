@@ -1,6 +1,6 @@
-import 'package:client/src/config/app_constants.dart';
 import 'package:dio/dio.dart' as dio;
 
+import '../../config/app_constants.dart';
 import './chatbot_service.dart';
 
 class ChatbotServiceImpl implements ChatbotService {

@@ -1,11 +1,12 @@
-import 'package:client/src/blocs/feedback/feedback_bloc.dart';
-import 'package:client/src/blocs/feedback/feedback_state.dart';
-import 'package:client/src/blocs/feedback/feedback_event.dart';
-import 'package:client/src/constants/constants.dart';
-import 'package:client/src/utils/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../blocs/feedback/feedback_bloc.dart';
+import '../blocs/feedback/feedback_event.dart';
+import '../blocs/feedback/feedback_state.dart';
+import '../constants/constants.dart';
 import '../constants/constants.dart' as constants;
+import '../utils/validators.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({Key? key}) : super(key: key);

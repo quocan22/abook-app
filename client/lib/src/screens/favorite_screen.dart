@@ -1,17 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:client/src/blocs/book/book_bloc.dart';
-import 'package:client/src/blocs/book/book_event.dart';
-import 'package:client/src/blocs/book/book_state.dart';
-import 'package:client/src/blocs/user_claim/user_claim_bloc.dart';
-import 'package:client/src/blocs/user_claim/user_claim_event.dart';
-import 'package:client/src/blocs/user_claim/user_claim_state.dart';
-import 'package:client/src/models/book.dart';
-import 'package:client/src/screens/book_detail_screen.dart';
-import 'package:client/src/widgets/book_search_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/book/book_bloc.dart';
+import '../blocs/book/book_event.dart';
+import '../blocs/book/book_state.dart';
+import '../blocs/user_claim/user_claim_bloc.dart';
+import '../blocs/user_claim/user_claim_event.dart';
+import '../blocs/user_claim/user_claim_state.dart';
 import '../constants/constants.dart';
+import '../models/book.dart';
+import '../widgets/book_search_delegate.dart';
+import './book_detail_screen.dart';
 
 class FavoriteScreen extends StatefulWidget {
   final String userId;
