@@ -13,6 +13,7 @@ import 'package:client/src/models/category.dart';
 import 'package:client/src/screens/feedback_screen.dart';
 import 'package:client/src/widgets/category_card.dart';
 import 'package:client/src/widgets/squared_book_card.dart';
+import 'package:client/src/widgets/squared_book_card_with_discount.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -221,9 +222,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 itemCount: bookList.length,
-                itemBuilder: (context, index) => SquaredBookCard(
-                  book: bookList[index],
-                ),
+                itemBuilder: (context, index) =>
+                    (bookList[index].discountRatio != 0)
+                        ? SquaredBookCardWithDiscount(
+                            book: bookList[index],
+                          )
+                        : SquaredBookCard(
+                            book: bookList[index],
+                          ),
               ),
             )
           ],
