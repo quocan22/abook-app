@@ -5,5 +5,8 @@ abstract class CartService {
 
   CartService({required this.dioClient});
 
-  Future<String> createCart(String userId);
+  Future<dynamic> getCartDetailByUserId(String userId);
+  Future<String> addBookToCart(String userId, String bookId, int quantity);
+  Future<String> changeBookQuantity(
+      String userId, String bookId, int newQuantity);
 }

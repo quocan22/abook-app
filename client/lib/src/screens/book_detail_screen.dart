@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:client/src/blocs/cart/cart_bloc.dart';
+import 'package:client/src/blocs/cart/cart_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -221,7 +223,15 @@ class BookDetailScreen extends StatelessWidget {
                     ),
                     Spacer(),
                     MaterialButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        bool isLoggedIn = await _checkLogin();
+                        if (isLoggedIn == false) {
+                          _showLoginDialog();
+                          return;
+                        }
+                        context.read<CartBloc>().add(CartBookAdded(
+                            userId: userId!, bookId: book.id, quantity: 1));
+                      },
                       color: ColorsConstant.primaryColor,
                       textColor: Colors.white,
                       child: Text('Buy'),

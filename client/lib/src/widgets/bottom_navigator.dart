@@ -88,7 +88,11 @@ class _BottomNavigator extends State<BottomNavigator> {
           width: double.infinity,
           child: (_selectedIndex != 3)
               ? ((_selectedIndex != 1)
-                  ? ((_selectedIndex != 2) ? HomeScreen() : CartScreen())
+                  ? ((_selectedIndex != 2)
+                      ? HomeScreen()
+                      : CartScreen(
+                          userId: userId.toString(),
+                        ))
                   : FavoriteScreen(
                       userId: userId.toString(),
                     ))
