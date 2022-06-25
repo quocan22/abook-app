@@ -1,11 +1,12 @@
-import 'package:client/src/blocs/book_by_category/book_by_category_bloc.dart';
-import 'package:client/src/blocs/book_by_category/book_by_category_event.dart';
-import 'package:client/src/blocs/book_by_category/book_by_category_state.dart';
-import 'package:client/src/constants/constants.dart';
-import 'package:client/src/models/category.dart';
-import 'package:client/src/widgets/search_book_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../blocs/book_by_category/book_by_category_bloc.dart';
+import '../blocs/book_by_category/book_by_category_event.dart';
+import '../blocs/book_by_category/book_by_category_state.dart';
+import '../constants/constants.dart';
+import '../models/category.dart';
+import '../widgets/search_book_card.dart';
 
 class BookListByCategoryScreen extends StatelessWidget {
   final Category category;

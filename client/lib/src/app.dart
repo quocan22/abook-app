@@ -1,22 +1,29 @@
-import 'package:client/src/blocs/authentication/authentication_bloc.dart';
-import 'package:client/src/blocs/book_by_category/book_by_category_bloc.dart';
-import 'package:client/src/blocs/profile/profile_bloc.dart';
+import 'package:client/src/services/cart_service/cart_service.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dio/dio.dart' as dio;
 
+import './blocs/authentication/authentication_bloc.dart';
+import './blocs/book/book_bloc.dart';
+import './blocs/book_by_category/book_by_category_bloc.dart';
+import './blocs/cart/cart_bloc.dart';
+import './blocs/category/category_bloc.dart';
+import './blocs/chatbot/chatbot_bloc.dart';
+import './blocs/feedback/feedback_bloc.dart';
+import './blocs/forgotpassword/forgotpassword_bloc.dart';
+import './blocs/login/login_bloc.dart';
+import './blocs/profile/profile_bloc.dart';
+import './blocs/signup/signup_bloc.dart';
+import './blocs/user_claim/user_claim_bloc.dart';
 import './config/app_constants.dart' as route_names;
 import './config/routes.dart';
 import './constants/app_theme.dart';
-import 'blocs/book/book_bloc.dart';
-import 'blocs/category/category_bloc.dart';
-import 'blocs/forgotpassword/forgotpassword_bloc.dart';
-import 'blocs/login/login_bloc.dart';
-import 'blocs/signup/signup_bloc.dart';
-import 'blocs/user_claim/user_claim_bloc.dart';
-import 'services/category_service/category_service_impl.dart';
-import 'services/book_service/book_service_impl.dart';
-import 'services/user_service/user_service_impl.dart';
+import './services/book_service/book_service_impl.dart';
+import './services/cart_service/cart_service_impl.dart';
+import './services/category_service/category_service_impl.dart';
+import './services/chatbot_service/chatbot_service_impl.dart';
+import './services/feedback_service/feedback_service_impl.dart';
+import './services/user_service/user_service_impl.dart';
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
@@ -28,6 +35,11 @@ class App extends StatelessWidget {
     CategoryServiceImpl _categoryService =
         CategoryServiceImpl(dioClient: dioClient);
     UserServiceImpl _userService = UserServiceImpl(dioClient: dioClient);
+    FeedbackServiceImpl _feedbackService =
+        FeedbackServiceImpl(dioClient: dioClient);
+    ChatbotServiceImpl _chatbotService =
+        ChatbotServiceImpl(dioClient: dioClient);
+    CartServiceImpl _cartService = CartServiceImpl(dioClient: dioClient);
 
     return MultiBlocProvider(
         providers: [
@@ -56,6 +68,15 @@ class App extends StatelessWidget {
           BlocProvider(
             create: (context) => CategoryBloc(service: _categoryService),
           ),
+          BlocProvider(
+            create: (context) => FeedbackBloc(service: _feedbackService),
+          ),
+          BlocProvider(
+            create: (context) => ChatbotBloc(service: _chatbotService),
+          ),
+          BlocProvider(
+            create: (context) => CartBloc(service: _cartService),
+          )
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

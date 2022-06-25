@@ -9,6 +9,8 @@ import '../models/book.dart';
 import './search_book_card.dart';
 
 class BookSearchDelegate extends SearchDelegate {
+  List<bool> filters = [true, false, false];
+
   @override
   ThemeData appBarTheme(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -66,22 +68,91 @@ class BookSearchDelegate extends SearchDelegate {
         if (state is BookLoadSuccess) {
           if (state.books != null) {
             final String lowerQuery = TiengViet.parse(query.toLowerCase());
-            Iterable<Book> filterList = state.books!.where(
-                (shortenedCategory) =>
-                    TiengViet.parse(shortenedCategory.name.toLowerCase())
-                        .contains(lowerQuery));
+            Iterable<Book> filterList = [];
 
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ListView.separated(
-                  itemBuilder: (context, index) => SearchBookCard(
-                        book: filterList.elementAt(index),
-                      ),
-                  separatorBuilder: (context, index) {
-                    return Divider();
-                  },
-                  shrinkWrap: true,
-                  itemCount: filterList.length),
+            for (var i = 0; i < 3; i++) {
+              if (filters[i] == true) {
+                if (i == 0) {
+                  filterList = filterList = state.books!.where(
+                      (shortenedCategory) =>
+                          TiengViet.parse(shortenedCategory.name.toLowerCase())
+                              .contains(lowerQuery));
+                } else if (i == 1) {
+                  filterList = filterList = state.books!.where(
+                      (shortenedCategory) => TiengViet.parse(
+                              shortenedCategory.author.toLowerCase())
+                          .contains(lowerQuery));
+                } else {
+                  filterList = filterList = state.books!.where(
+                      (shortenedCategory) => TiengViet.parse(
+                              shortenedCategory.price.toString().toLowerCase())
+                          .contains(lowerQuery));
+                }
+              }
+            }
+
+            return Column(
+              children: [
+                SizedBox(
+                  height: 50,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 8.0,
+                    ),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                          child: FilterChip(
+                              selectedColor: Colors.blue,
+                              selected: filters[0],
+                              label: Text('Name'),
+                              onSelected: (_) {
+                                filters = [true, false, false];
+                                context.read<BookBloc>().add(BookRequested());
+                              }),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                          child: FilterChip(
+                              label: Text('Author'),
+                              selectedColor: Colors.blue,
+                              selected: filters[1],
+                              onSelected: (_) {
+                                filters = [false, true, false];
+                                context.read<BookBloc>().add(BookRequested());
+                              }),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                          child: FilterChip(
+                              selectedColor: Colors.blue,
+                              selected: filters[2],
+                              label: Text('Price'),
+                              onSelected: (_) {
+                                filters = [false, false, true];
+                                context.read<BookBloc>().add(BookRequested());
+                              }),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ListView.separated(
+                        itemBuilder: (context, index) => SearchBookCard(
+                              book: filterList.elementAt(index),
+                            ),
+                        separatorBuilder: (context, index) {
+                          return Divider();
+                        },
+                        shrinkWrap: true,
+                        itemCount: filterList.length),
+                  ),
+                )
+              ],
             );
           } else {
             //temp screen

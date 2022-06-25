@@ -1,13 +1,17 @@
-import 'package:client/src/blocs/book/book_bloc.dart';
-import 'package:client/src/blocs/book/book_event.dart';
-import 'package:client/src/blocs/user_claim/user_claim_bloc.dart';
-import 'package:client/src/blocs/user_claim/user_claim_event.dart';
-import 'package:client/src/blocs/user_claim/user_claim_state.dart';
-import 'package:client/src/config/app_constants.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../blocs/book/book_bloc.dart';
+import '../blocs/book/book_event.dart';
+import '../blocs/cart/cart_bloc.dart';
+import '../blocs/cart/cart_event.dart';
+import '../blocs/cart/cart_state.dart';
+import '../blocs/user_claim/user_claim_bloc.dart';
+import '../blocs/user_claim/user_claim_event.dart';
+import '../blocs/user_claim/user_claim_state.dart';
+import '../config/app_constants.dart';
 import '../constants/constants.dart';
 import '../models/book.dart';
 
@@ -109,11 +113,20 @@ class BookDetailScreen extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network(
-                          book.imageUrl,
+                        child: CachedNetworkImage(
+                          imageUrl: book.imageUrl,
                           width: 150,
                           fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                         ),
+                        // Image.network(
+                        //   book.imageUrl,
+                        //   width: 150,
+                        //   fit: BoxFit.cover,
+                        // ),
                       ),
                       SizedBox(
                         width: 16.0,
@@ -210,13 +223,55 @@ class BookDetailScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10)),
                     ),
                     Spacer(),
-                    MaterialButton(
-                      onPressed: () {},
-                      color: ColorsConstant.primaryColor,
-                      textColor: Colors.white,
-                      child: Text('Buy'),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                    BlocBuilder<CartBloc, CartState>(
+                      builder: (context, state) {
+                        if (state is CartLoadSuccess &&
+                            state.cartDetailList!
+                                .map((e) => e['bookId'])
+                                .contains(book.id)) {
+                          return MaterialButton(
+                            onPressed: () async {
+                              bool isLoggedIn = await _checkLogin();
+                              if (isLoggedIn == false) {
+                                _showLoginDialog();
+                                return;
+                              }
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content: Text(
+                                      'This book is already added in your cart')));
+                            },
+                            color: ColorsConstant.primaryColor,
+                            textColor: Colors.white,
+                            child: Text('Buy'),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          );
+                        } else {
+                          return MaterialButton(
+                            onPressed: () async {
+                              bool isLoggedIn = await _checkLogin();
+                              if (isLoggedIn == false) {
+                                _showLoginDialog();
+                                return;
+                              }
+                              context.read<CartBloc>().add(CartBookAdded(
+                                  userId: userId!,
+                                  bookId: book.id,
+                                  quantity: 1));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text('Added book to your cart')));
+                              Navigator.of(context).maybePop();
+                            },
+                            color: ColorsConstant.primaryColor,
+                            textColor: Colors.white,
+                            child: Text('Buy'),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          );
+                        }
+                      },
                     ),
                     SizedBox(
                       width: 5,
@@ -236,11 +291,26 @@ class BookDetailScreen extends StatelessWidget {
                                 context
                                     .read<BookBloc>()
                                     .add(BookRemovedFav(bookId: book.id));
+                                context
+                                    .read<UserClaimBloc>()
+                                    .add(UserClaimRequested(userId: userId!));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Removed from your favorite books')));
                               } else {
                                 context
                                     .read<BookBloc>()
                                     .add(BookAddedFav(bookId: book.id));
+                                context
+                                    .read<UserClaimBloc>()
+                                    .add(UserClaimRequested(userId: userId!));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Added to your favorite books')));
                               }
+
                               Navigator.maybePop(context, true);
                             }
                           },

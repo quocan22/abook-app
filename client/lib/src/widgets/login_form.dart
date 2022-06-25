@@ -1,9 +1,10 @@
-import 'package:client/src/blocs/login/login_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 //import 'package:google_sign_in/google_sign_in.dart';
 
 import '../blocs/login/login_bloc.dart';
+import '../blocs/login/login_event.dart';
 import '../blocs/login/login_state.dart';
 import '../config/app_constants.dart' as app_constants;
 import '../constants/constants.dart' as constants;

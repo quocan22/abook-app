@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:client/src/services/user_service/user_service.dart';
 
+import '../../services/user_service/user_service.dart';
 import './signup_event.dart';
 import './signup_state.dart';
 

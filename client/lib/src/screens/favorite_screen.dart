@@ -1,15 +1,17 @@
-import 'package:client/src/blocs/book/book_bloc.dart';
-import 'package:client/src/blocs/book/book_state.dart';
-import 'package:client/src/blocs/user_claim/user_claim_bloc.dart';
-import 'package:client/src/blocs/user_claim/user_claim_event.dart';
-import 'package:client/src/blocs/user_claim/user_claim_state.dart';
-import 'package:client/src/models/book.dart';
-import 'package:client/src/screens/book_detail_screen.dart';
-import 'package:client/src/widgets/book_search_delegate.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/book/book_bloc.dart';
+import '../blocs/book/book_event.dart';
+import '../blocs/book/book_state.dart';
+import '../blocs/user_claim/user_claim_bloc.dart';
+import '../blocs/user_claim/user_claim_event.dart';
+import '../blocs/user_claim/user_claim_state.dart';
 import '../constants/constants.dart';
+import '../models/book.dart';
+import '../widgets/book_search_delegate.dart';
+import './book_detail_screen.dart';
 
 class FavoriteScreen extends StatefulWidget {
   final String userId;
@@ -26,6 +28,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     context
         .read<UserClaimBloc>()
         .add(UserClaimRequested(userId: widget.userId));
+    context.read<BookBloc>().add(BookRequested());
 
     return SafeArea(
       child: Scaffold(
@@ -60,7 +63,13 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         ),
         body: BlocBuilder<UserClaimBloc, UserClaimState>(
           builder: (context, state) {
-            if (state is UserClaimLoadSuccess) {
+            if (state is UserClaimLoadInProgress) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.red,
+                ),
+              );
+            } else if (state is UserClaimLoadSuccess) {
               if (state.userClaim!.favorite.isEmpty) {
                 return Center(
                   child: Text('You don\'t have any book in your favorite'),
@@ -81,7 +90,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2),
-                            itemCount: state.userClaim!.favorite.length,
+                            itemCount: favBook.length,
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -91,7 +100,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (_) => BookDetailScreen(
-                                                book: favBook[index])));
+                                                book:
+                                                    favBook.elementAt(index))));
                                     if (isFavChange != null) {
                                       if (isFavChange == true) {
                                         setState(() {});
@@ -104,11 +114,24 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(8.0),
-                                          child: Image.network(
-                                            favBook[index].imageUrl,
+                                          child: CachedNetworkImage(
+                                            imageUrl: favBook
+                                                .elementAt(index)
+                                                .imageUrl,
                                             width: 200,
                                             fit: BoxFit.cover,
+                                            placeholder: (context, url) => Center(
+                                                child:
+                                                    CircularProgressIndicator()),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Icon(Icons.error),
                                           ),
+                                          // Image.network(
+                                          //   favBook.elementAt(index).imageUrl,
+                                          //   width: 200,
+                                          //   fit: BoxFit.cover,
+                                          // ),
                                         ),
                                       ),
                                       Row(

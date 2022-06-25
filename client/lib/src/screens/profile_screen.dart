@@ -1,11 +1,11 @@
-import 'package:client/src/blocs/authentication/authentication_bloc.dart';
-import 'package:client/src/blocs/authentication/authentication_event.dart';
-import 'package:client/src/blocs/user_claim/user_claim_bloc.dart';
-import 'package:client/src/blocs/user_claim/user_claim_event.dart';
-import 'package:client/src/blocs/user_claim/user_claim_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/authentication/authentication_bloc.dart';
+import '../blocs/authentication/authentication_event.dart';
+import '../blocs/user_claim/user_claim_bloc.dart';
+import '../blocs/user_claim/user_claim_event.dart';
+import '../blocs/user_claim/user_claim_state.dart';
 import '../config/app_constants.dart';
 import '../constants/constants.dart';
 import './edit_profile_screen.dart';

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../config/app_constants.dart' as app_constants;
@@ -28,40 +29,49 @@ class SearchBookCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                  book.imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: book.imageUrl,
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                   fit: BoxFit.cover,
                 ),
+                // Image.network(
+                //   book.imageUrl,
+                //   fit: BoxFit.cover,
+                // ),
               ),
               SizedBox(
                 width: 16.0,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    book.name,
-                    style: Theme.of(context).textTheme.headline4?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                  ),
-                  Text(
-                    book.author,
-                    style: Theme.of(context).textTheme.headline5?.copyWith(
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black,
-                        ),
-                  ),
-                  Spacer(),
-                  Text(
-                    '${book.price} VNĐ',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      book.name,
+                      style: Theme.of(context).textTheme.headline4?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                    ),
+                    Text(
+                      book.author,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.headline5?.copyWith(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                          ),
+                    ),
+                    Spacer(),
+                    Text(
+                      '${book.price} VNĐ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              )
             ],
           )),
     );
