@@ -196,15 +196,21 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
                 <Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Name:</Typography>
-                    <Typography align="right">{order.customerName}</Typography>
+                    <Typography sx={{ ml: 4 }} align="right">
+                      {order.customerName}
+                    </Typography>
                   </Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Phone number:</Typography>
-                    <Typography align="right">{order.customerPhone}</Typography>
+                    <Typography sx={{ ml: 4 }} align="right">
+                      {order.customerPhone}
+                    </Typography>
                   </Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Address:</Typography>
-                    <Typography align="right">{order.customerAddress}</Typography>
+                    <Typography sx={{ ml: 4 }} align="right">
+                      {order.customerAddress}
+                    </Typography>
                   </Stack>
                 </Stack>
               )}
@@ -223,17 +229,21 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
                 <Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Order date:</Typography>
-                    <Typography align="right">
+                    <Typography sx={{ ml: 4 }} align="right">
                       {dateFormat(order.createdAt, 'dd/mm/yyyy')}
                     </Typography>
                   </Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Discount:</Typography>
-                    <Typography align="right">{fCurrency(order.discountPrice)}&nbsp;VNĐ</Typography>
+                    <Typography sx={{ ml: 4 }} align="right">
+                      {fCurrency(order.discountPrice)}&nbsp;VNĐ
+                    </Typography>
                   </Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Total amount:</Typography>
-                    <Typography align="right">{fCurrency(order.totalPrice)}&nbsp;VNĐ</Typography>
+                    <Typography sx={{ ml: 4 }} align="right">
+                      {fCurrency(order.totalPrice)}&nbsp;VNĐ
+                    </Typography>
                   </Stack>
                 </Stack>
               )}

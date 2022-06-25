@@ -356,7 +356,7 @@ export default function Report() {
                             >
                               <TableCell align="center">{index + 1}</TableCell>
                               <TableCell align="left">
-                                {dateFormat(receiptDate, 'dd/mm/yyyy')}
+                                {dateFormat(receiptDate, 'dd/mm/yyyy HH:MM')}
                               </TableCell>
                               <TableCell align="right">{fCurrency(totalPrice)}</TableCell>
                             </TableRow>

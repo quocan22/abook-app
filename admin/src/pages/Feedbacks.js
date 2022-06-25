@@ -28,7 +28,7 @@ const TABLE_HEAD = [
 ];
 
 export default function Feedbacks() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [feedbacks, setFeedbacks] = useState([]);
 
   const [page, setPage] = useState(0);

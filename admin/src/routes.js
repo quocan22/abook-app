@@ -5,9 +5,7 @@ import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 //
 import Login from './pages/Login';
 import Register from './pages/Register';
-import DashboardApp from './pages/DashboardApp';
 import Products from './pages/Products';
-import Blog from './pages/Blog';
 import Users from './pages/Users';
 import Orders from './pages/Orders';
 import NotFound from './pages/Page404';
@@ -32,7 +30,6 @@ export default function Router() {
       element: <DashboardLayout />,
       children: [
         { element: handleNavigate() },
-        { path: 'app', element: <DashboardApp /> },
         { path: 'users', element: <Users /> },
         { path: 'products', element: <Products /> },
         { path: 'orders', element: <Orders /> },
@@ -40,8 +37,7 @@ export default function Router() {
         { path: 'feedbacks', element: <Feedbacks /> },
         { path: 'report', element: <Report /> },
         { path: 'details/:bookId', element: <BookDetails /> },
-        { path: 'book_receipt', element: <BookReceipt /> },
-        { path: 'blog', element: <Blog /> }
+        { path: 'book_receipt', element: <BookReceipt /> }
       ]
     },
     {
@@ -51,7 +47,7 @@ export default function Router() {
         { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
-        { path: '/', element: <Navigate to="/dashboard" /> },
+        { path: '/', element: <Navigate to="/dashboard/users" /> },
         { path: '*', element: <Navigate to="/404" /> }
       ]
     },
