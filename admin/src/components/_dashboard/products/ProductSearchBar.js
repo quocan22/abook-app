@@ -47,7 +47,8 @@ ProductSearchBar.propTypes = {
   filteredBooks: PropTypes.array,
   itemPerPage: PropTypes.number,
   page: PropTypes.number,
-  handleChangePage: PropTypes.func
+  handleChangePage: PropTypes.func,
+  loading: PropTypes.bool
 };
 
 export default function ProductSearchBar({
@@ -58,7 +59,8 @@ export default function ProductSearchBar({
   filteredBooks,
   itemPerPage,
   page,
-  handleChangePage
+  handleChangePage,
+  loading
 }) {
   const [cates, setCates] = useState([]);
 
@@ -99,15 +101,17 @@ export default function ProductSearchBar({
             ))}
           </TextField>
         </Stack>
-        <Pagination
-          size="large"
-          color="primary"
-          showFirstButton
-          showLastButton
-          count={parseInt(filteredBooks.length / itemPerPage, 10) + 1}
-          page={page}
-          onChange={handleChangePage}
-        />
+        {!loading && (
+          <Pagination
+            size="large"
+            color="primary"
+            showFirstButton
+            showLastButton
+            count={parseInt(filteredBooks.length / itemPerPage, 10) + 1}
+            page={page}
+            onChange={handleChangePage}
+          />
+        )}
       </Stack>
     </RootStyle>
   );

@@ -123,6 +123,7 @@ export default function Products() {
           itemPerPage={ITEM_PER_PAGE}
           page={page}
           handleChangePage={handleChangePage}
+          loading={loading}
         />
 
         {isBookNotFound && !loading && <SearchNotFound searching searchQuery={filterName} />}
