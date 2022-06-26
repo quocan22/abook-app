@@ -1,4 +1,5 @@
-import { Navigate, useRoutes } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Navigate, useNavigate, useRoutes } from 'react-router-dom';
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
@@ -18,18 +19,19 @@ import BookReceipt from './pages/BookReceipt';
 // ----------------------------------------------------------------------
 
 export default function Router() {
-  function handleNavigate() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
     if (!localStorage.getItem('user')) {
-      return <Navigate to="/login" replace />;
+      navigate('/login', { replace: true });
     }
-    return <Navigate to="/dashboard/users" replace />;
-  }
+  }, [navigate]);
+
   return useRoutes([
     {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
-        { element: handleNavigate() },
         { path: 'users', element: <Users /> },
         { path: 'products', element: <Products /> },
         { path: 'orders', element: <Orders /> },

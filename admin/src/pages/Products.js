@@ -3,15 +3,7 @@ import { filter } from 'lodash';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 // material
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Container,
-  Pagination,
-  Stack,
-  Typography
-} from '@mui/material';
+import { Box, Button, CircularProgress, Container, Stack, Typography } from '@mui/material';
 import { Icon } from '@iconify/react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import downloadFill from '@iconify/icons-eva/download-fill';
@@ -32,7 +24,7 @@ function applyFilter(array, name, cate) {
     (_book) => _book.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
   );
 
-  if (cate) {
+  if (cate && cate !== 'all') {
     return stabilize.filter((_book) => _book.categoryId === cate);
   }
 
@@ -44,7 +36,7 @@ export default function Products() {
   const [books, setBooks] = useState([]);
   const [page, setPage] = useState(1);
   const [filterName, setFilterName] = useState('');
-  const [filterCate, setFilterCate] = useState('');
+  const [filterCate, setFilterCate] = useState('all');
 
   const [openAddDialog, setOpenAddDialog] = useState(false);
 
@@ -127,6 +119,10 @@ export default function Products() {
           onFilterName={handleFilterByName}
           filterCate={filterCate}
           onFilterCate={handleFilterByCate}
+          filteredBooks={filteredBooks}
+          itemPerPage={ITEM_PER_PAGE}
+          page={page}
+          handleChangePage={handleChangePage}
         />
 
         {isBookNotFound && !loading && <SearchNotFound searching searchQuery={filterName} />}
@@ -154,16 +150,18 @@ export default function Products() {
           onChange={onProductChange}
         />
 
-        <Pagination
-          sx={{ mt: 2, mr: 0 }}
-          size="large"
-          color="primary"
-          showFirstButton
-          showLastButton
-          count={parseInt(books.length / ITEM_PER_PAGE, 10) + 1}
-          page={page}
-          onChange={handleChangePage}
-        />
+        {/* {!loading && (
+          <Pagination
+            sx={{ mt: 2, mr: 0 }}
+            size="large"
+            color="primary"
+            showFirstButton
+            showLastButton
+            count={parseInt(filteredBooks.length / ITEM_PER_PAGE, 10) + 1}
+            page={page}
+            onChange={handleChangePage}
+          />
+        )} */}
       </Container>
     </Page>
   );

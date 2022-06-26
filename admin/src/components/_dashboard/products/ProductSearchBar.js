@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
 import searchFill from '@iconify/icons-eva/search-fill';
-import closeCircleFill from '@iconify/icons-eva/close-circle-fill';
 import { toast } from 'react-toastify';
 
 import { styled } from '@mui/material/styles';
@@ -13,15 +12,16 @@ import {
   InputAdornment,
   TextField,
   MenuItem,
-  Button
+  Stack,
+  Pagination
 } from '@mui/material';
 
 import { CategoryService } from '../../../services';
 
 const RootStyle = styled(Toolbar)(({ theme }) => ({
   height: 96,
+  width: '100%',
   spacing: 1,
-  display: 'flex',
   padding: theme.spacing(0, 1, 0, 3)
 }));
 
@@ -43,52 +43,72 @@ ProductSearchBar.propTypes = {
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
   filterCate: PropTypes.string,
-  onFilterCate: PropTypes.func
+  onFilterCate: PropTypes.func,
+  filteredBooks: PropTypes.array,
+  itemPerPage: PropTypes.number,
+  page: PropTypes.number,
+  handleChangePage: PropTypes.func
 };
 
-export default function ProductSearchBar({ filterName, onFilterName, filterCate, onFilterCate }) {
-  const [cates, setCates] = useState([{ _id: '', categoryName: 'All' }]);
+export default function ProductSearchBar({
+  filterName,
+  onFilterName,
+  filterCate,
+  onFilterCate,
+  filteredBooks,
+  itemPerPage,
+  page,
+  handleChangePage
+}) {
+  const [cates, setCates] = useState([]);
 
   useEffect(() => {
     CategoryService.getAllCates()
-      .then((res) => setCates(res.data.data))
+      .then((res) => {
+        setCates([{ _id: 'all', categoryName: 'All' }, ...res.data.data]);
+      })
       .catch((err) => err.response && toast.error(err.response.data.msg));
   }, []);
 
   return (
     <RootStyle>
-      <SearchStyle
-        value={filterName}
-        onChange={onFilterName}
-        placeholder="Search book by name..."
-        startAdornment={
-          <InputAdornment position="start">
-            <Box component={Icon} icon={searchFill} sx={{ color: 'text.disabled' }} />
-          </InputAdornment>
-        }
-      />
-      <TextField
-        style={{ width: 200 }}
-        select
-        label="Sort by category"
-        value={filterCate}
-        onChange={onFilterCate}
-        defaultValue=""
-      >
-        {cates.map((option) => (
-          <MenuItem key={option._id} value={option._id}>
-            {option.categoryName}
-          </MenuItem>
-        ))}
-      </TextField>
-      <Button
-        style={{ marginLeft: 10, fontSize: 16 }}
-        value=""
-        onClick={onFilterCate}
-        endIcon={<Icon icon={closeCircleFill} />}
-      >
-        Clear
-      </Button>
+      <Stack sx={{ width: '100%' }} direction="row" justifyContent="space-between">
+        <Stack direction="row">
+          <SearchStyle
+            value={filterName}
+            onChange={onFilterName}
+            placeholder="Search book by name..."
+            startAdornment={
+              <InputAdornment position="start">
+                <Box component={Icon} icon={searchFill} sx={{ color: 'text.disabled' }} />
+              </InputAdornment>
+            }
+          />
+          <TextField
+            style={{ width: 200 }}
+            select
+            label="Sort by category"
+            value={filterCate}
+            onChange={onFilterCate}
+            defaultValue="all"
+          >
+            {cates.map((option) => (
+              <MenuItem key={option._id} value={option._id}>
+                {option.categoryName}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Stack>
+        <Pagination
+          size="large"
+          color="primary"
+          showFirstButton
+          showLastButton
+          count={parseInt(filteredBooks.length / itemPerPage, 10) + 1}
+          page={page}
+          onChange={handleChangePage}
+        />
+      </Stack>
     </RootStyle>
   );
 }
