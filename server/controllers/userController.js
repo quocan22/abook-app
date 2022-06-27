@@ -468,8 +468,7 @@ const userController = {
   },
   addAddress: async (req, res) => {
     try {
-      const { userId, name, company, phoneNumber, address, city, zipCode } =
-        req.body;
+      const { userId, fullName, phoneNumber, address } = req.body;
 
       const user = await Users.findById(userId);
 
@@ -478,12 +477,9 @@ const userController = {
       }
 
       const addressBook = {
-        name,
-        company,
+        fullName,
         phoneNumber,
         address,
-        city,
-        zipCode,
       };
 
       user.userClaim.addressBook.push(addressBook);
@@ -498,9 +494,31 @@ const userController = {
       return res.status(500).json({ msg: err.message });
     }
   },
-  getAddressBooks: async (req, res) => {
+  updateAddressBook: async (req, res) => {
     try {
-      const userId = req.query.id;
+      const { userId, address } = req.body;
+
+      const user = await Users.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ msg: "Cannot find this user" });
+      }
+
+      user.userClaim.addressBook = address;
+
+      await user.save();
+
+      res.json({
+        msg: "Update address book successfully",
+        data: address,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  getAddressBook: async (req, res) => {
+    try {
+      const userId = req.params.id;
 
       const user = await Users.findById(userId);
 

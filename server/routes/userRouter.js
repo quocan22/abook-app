@@ -7,7 +7,7 @@ const userController = require("../controllers/userController");
 
 // router.get("/activate/:token", userController.activateEmail);
 
-router.get("/address_book", authentication, userController.getAddressBooks);
+router.get("/address_book/:id", userController.getAddressBook);
 
 router.get("/:id", userController.getUserInfo);
 
@@ -15,7 +15,9 @@ router.get("/", userController.getAllUser);
 
 router.put("/:id", upload.single("image"), userController.updateInfo);
 
-router.post("/address_book", authentication, userController.addAddress);
+router.post("/add_address_book", userController.addAddress);
+
+router.post("/update_address_book", userController.updateAddressBook);
 
 router.post("/register", upload.single("image"), userController.register);
 

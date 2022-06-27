@@ -13,5 +13,6 @@ router.post(
   authenticationAdmin,
   orderController.updateShippingStatus
 );
+router.post("/get_by_user_id", orderController.getOrderByUserId);
 
 module.exports = router;
