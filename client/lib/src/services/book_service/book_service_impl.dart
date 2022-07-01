@@ -95,4 +95,50 @@ class BookServiceImpl implements BookService {
       throw Exception(e.toString());
     }
   }
+
+  @override
+  Future<Book> getBookDetailById(String bookId) async {
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/books');
+
+    try {
+      dio.Response response = await dioClient.get(uri.toString() + '/$bookId');
+
+      if (response.statusCode == 200) {
+        var book = Book.fromJson(response.data['data']);
+
+        return book;
+      } else {
+        throw Exception('Error when fetching book data');
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<String> sendRateAndComment(
+      String bookId, String userId, int rate, String review) async {
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/books/comment');
+
+    try {
+      dio.Response response = await dioClient.patch(uri.toString(), data: {
+        "bookId": bookId,
+        "userId": userId,
+        "rate": rate,
+        "review": review
+      });
+
+      if (response.statusCode == 200) {
+        String responseMsg = response.data['msg'];
+
+        return responseMsg;
+      } else {
+        throw Exception('Error when send comment');
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e.toString());
+    }
+  }
 }

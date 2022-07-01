@@ -12,20 +12,45 @@ class BookRequested extends BookEvent {
   List<Object?> get props => [];
 }
 
-class BookAddedFav extends BookEvent {
+class BookRequestedById extends BookEvent {
   final String bookId;
 
-  BookAddedFav({required this.bookId});
+  BookRequestedById({required this.bookId});
 
   @override
   List<Object?> get props => [bookId];
 }
 
-class BookRemovedFav extends BookEvent {
-  final String bookId;
+// class BookAddedFav extends BookEvent {
+//   final String bookId;
 
-  BookRemovedFav({required this.bookId});
+//   BookAddedFav({required this.bookId});
+
+//   @override
+//   List<Object?> get props => [bookId];
+// }
+
+// class BookRemovedFav extends BookEvent {
+//   final String bookId;
+
+//   BookRemovedFav({required this.bookId});
+
+//   @override
+//   List<Object?> get props => [bookId];
+// }
+
+class BookSentComment extends BookEvent {
+  final String bookId;
+  final String userId;
+  final int rate;
+  final String review;
+
+  BookSentComment(
+      {required this.bookId,
+      required this.userId,
+      required this.rate,
+      required this.review});
 
   @override
-  List<Object?> get props => [bookId];
+  List<Object?> get props => [bookId, userId, rate, review];
 }

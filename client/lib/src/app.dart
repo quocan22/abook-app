@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import './blocs/authentication/authentication_bloc.dart';
 import './blocs/book/book_bloc.dart';
+import './blocs/book_detail/book_detail_bloc.dart';
 import './blocs/book_by_category/book_by_category_bloc.dart';
 import './blocs/cart/cart_bloc.dart';
 import './blocs/category/category_bloc.dart';
@@ -83,6 +84,10 @@ class App extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => DiscountBloc(service: _discountService),
+          ),
+          BlocProvider(
+            create: (context) => BookDetailBloc(
+                service: _bookService, userService: _userService),
           )
         ],
         child: MaterialApp(

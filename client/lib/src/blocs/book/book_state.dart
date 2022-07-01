@@ -31,6 +31,26 @@ class BookLoadSuccess extends BookState {
   List<Object?> get props => [books];
 }
 
+class BookLoadByIdInProgress extends BookState {}
+
+class BookLoadByIdFailure extends BookState {
+  final String? errorMessage;
+
+  const BookLoadByIdFailure({this.errorMessage});
+
+  @override
+  List<Object?> get props => [errorMessage];
+}
+
+class BookLoadByIdSuccess extends BookState {
+  final Book? book;
+
+  const BookLoadByIdSuccess({this.book});
+
+  @override
+  List<Object?> get props => [book];
+}
+
 class BookAddFavSuccess extends BookState {}
 
 class BookAddFavFailure extends BookState {}
