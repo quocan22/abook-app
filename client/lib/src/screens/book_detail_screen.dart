@@ -1,10 +1,10 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../blocs/book/book_bloc.dart';
-import '../blocs/book/book_event.dart';
 import '../blocs/cart/cart_bloc.dart';
 import '../blocs/cart/cart_event.dart';
 import '../blocs/cart/cart_state.dart';
@@ -14,6 +14,7 @@ import '../blocs/user_claim/user_claim_state.dart';
 import '../config/app_constants.dart';
 import '../constants/constants.dart';
 import '../models/book.dart';
+import '../utils/format_rules.dart';
 
 class BookDetailScreen extends StatelessWidget {
   final Book book;
@@ -37,6 +38,9 @@ class BookDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var _sigmaXOfBackgroudImage = 10.0;
+    var _sigmaYOfBackgroudImage = 10.0;
+
     String? userId;
 
     Future<bool> _checkLogin() async {
@@ -84,404 +88,419 @@ class BookDetailScreen extends StatelessWidget {
       );
     }
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.black),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          automaticallyImplyLeading: true,
-          title: Text(
-            'Detail',
-            style: Theme.of(context).textTheme.headline4?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: ColorsConstant.primaryColor,
-                ),
-          ),
-          centerTitle: true,
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+        image: CachedNetworkImageProvider(
+          book.imageUrl,
         ),
-        body: Padding(
-          padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 200,
-                  child: Row(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: CachedNetworkImage(
-                          imageUrl: book.imageUrl,
-                          width: 150,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
-                        ),
-                        // Image.network(
-                        //   book.imageUrl,
-                        //   width: 150,
-                        //   fit: BoxFit.cover,
-                        // ),
-                      ),
-                      SizedBox(
-                        width: 16.0,
-                      ),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              book.name,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline4
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
+        fit: BoxFit.fitHeight,
+      )),
+      child: BackdropFilter(
+          filter: ImageFilter.blur(
+              sigmaX: _sigmaXOfBackgroudImage, sigmaY: _sigmaYOfBackgroudImage),
+          child: Scaffold(
+            backgroundColor: Colors.white.withOpacity(0.5),
+            appBar: AppBar(
+              iconTheme: IconThemeData(color: Colors.black),
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              automaticallyImplyLeading: true,
+              title: Text(
+                'Detail',
+                style: Theme.of(context).textTheme.headline4?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: ColorsConstant.primaryColor,
+                    ),
+              ),
+              centerTitle: true,
+            ),
+            body: Padding(
+              padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 200,
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: CachedNetworkImage(
+                              imageUrl: book.imageUrl,
+                              width: 150,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  Center(child: CircularProgressIndicator()),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
                             ),
-                            Text(
-                              book.author,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline5
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.black,
-                                  ),
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                            // Image.network(
+                            //   book.imageUrl,
+                            //   width: 150,
+                            //   fit: BoxFit.cover,
+                            // ),
+                          ),
+                          SizedBox(
+                            width: 16.0,
+                          ),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(
-                                    (book.avgRate >= 1)
-                                        ? Icons.star
-                                        : Icons.star_border,
-                                    color: Colors.yellow),
-                                Icon(
-                                    (book.avgRate >= 2)
-                                        ? Icons.star
-                                        : Icons.star_border,
-                                    color: Colors.yellow),
-                                Icon(
-                                    (book.avgRate >= 3)
-                                        ? Icons.star
-                                        : Icons.star_border,
-                                    color: Colors.yellow),
-                                Icon(
-                                    (book.avgRate >= 4)
-                                        ? Icons.star
-                                        : Icons.star_border,
-                                    color: Colors.yellow),
-                                Icon(
-                                    (book.avgRate == 5)
-                                        ? Icons.star
-                                        : Icons.star_border,
-                                    color: Colors.yellow),
-                                Text('(${book.comments.length})',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                    ))
+                                Text(
+                                  book.name,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline4
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                ),
+                                Text(
+                                  book.author,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline5
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.black,
+                                      ),
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Icon(
+                                        (book.avgRate >= 1)
+                                            ? Icons.star
+                                            : Icons.star_border,
+                                        color: Colors.yellow),
+                                    Icon(
+                                        (book.avgRate >= 2)
+                                            ? Icons.star
+                                            : Icons.star_border,
+                                        color: Colors.yellow),
+                                    Icon(
+                                        (book.avgRate >= 3)
+                                            ? Icons.star
+                                            : Icons.star_border,
+                                        color: Colors.yellow),
+                                    Icon(
+                                        (book.avgRate >= 4)
+                                            ? Icons.star
+                                            : Icons.star_border,
+                                        color: Colors.yellow),
+                                    Icon(
+                                        (book.avgRate == 5)
+                                            ? Icons.star
+                                            : Icons.star_border,
+                                        color: Colors.yellow),
+                                    Text('(${book.comments.length})',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                        ))
+                                  ],
+                                ),
+                                Spacer(),
+                                Text(
+                                  FormatRules.formatPrice(book.price),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline5
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                ),
                               ],
                             ),
-                            Spacer(),
-                            Text(
-                              '${book.price} VNĐ',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline5
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                Row(
-                  children: [
-                    MaterialButton(
-                      onPressed: () {},
-                      color: ColorsConstant.primaryColor,
-                      textColor: Colors.white,
-                      child: Icon(
-                        Icons.share,
+                          )
+                        ],
                       ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                    Spacer(),
-                    BlocBuilder<CartBloc, CartState>(
-                      builder: (context, state) {
-                        if (state is CartLoadSuccess &&
-                            state.cartDetailList!
-                                .map((e) => e['bookId'])
-                                .contains(book.id)) {
-                          return MaterialButton(
-                            onPressed: () async {
-                              bool isLoggedIn = await _checkLogin();
-                              if (isLoggedIn == false) {
-                                _showLoginDialog();
-                                return;
-                              }
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: Text(
-                                      'This book is already added in your cart')));
-                            },
-                            color: ColorsConstant.primaryColor,
-                            textColor: Colors.white,
-                            child: Text('Buy'),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                          );
-                        } else {
-                          return MaterialButton(
-                            onPressed: () async {
-                              bool isLoggedIn = await _checkLogin();
-                              if (isLoggedIn == false) {
-                                _showLoginDialog();
-                                return;
-                              }
-                              context.read<CartBloc>().add(CartBookAdded(
-                                  userId: userId!,
-                                  bookId: book.id,
-                                  quantity: 1));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content:
-                                          Text('Added book to your cart')));
-                              Navigator.of(context).maybePop();
-                            },
-                            color: ColorsConstant.primaryColor,
-                            textColor: Colors.white,
-                            child: Text('Buy'),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                          );
-                        }
-                      },
                     ),
                     SizedBox(
-                      width: 5,
+                      height: 25,
                     ),
-                    BlocBuilder<UserClaimBloc, UserClaimState>(
-                      builder: (context, state) {
-                        return MaterialButton(
-                          onPressed: () async {
-                            bool isLoggedIn = await _checkLogin();
-                            if (isLoggedIn == false) {
-                              _showLoginDialog();
-                              return;
-                            }
-
-                            if (state is UserClaimLoadSuccess) {
-                              if (state.userClaim!.favorite.contains(book.id)) {
-                                context
-                                    .read<BookBloc>()
-                                    .add(BookRemovedFav(bookId: book.id));
-                                context
-                                    .read<UserClaimBloc>()
-                                    .add(UserClaimRequested(userId: userId!));
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Removed from your favorite books')));
-                              } else {
-                                context
-                                    .read<BookBloc>()
-                                    .add(BookAddedFav(bookId: book.id));
-                                context
-                                    .read<UserClaimBloc>()
-                                    .add(UserClaimRequested(userId: userId!));
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Added to your favorite books')));
-                              }
-
-                              Navigator.maybePop(context, true);
-                            }
-                          },
+                    Row(
+                      children: [
+                        MaterialButton(
+                          onPressed: () {},
                           color: ColorsConstant.primaryColor,
                           textColor: Colors.white,
                           child: Icon(
-                            (state is UserClaimLoadSuccess)
-                                ? ((state.userClaim!.favorite.contains(book.id))
-                                    ? Icons.favorite
-                                    : Icons.favorite_border)
-                                : Icons.favorite_border,
+                            Icons.share,
                           ),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
-                        );
-                      },
+                        ),
+                        Spacer(),
+                        BlocBuilder<CartBloc, CartState>(
+                          builder: (context, state) {
+                            if (state is CartLoadSuccess &&
+                                state.cartDetailList!
+                                    .map((e) => e['bookId'])
+                                    .contains(book.id)) {
+                              return MaterialButton(
+                                onPressed: () async {
+                                  bool isLoggedIn = await _checkLogin();
+                                  if (isLoggedIn == false) {
+                                    _showLoginDialog();
+                                    return;
+                                  }
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              'This book is already added in your cart')));
+                                },
+                                color: ColorsConstant.primaryColor,
+                                textColor: Colors.white,
+                                child: Text('Buy'),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              );
+                            } else {
+                              return MaterialButton(
+                                onPressed: () async {
+                                  bool isLoggedIn = await _checkLogin();
+                                  if (isLoggedIn == false) {
+                                    _showLoginDialog();
+                                    return;
+                                  }
+                                  context.read<CartBloc>().add(CartBookAdded(
+                                      userId: userId!,
+                                      bookId: book.id,
+                                      quantity: 1));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content:
+                                              Text('Added book to your cart')));
+                                  Navigator.of(context).maybePop();
+                                },
+                                color: ColorsConstant.primaryColor,
+                                textColor: Colors.white,
+                                child: Text('Buy'),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              );
+                            }
+                          },
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        BlocBuilder<UserClaimBloc, UserClaimState>(
+                          builder: (context, state) {
+                            return MaterialButton(
+                              onPressed: () async {
+                                bool isLoggedIn = await _checkLogin();
+                                if (isLoggedIn == false) {
+                                  _showLoginDialog();
+                                  return;
+                                }
+
+                                if (state is UserClaimLoadSuccess) {
+                                  if (state.userClaim!.favorite
+                                      .contains(book.id)) {
+                                    context
+                                        .read<UserClaimBloc>()
+                                        .add(BookRemovedFav(bookId: book.id));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Removed from your favorite books')));
+                                  } else {
+                                    context
+                                        .read<UserClaimBloc>()
+                                        .add(BookAddedFav(bookId: book.id));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Added to your favorite books')));
+                                  }
+
+                                  Navigator.maybePop(context, true);
+                                }
+                              },
+                              color: ColorsConstant.primaryColor,
+                              textColor: Colors.white,
+                              child: Icon(
+                                (state is UserClaimLoadSuccess)
+                                    ? ((state.userClaim!.favorite
+                                            .contains(book.id))
+                                        ? Icons.favorite
+                                        : Icons.favorite_border)
+                                    : Icons.favorite_border,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                Text(
-                  'Descriptions',
-                  style: Theme.of(context).textTheme.headline4?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                ),
-                Text(
-                  book.description,
-                  maxLines: 7,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
-                        fontWeight: FontWeight.normal,
-                        color: Colors.black,
-                      ),
-                ),
-                SizedBox(
-                  height: 25,
-                ),
-                Text(
-                  'Ratings & Review',
-                  style: Theme.of(context).textTheme.headline4?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                ),
-                ListView.separated(
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      context.read<UserClaimBloc>().add(UserClaimRequested(
-                          userId: book.comments[index]['userId']));
-                      return BlocBuilder<UserClaimBloc, UserClaimState>(
-                        builder: (context, state) {
-                          if (state is UserClaimLoadSuccess) {
-                            return Container(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    child: CircleAvatar(
-                                        radius: 50.0,
-                                        backgroundImage: NetworkImage(
-                                            state.userClaim!.avatarUrl)),
-                                  ),
-                                  SizedBox(
-                                    width: 16.0,
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          state.userClaim!.displayName,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline4
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              ),
-                                        ),
-                                        Text(
-                                          book.comments[index]['review'],
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline5
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.normal,
-                                                color: Colors.black,
-                                              ),
-                                        ),
-                                        Row(
+                    SizedBox(
+                      height: 25,
+                    ),
+                    Text(
+                      'Descriptions',
+                      style: Theme.of(context).textTheme.headline4?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                    ),
+                    Text(
+                      book.description,
+                      maxLines: 7,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                          ),
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    Text(
+                      'Ratings & Review',
+                      style: Theme.of(context).textTheme.headline4?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                    ),
+                    ListView.separated(
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          context.read<UserClaimBloc>().add(UserClaimRequested(
+                              userId: book.comments[index]['userId']));
+                          return BlocBuilder<UserClaimBloc, UserClaimState>(
+                            builder: (context, state) {
+                              if (state is UserClaimLoadSuccess) {
+                                return Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        child: CircleAvatar(
+                                            radius: 50.0,
+                                            backgroundImage: NetworkImage(
+                                                state.userClaim!.avatarUrl)),
+                                      ),
+                                      SizedBox(
+                                        width: 16.0,
+                                      ),
+                                      Expanded(
+                                        child: Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.end,
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Icon(
-                                              (book.comments[index]['rate'] >=
-                                                      1)
-                                                  ? Icons.star
-                                                  : Icons.star_border,
-                                              color: Colors.yellow,
-                                              size: 17,
+                                            Text(
+                                              state.userClaim!.displayName,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline4
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                  ),
                                             ),
-                                            Icon(
-                                                (book.comments[index]['rate'] >=
-                                                        2)
-                                                    ? Icons.star
-                                                    : Icons.star_border,
-                                                color: Colors.yellow,
-                                                size: 17),
-                                            Icon(
-                                                (book.comments[index]['rate'] >=
-                                                        3)
-                                                    ? Icons.star
-                                                    : Icons.star_border,
-                                                color: Colors.yellow,
-                                                size: 17),
-                                            Icon(
-                                                (book.comments[index]['rate'] >=
-                                                        4)
-                                                    ? Icons.star
-                                                    : Icons.star_border,
-                                                color: Colors.yellow,
-                                                size: 17),
-                                            Icon(
-                                                (book.comments[index]['rate'] ==
-                                                        5)
-                                                    ? Icons.star
-                                                    : Icons.star_border,
-                                                color: Colors.yellow,
-                                                size: 17),
+                                            Text(
+                                              book.comments[index]['review'],
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline5
+                                                  ?.copyWith(
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.black,
+                                                  ),
+                                            ),
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Icon(
+                                                  (book.comments[index]
+                                                              ['rate'] >=
+                                                          1)
+                                                      ? Icons.star
+                                                      : Icons.star_border,
+                                                  color: Colors.yellow,
+                                                  size: 17,
+                                                ),
+                                                Icon(
+                                                    (book.comments[index]
+                                                                ['rate'] >=
+                                                            2)
+                                                        ? Icons.star
+                                                        : Icons.star_border,
+                                                    color: Colors.yellow,
+                                                    size: 17),
+                                                Icon(
+                                                    (book.comments[index]
+                                                                ['rate'] >=
+                                                            3)
+                                                        ? Icons.star
+                                                        : Icons.star_border,
+                                                    color: Colors.yellow,
+                                                    size: 17),
+                                                Icon(
+                                                    (book.comments[index]
+                                                                ['rate'] >=
+                                                            4)
+                                                        ? Icons.star
+                                                        : Icons.star_border,
+                                                    color: Colors.yellow,
+                                                    size: 17),
+                                                Icon(
+                                                    (book.comments[index]
+                                                                ['rate'] ==
+                                                            5)
+                                                        ? Icons.star
+                                                        : Icons.star_border,
+                                                    color: Colors.yellow,
+                                                    size: 17),
+                                              ],
+                                            ),
+                                            Text(
+                                              commentDate(book.comments[index]
+                                                  ['commentDate']),
+                                              style: TextStyle(
+                                                  fontStyle: FontStyle.italic),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ],
                                         ),
-                                        Text(
-                                          commentDate(book.comments[index]
-                                              ['commentDate']),
-                                          style: TextStyle(
-                                              fontStyle: FontStyle.italic),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            );
-                          } else {
-                            return const Center(
-                              child: Text('BLOC NO STATE'),
-                            );
-                          }
+                                );
+                              } else {
+                                return const Center(
+                                  child: Text('BLOC NO STATE'),
+                                );
+                              }
+                            },
+                          );
                         },
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return Divider();
-                    },
-                    shrinkWrap: true,
-                    itemCount: book.comments.length)
-              ],
+                        separatorBuilder: (context, index) {
+                          return Divider();
+                        },
+                        shrinkWrap: true,
+                        itemCount: book.comments.length)
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
+          )),
     );
   }
 }

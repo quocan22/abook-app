@@ -10,7 +10,7 @@ class ChatbotServiceImpl implements ChatbotService {
 
   @override
   Future<dynamic> sendMessage(String message) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, '/api/chatbot/text_query');
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/chatbot/text_query');
 
     try {
       dio.Response response =
@@ -22,6 +22,27 @@ class ChatbotServiceImpl implements ChatbotService {
         // return responseMsg;
       } else {
         throw Exception('Error when send message chatbot');
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<dynamic> sendEvent(String eventName) async {
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/chatbot/event_query');
+
+    try {
+      dio.Response response =
+          await dioClient.post(uri.toString(), data: {'event': eventName});
+
+      if (response.statusCode == 200) {
+        return response.data;
+        // print(responseMsg);
+        // return responseMsg;
+      } else {
+        throw Exception('Error when send event chatbot');
       }
     } catch (e) {
       print(e.toString());

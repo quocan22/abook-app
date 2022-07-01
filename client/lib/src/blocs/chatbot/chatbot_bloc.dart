@@ -35,5 +35,16 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
         emit(ChatbotLoadFailure(errorMessage: e.toString()));
       }
     });
+    on<ChatbotEventSent>((event, emit) async {
+      emit(ChatbotLoadInProgress());
+      try {
+        Map<String, dynamic>? jsonRes =
+            await service.sendEvent(event.eventName);
+        Map<String, dynamic> responseJson = jsonRes!;
+        emit(ChatbotLoadSuccess(type: 1, text: responseJson['text']));
+      } catch (e) {
+        emit(ChatbotLoadFailure(errorMessage: e.toString()));
+      }
+    });
   }
 }

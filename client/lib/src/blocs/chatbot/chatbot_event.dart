@@ -15,3 +15,12 @@ class ChatbotMessageSent extends ChatbotEvent {
   @override
   List<Object?> get props => [msg];
 }
+
+class ChatbotEventSent extends ChatbotEvent {
+  final String eventName;
+
+  ChatbotEventSent({required this.eventName});
+
+  @override
+  List<Object?> get props => [eventName];
+}

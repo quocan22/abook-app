@@ -10,7 +10,7 @@ class CartServiceImpl implements CartService {
 
   @override
   Future<dynamic> getCartDetailByUserId(String userId) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, '/api/carts/details');
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/carts/details');
 
     try {
       dio.Response response = await dioClient
@@ -30,7 +30,7 @@ class CartServiceImpl implements CartService {
   @override
   Future<String> addBookToCart(
       String userId, String bookId, int quantity) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, '/api/carts/add_book');
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/carts/add_book');
 
     try {
       dio.Response response = await dioClient.patch(uri.toString(),
@@ -49,9 +49,28 @@ class CartServiceImpl implements CartService {
   }
 
   @override
+  Future<String> removeBookFromCart(String userId, String bookId) async {
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/carts/remove_book');
+
+    try {
+      dio.Response response = await dioClient.post(uri.toString(),
+          queryParameters: {'userId': userId}, data: {'bookId': bookId});
+
+      if (response.statusCode == 200) {
+        return response.data['msg'];
+      } else {
+        throw Exception('Error when remove book from cart');
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
   Future<String> changeBookQuantity(
       String userId, String bookId, int newQuantity) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, '/api/carts/change_quantity');
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/carts/change_quantity');
 
     try {
       dio.Response response = await dioClient.patch(uri.toString(),

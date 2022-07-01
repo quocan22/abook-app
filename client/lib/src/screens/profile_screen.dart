@@ -10,14 +10,23 @@ import '../config/app_constants.dart';
 import '../constants/constants.dart';
 import './edit_profile_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   final String userId;
 
   const ProfileScreen({Key? key, required this.userId}) : super(key: key);
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen>
+    with AutomaticKeepAliveClientMixin<ProfileScreen> {
+  @override
   Widget build(BuildContext context) {
-    context.read<UserClaimBloc>().add(UserClaimRequested(userId: userId));
+    super.build(context);
+    context
+        .read<UserClaimBloc>()
+        .add(UserClaimRequested(userId: widget.userId));
 
     return SafeArea(
       child: Scaffold(
@@ -188,7 +197,7 @@ class ProfileScreen extends StatelessWidget {
                                               MaterialPageRoute(
                                                   builder: (_) =>
                                                       EditProfileScreen(
-                                                        userId: userId,
+                                                        userId: widget.userId,
                                                       )));
                                         },
                                         icon: Icon(Icons.settings)),
@@ -323,4 +332,7 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

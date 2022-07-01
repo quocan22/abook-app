@@ -6,4 +6,5 @@ abstract class ChatbotService {
   ChatbotService({required this.dioClient});
 
   Future<dynamic> sendMessage(String message);
+  Future<dynamic> sendEvent(String eventName);
 }

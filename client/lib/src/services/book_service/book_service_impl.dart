@@ -11,7 +11,7 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<List<Book>> fetchBookList() async {
-    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.BOOKS);
+    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.BOOKS);
 
     try {
       dio.Response response = await dioClient.get(uri.toString());
@@ -33,7 +33,7 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<List<Book>>? fetchBookListByCategoryId(String categoryId) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.BOOKSBYCATE);
+    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.BOOKSBYCATE);
 
     try {
       dio.Response response = await dioClient
@@ -56,7 +56,7 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<String> addBookToFav(String bookId, String userId) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.ADDFAV);
+    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.ADDFAV);
 
     try {
       dio.Response response = await dioClient
@@ -77,7 +77,7 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<String> removeBookFromFav(String bookId, String userId) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.REMOVEFAV);
+    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.REMOVEFAV);
 
     try {
       dio.Response response = await dioClient

@@ -30,7 +30,17 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   @override
   void initState() {
-    messageWidgetList = [];
+    messageWidgetList = [
+      SizedBox(
+        height: 200,
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Image.asset('assets/images/ABook_chatbot_logo.png'),
+          ),
+        ),
+      )
+    ];
     super.initState();
   }
 
@@ -44,6 +54,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Widget build(BuildContext context) {
     context.read<BookBloc>().add(BookRequested());
     context.read<CategoryBloc>().add(CategoryRequested());
+    context
+        .read<ChatbotBloc>()
+        .add(ChatbotEventSent(eventName: 'welcomeToAbook'));
 
     return Scaffold(
       appBar: AppBar(
@@ -90,36 +103,27 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 return const Center(child: Text('fail'));
               }
               if (state is ChatbotLoadSuccess) {
-                if (messageWidgetList.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child:
-                          Image.asset('assets/images/ABook_chatbot_logo.png'),
-                    ),
-                  );
+                if (state.type == 1) {
+                  messageWidgetList.insert(
+                      0, buildTextChatItem(text: state.text!, yourMsg: false));
+                } else if (state.type == 2) {
+                  messageWidgetList.insert(
+                      0,
+                      buildBookChatItem(
+                          text: state.text!, bookList: state.listBook!));
                 } else {
-                  if (state.type == 1) {
-                    messageWidgetList.insert(0,
-                        buildTextChatItem(text: state.text!, yourMsg: false));
-                  } else if (state.type == 2) {
-                    messageWidgetList.insert(
-                        0,
-                        buildBookChatItem(
-                            text: state.text!, bookList: state.listBook!));
-                  } else {
-                    messageWidgetList.insert(
-                        0,
-                        buildCategoryChatItem(
-                            text: state.text!,
-                            categoryList: state.listCategory!));
-                  }
-                  return ListView.builder(
-                    itemBuilder: (context, index) => messageWidgetList[index],
-                    reverse: true,
-                    itemCount: messageWidgetList.length,
-                  );
+                  messageWidgetList.insert(
+                      0,
+                      buildCategoryChatItem(
+                          text: state.text!,
+                          categoryList: state.listCategory!));
                 }
+                return ListView.builder(
+                  itemBuilder: (context, index) => messageWidgetList[index],
+                  reverse: true,
+                  itemCount: messageWidgetList.length,
+                );
+                // }
               }
               //temp screen
               return Center(
@@ -188,7 +192,19 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     return Row(
         mainAxisAlignment:
             yourMsg ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
+          Visibility(
+              visible: !yourMsg,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0, 10.0),
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage:
+                      AssetImage('assets/images/app_logo_no_bg.png'),
+                  backgroundColor: Colors.blue.withOpacity(0.1),
+                ),
+              )),
           Container(
             child: Text(
               text,
@@ -206,72 +222,94 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   Widget buildBookChatItem(
       {required String text, required List<Book> bookList}) {
-    return Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-      Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              text,
-              style: TextStyle(color: Colors.white),
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0, 10.0),
+            child: CircleAvatar(
+              radius: 20,
+              backgroundImage: AssetImage('assets/images/app_logo_no_bg.png'),
+              backgroundColor: Colors.blue.withOpacity(0.1),
             ),
-            SizedBox(
-              height: 150,
-              child: ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount: bookList.length,
-                itemBuilder: (context, index) =>
-                    (bookList[index].discountRatio != 0)
-                        ? SquaredBookCardWithDiscount(
-                            book: bookList[index],
-                          )
-                        : SquaredBookCard(
-                            book: bookList[index],
-                          ),
-              ),
-            )
-          ],
-        ),
-        padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-        constraints: BoxConstraints(maxWidth: 300),
-        decoration: BoxDecoration(
-            color: Colors.grey, borderRadius: BorderRadius.circular(8.0)),
-        margin: EdgeInsets.only(left: 10.0, bottom: 10.0, right: 10.0),
-      ),
-    ]);
+          ),
+          Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  text,
+                  style: TextStyle(color: Colors.white),
+                ),
+                SizedBox(
+                  height: 150,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: bookList.length,
+                    itemBuilder: (context, index) =>
+                        (bookList[index].discountRatio != 0)
+                            ? SquaredBookCardWithDiscount(
+                                book: bookList[index],
+                              )
+                            : SquaredBookCard(
+                                book: bookList[index],
+                              ),
+                  ),
+                )
+              ],
+            ),
+            padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+            constraints: BoxConstraints(maxWidth: 300),
+            decoration: BoxDecoration(
+                color: Colors.grey, borderRadius: BorderRadius.circular(8.0)),
+            margin: EdgeInsets.only(left: 10.0, bottom: 10.0, right: 10.0),
+          ),
+        ]);
   }
 
   Widget buildCategoryChatItem(
       {required String text, required List<Category> categoryList}) {
-    return Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-      Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              text,
-              style: TextStyle(color: Colors.white),
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0, 10.0),
+            child: CircleAvatar(
+              radius: 20,
+              backgroundImage: AssetImage('assets/images/app_logo_no_bg.png'),
+              backgroundColor: Colors.blue.withOpacity(0.1),
             ),
-            SizedBox(
-              height: 150,
-              child: ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount: categoryList.length,
-                itemBuilder: (BuildContext context, int index) =>
-                    CategoryCard(category: categoryList[index]),
-              ),
-            )
-          ],
-        ),
-        padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-        constraints: BoxConstraints(maxWidth: 300),
-        decoration: BoxDecoration(
-            color: Colors.grey, borderRadius: BorderRadius.circular(8.0)),
-        margin: EdgeInsets.only(left: 10.0, bottom: 10.0, right: 10.0),
-      ),
-    ]);
+          ),
+          Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  text,
+                  style: TextStyle(color: Colors.white),
+                ),
+                SizedBox(
+                  height: 150,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categoryList.length,
+                    itemBuilder: (BuildContext context, int index) =>
+                        CategoryCard(category: categoryList[index]),
+                  ),
+                )
+              ],
+            ),
+            padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+            constraints: BoxConstraints(maxWidth: 300),
+            decoration: BoxDecoration(
+                color: Colors.grey, borderRadius: BorderRadius.circular(8.0)),
+            margin: EdgeInsets.only(left: 10.0, bottom: 10.0, right: 10.0),
+          ),
+        ]);
   }
 
   void onSendMessage(String text) {

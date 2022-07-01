@@ -13,7 +13,7 @@ class UserServiceImpl implements UserService {
   @override
   Future<UserClaim> fetchUserInfoById(String userId) async {
     final uri =
-        Uri.http(AppConstants.HOST_NAME, '${AppConstants.USERS}/$userId');
+        Uri.https(AppConstants.HOST_NAME, '${AppConstants.USERS}/$userId');
 
     try {
       dio.Response response = await dioClient.get(uri.toString());
@@ -33,7 +33,7 @@ class UserServiceImpl implements UserService {
 
   @override
   Future<String> login(String email, String password) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.LOGIN);
+    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.LOGIN);
 
     try {
       dio.Response response = await dioClient
@@ -71,7 +71,7 @@ class UserServiceImpl implements UserService {
   @override
   Future<String> register(
       String email, String password, String fullName) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.REGISTERUSER);
+    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.REGISTERUSER);
 
     try {
       dio.Response response = await dioClient.post(uri.toString(), data: {
@@ -103,7 +103,7 @@ class UserServiceImpl implements UserService {
   Future<String> updateProfile(String userId, String fullName, String address,
       String phoneNumber) async {
     final uri =
-        Uri.http(AppConstants.HOST_NAME, '${AppConstants.USERS}/$userId');
+        Uri.https(AppConstants.HOST_NAME, '${AppConstants.USERS}/$userId');
 
     try {
       dio.Response response = await dioClient.put(uri.toString(), data: {
