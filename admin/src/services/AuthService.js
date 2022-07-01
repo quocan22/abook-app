@@ -8,8 +8,12 @@ const login = (email, password) =>
     password
   });
 
+const adminLogin = (email, password) =>
+  api.post(`${API_MODEL_URL}/admin_login`, { email, password });
+
 const AuthService = {
-  login
+  login,
+  adminLogin
 };
 
 export default AuthService;

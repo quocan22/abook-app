@@ -9,7 +9,7 @@ const orderController = {
     try {
       const { userId, discountPrice, address } = req.body;
 
-      const cart = await Carts.find({ userId: userId });
+      const cart = await Carts.findOne({ userId: userId });
 
       if (!cart) {
         return res.status(404).json({ msg: "This user has no cart" });
@@ -53,7 +53,7 @@ const orderController = {
       await newOrder.save();
 
       // After ordering, cart have to be deleted
-      await Carts.findByIdAndDelete(cartId);
+      await Carts.findOneAndDelete({ userId: userId });
 
       res.status(202).json({
         msg: "Create order successfully",
