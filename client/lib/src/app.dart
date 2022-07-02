@@ -12,6 +12,7 @@ import './blocs/category/category_bloc.dart';
 import './blocs/chatbot/chatbot_bloc.dart';
 import './blocs/discount/discount_bloc.dart';
 import './blocs/feedback/feedback_bloc.dart';
+import './blocs/order/order_bloc.dart';
 import './blocs/forgotpassword/forgotpassword_bloc.dart';
 import './blocs/login/login_bloc.dart';
 import './blocs/profile/profile_bloc.dart';
@@ -24,8 +25,9 @@ import './services/book_service/book_service_impl.dart';
 import './services/cart_service/cart_service_impl.dart';
 import './services/category_service/category_service_impl.dart';
 import './services/chatbot_service/chatbot_service_impl.dart';
-import './services/discount_service/chatbot_service_impl.dart';
+import './services/discount_service/discount_service_impl.dart';
 import './services/feedback_service/feedback_service_impl.dart';
+import './services/order_service/order_service_impl.dart';
 import './services/user_service/user_service_impl.dart';
 
 class App extends StatelessWidget {
@@ -45,6 +47,7 @@ class App extends StatelessWidget {
     CartServiceImpl _cartService = CartServiceImpl(dioClient: dioClient);
     DiscountServiceImpl _discountService =
         DiscountServiceImpl(dioClient: dioClient);
+    OrderServiceImpl _orderService = OrderServiceImpl(dioClient: dioClient);
 
     return MultiBlocProvider(
         providers: [
@@ -92,6 +95,9 @@ class App extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => AddressBookBloc(service: _userService),
+          ),
+          BlocProvider(
+            create: (context) => OrderBloc(service: _orderService),
           )
         ],
         child: MaterialApp(

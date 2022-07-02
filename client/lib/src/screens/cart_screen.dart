@@ -9,11 +9,15 @@ import '../blocs/cart/cart_state.dart';
 import '../blocs/discount/discount_bloc.dart';
 import '../blocs/discount/discount_event.dart';
 import '../blocs/discount/discount_state.dart';
+import '../blocs/order/order_bloc.dart';
+import '../blocs/order/order_event.dart';
 import '../constants/constants.dart';
+import '../models/address_book.dart';
 import '../models/book.dart';
 import '../utils/format_rules.dart';
 import '../widgets/book_cart_item.dart';
 import '../widgets/book_search_delegate.dart';
+import 'choose_address_book_screen.dart';
 
 class CartScreen extends StatefulWidget {
   final String userId;
@@ -330,7 +334,26 @@ class _CartScreenState extends State<CartScreen>
                                             BorderRadius.circular(10.0),
                                       )),
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      AddressBook? addressBook =
+                                          await Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      ChooseAddressBookScreen(
+                                                          userId:
+                                                              widget.userId)));
+
+                                      if (addressBook != null) {
+                                        context.read<OrderBloc>().add(
+                                            OrderCreated(
+                                                userId: widget.userId,
+                                                discountPrice: _appliedDiscount,
+                                                addressBook: addressBook));
+                                        context.read<OrderBloc>().add(
+                                            OrderRequested(
+                                                userId: widget.userId));
+                                      }
+                                    },
                                     child: Text(
                                       'Check Out',
                                       style: Theme.of(context)

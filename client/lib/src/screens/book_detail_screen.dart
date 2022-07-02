@@ -127,7 +127,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 backgroundColor: Colors.transparent,
                 automaticallyImplyLeading: true,
                 title: Text(
-                  'Detail',
+                  widget.book.name,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.headline4?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: ColorsConstant.primaryColor,
@@ -186,7 +187,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                state.book!.name,
+                                                state.book!.author,
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .headline4
@@ -196,17 +197,17 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                       color: Colors.black,
                                                     ),
                                               ),
-                                              Text(
-                                                state.book!.author,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headline5
-                                                    ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      color: Colors.black,
-                                                    ),
-                                              ),
+                                              // Text(
+                                              //   state.book!.author,
+                                              //   style: Theme.of(context)
+                                              //       .textTheme
+                                              //       .headline5
+                                              //       ?.copyWith(
+                                              //         fontWeight:
+                                              //             FontWeight.normal,
+                                              //         color: Colors.black,
+                                              //       ),
+                                              // ),
                                               Row(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.end,
