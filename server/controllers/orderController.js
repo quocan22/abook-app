@@ -46,7 +46,7 @@ const orderController = {
         customerName: address.fullName,
         customerPhoneNumber: address.phoneNumber,
         customerAddress: address.address,
-        shippingStatus: 0,
+        shippingStatus: 1,
         details: orderDetails,
       });
 
@@ -168,7 +168,12 @@ const orderController = {
     try {
       const { id, status } = req.body;
 
-      const order = Orders.findById(id);
+      // check if new status is out of status range
+      if (status < 1 || status > 3) {
+        return res.status(400).json({ msg: "Invalid status" });
+      }
+
+      const order = await Orders.findById(id);
 
       if (!order) {
         return res.status(400).json({ msg: "Cannot find this order" });
@@ -196,6 +201,33 @@ const orderController = {
       res.status(201).json({
         msg: "Update order shipping status successfully",
         id: result._id,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  updatePaidStatus: async (req, res) => {
+    try {
+      const { id, status } = req.body;
+
+      // check if new status is out of status range
+      if (status < 1 || status > 2) {
+        return res.status(400).json({ msg: "Invalid status" });
+      }
+
+      const order = await Orders.findById(id);
+
+      if (!order) {
+        return res.status(400).json({ msg: "Cannot find this order" });
+      }
+
+      order.paidStatus = status;
+
+      await order.save();
+
+      res.status(201).json({
+        msg: "Update order paid status successfully",
+        id: order._id,
       });
     } catch (err) {
       return res.status(500).json({ msg: err.message });

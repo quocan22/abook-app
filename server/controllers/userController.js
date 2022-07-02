@@ -504,7 +504,10 @@ const userController = {
       // return user claim information
       res.json({
         msg: "Get user information successfully",
-        data: user.userClaim,
+        data: {
+          email: user.email,
+          ...user.userClaim,
+        },
       });
     } catch (err) {
       return res.status(500).json({ msg: err.message });

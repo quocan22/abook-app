@@ -13,6 +13,7 @@ router.post(
   authenticationAdmin,
   orderController.updateShippingStatus
 );
+router.post("/paid_status", orderController.updatePaidStatus);
 router.post("/get_by_user_id", orderController.getOrderByUserId);
 
 module.exports = router;

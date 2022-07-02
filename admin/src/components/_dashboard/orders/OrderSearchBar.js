@@ -28,7 +28,7 @@ const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
 const searchOptions = [
   { value: '_id', label: 'Bill No' },
   { value: 'customerName', label: 'Customer Name' },
-  { value: 'customerPhone', label: 'Customer Phone' },
+  { value: 'customerPhoneNumber', label: 'Customer Phone' },
   { value: 'paidStatus', label: 'Paid Status' },
   { value: 'shippingStatus', label: 'Shipping Status' }
 ];

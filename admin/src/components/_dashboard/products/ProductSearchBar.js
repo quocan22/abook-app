@@ -92,7 +92,7 @@ export default function ProductSearchBar({
             label="Sort by category"
             value={filterCate}
             onChange={onFilterCate}
-            defaultValue="all"
+            defaultValue=""
           >
             {cates.map((option) => (
               <MenuItem key={option._id} value={option._id}>

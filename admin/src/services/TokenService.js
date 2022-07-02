@@ -24,13 +24,22 @@ const removeUser = () => {
   localStorage.removeItem('user');
 };
 
+const updateUser = (displayName, avatarUrl) => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  user.displayName = displayName;
+  user.avatarUrl = avatarUrl;
+
+  setUser(user);
+};
+
 const TokenService = {
   getLocalRefreshToken,
   getLocalAccessToken,
   updateLocalAccessToken,
   getUser,
   setUser,
-  removeUser
+  removeUser,
+  updateUser
 };
 
 export default TokenService;
