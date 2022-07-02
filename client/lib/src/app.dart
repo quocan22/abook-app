@@ -2,6 +2,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import './blocs/address_book/address_book_bloc.dart';
 import './blocs/authentication/authentication_bloc.dart';
 import './blocs/book/book_bloc.dart';
 import './blocs/book_detail/book_detail_bloc.dart';
@@ -88,6 +89,9 @@ class App extends StatelessWidget {
           BlocProvider(
             create: (context) => BookDetailBloc(
                 service: _bookService, userService: _userService),
+          ),
+          BlocProvider(
+            create: (context) => AddressBookBloc(service: _userService),
           )
         ],
         child: MaterialApp(
