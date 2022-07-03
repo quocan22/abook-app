@@ -23,6 +23,7 @@ app.use("/api/feedbacks", require("./routes/feedbackRouter"));
 app.use("/api/asset", require("./routes/assetRouter"));
 app.use("/api/report", require("./routes/reportRouter"));
 app.use("/api/chatbot", require("./routes/chatbotRouter"));
+app.use("/api/activate", require("./routes/activateOTPRouter"));
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
