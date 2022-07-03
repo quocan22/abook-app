@@ -9,12 +9,12 @@ class LoginInitial extends LoginState {}
 
 class LoginFailure extends LoginState {
   final String errorMessage;
-  LoginFailure({
-    required this.errorMessage,
-  });
+  final String? userId;
+  final String? email;
+  LoginFailure({required this.errorMessage, this.userId, this.email});
 
   @override
-  List<Object?> get props => [errorMessage];
+  List<Object?> get props => [errorMessage, userId, email];
 }
 
 class LoginInProgress extends LoginState {}

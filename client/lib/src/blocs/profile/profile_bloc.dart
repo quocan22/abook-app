@@ -11,9 +11,41 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfileUpdated>((event, emit) async {
       emit(ProfileUpdateInProgress());
       try {
-        await userService.updateProfile(
-            event.userId, event.fullName, event.address, event.phoneNumber);
-        emit(ProfileUpdateSuccess());
+        if (event.isProfileImageRemoved) {
+          String defaultAvaUrl =
+              await userService.removeProfileImage(event.userId);
+          await userService.updateProfile(event.userId, event.fullName,
+              event.address, event.phoneNumber, null);
+          emit(ProfileUpdateSuccess(avatarUrl: defaultAvaUrl));
+        } else {
+          if (event.profileImage == null) {
+            await userService.updateProfile(event.userId, event.fullName,
+                event.address, event.phoneNumber, null);
+            emit(ProfileUpdateSuccess());
+          } else {
+            String? avaUrl = await userService.updateProfile(
+                event.userId,
+                event.fullName,
+                event.address,
+                event.phoneNumber,
+                event.profileImage);
+            emit(ProfileUpdateSuccess(avatarUrl: avaUrl));
+          }
+        }
+      } catch (e) {
+        emit(ProfileUpdateFailure(errorMessage: e.toString()));
+      }
+    });
+    on<ProfilePasswordChanged>((event, emit) async {
+      emit(ProfileUpdateInProgress());
+      try {
+        String msg = await userService.changePassword(
+            event.userId, event.oldPassword, event.newPassword);
+        if (msg == 'Change password successfully') {
+          emit(ProfileUpdateSuccess());
+        } else {
+          emit(ProfileUpdateSuccess(msg: msg));
+        }
       } catch (e) {
         emit(ProfileUpdateFailure(errorMessage: e.toString()));
       }

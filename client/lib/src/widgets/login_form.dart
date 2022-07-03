@@ -1,7 +1,9 @@
+import 'package:client/src/blocs/verify/verify_bloc.dart';
+import 'package:client/src/blocs/verify/verify_event.dart';
+import 'package:client/src/blocs/verify/verify_state.dart';
+import 'package:client/src/screens/verify_account_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-//import 'package:google_sign_in/google_sign_in.dart';
 
 import '../blocs/login/login_bloc.dart';
 import '../blocs/login/login_event.dart';
@@ -9,13 +11,6 @@ import '../blocs/login/login_state.dart';
 import '../config/app_constants.dart' as app_constants;
 import '../constants/constants.dart' as constants;
 import '../utils/validators.dart';
-
-// GoogleSignIn _googleSignIn = GoogleSignIn(
-//   scopes: <String>[
-//     'email',
-//     'https://www.googleapis.com/auth/contacts.readonly',
-//   ],
-// );
 
 class LoginForm extends StatefulWidget {
   final String? defaultEmail;
@@ -28,7 +23,7 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   var _emailController;
   final _passwordController = TextEditingController();
-  final _logginformKey = GlobalKey<FormState>();
+  final _loginFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -49,20 +44,6 @@ class _LoginFormState extends State<LoginForm> {
 
   bool isInvalidPassword(String password) {
     return password.isEmpty;
-  }
-
-  void signInWithGoogle() async {
-    // await _googleSignIn.signIn().then((result) {
-    //   result!.authentication.then((googleKey) {
-    //     print(googleKey);
-    //     print(googleKey);
-    //     print(_googleSignIn.currentUser!.displayName);
-    //   }).catchError((err) {
-    //     print('inner error');
-    //   });
-    // }).catchError((err) {
-    //   print(err.toString());
-    // });
   }
 
   @override
@@ -89,7 +70,8 @@ class _LoginFormState extends State<LoginForm> {
 
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
-        if (state is LoginFailure) {
+        if (state is LoginFailure &&
+            state.errorMessage != 'This user has not been activated') {
           ScaffoldMessenger.of(context)
             ..removeCurrentSnackBar()
             ..showSnackBar(
@@ -109,7 +91,7 @@ class _LoginFormState extends State<LoginForm> {
       child: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
           return Form(
-            key: _logginformKey,
+            key: _loginFormKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -131,7 +113,6 @@ class _LoginFormState extends State<LoginForm> {
                       ? constants.FailureProcess.invalidEmail
                       : null,
                   keyboardType: TextInputType.emailAddress,
-                  autofocus: true,
                   textInputAction: TextInputAction.next,
                   cursorColor: constants.LoginScreenConstants.mainTheme,
                   decoration: InputDecoration(
@@ -162,32 +143,14 @@ class _LoginFormState extends State<LoginForm> {
                   height:
                       _emailTextFormFieldSectionAndPasswordTextFormFieldSectionSpacing,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      constants.LoginScreenConstants.passwordTitle,
-                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                            color: constants.LoginScreenConstants
-                                .emailAndPasswordTitleColor,
-                            fontSize: _titleTextFormFieldFontSize,
-                            fontWeight: _titleTextFormFieldFontWeight,
-                          ),
-                    ),
-                    InkWell(
-                      onTap: () => Navigator.of(context)
-                          .pushNamed(app_constants.RouteNames.forgotPassword),
-                      child: Text(
-                        constants.LoginScreenConstants.forgotPasswordTitle,
-                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                              color: constants.LoginScreenConstants
-                                  .forgotPasswordTitleColor,
-                              fontSize: _forgotPasswordFontSize,
-                              fontWeight: _forgotPasswordFontWeight,
-                            ),
+                Text(
+                  constants.LoginScreenConstants.passwordTitle,
+                  style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                        color: constants
+                            .LoginScreenConstants.emailAndPasswordTitleColor,
+                        fontSize: _titleTextFormFieldFontSize,
+                        fontWeight: _titleTextFormFieldFontWeight,
                       ),
-                    ),
-                  ],
                 ),
                 SizedBox(
                   height: _passwordTitleAndpasswordTextFormFieldSpacing,
@@ -225,7 +188,57 @@ class _LoginFormState extends State<LoginForm> {
                       ),
                 ),
                 SizedBox(
-                  height: _passwordTextFormFieldSectionAndLogginButtonSpacing,
+                  height:
+                      _passwordTextFormFieldSectionAndLogginButtonSpacing / 2,
+                ),
+                Visibility(
+                  visible: (state is LoginFailure &&
+                          state.errorMessage ==
+                              'This user has not been activated')
+                      ? true
+                      : false,
+                  child: Row(
+                    children: [
+                      Text(
+                        'Your account has not been verified',
+                        style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                              color: Colors.red,
+                            ),
+                      ),
+                      const SizedBox(
+                        width: 5.0,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          if (state is LoginFailure &&
+                              state.errorMessage ==
+                                  'This user has not been activated') {
+                            context.read<VerifyBloc>().add(
+                                VerifyResendOTPRequested(email: state.email!));
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => VerifyAccountScreen(
+                                        email: state.email!,
+                                        userId: state.userId!)));
+                          }
+                        },
+                        child: Text(
+                          'Verify',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(
+                                color: constants.ColorsConstant.primaryColor,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height:
+                      _passwordTextFormFieldSectionAndLogginButtonSpacing / 2,
                 ),
                 SizedBox(
                   width: double.infinity,
@@ -240,7 +253,7 @@ class _LoginFormState extends State<LoginForm> {
                       )),
                     ),
                     onPressed: () {
-                      if (_logginformKey.currentState!.validate()) {
+                      if (_loginFormKey.currentState!.validate()) {
                         context.read<LoginBloc>().add(LoginRequested(
                             _emailController.text.trim(),
                             _passwordController.text));
@@ -259,57 +272,6 @@ class _LoginFormState extends State<LoginForm> {
                                       fontSize: _loginButtonFontSize,
                                       fontWeight: _loginButtonFontWeight,
                                     ),
-                          ),
-                  ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: _buttonHeight,
-                  child: TextButton(
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        side: BorderSide(
-                            color: constants.ColorsConstant.primaryColor),
-                        borderRadius: BorderRadius.circular(8),
-                      )),
-                    ),
-                    onPressed: () async => signInWithGoogle(),
-                    child: state is LoginInProgress
-                        ? CircularProgressIndicator(
-                            color: Colors.white,
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image(
-                                    image: AssetImage(
-                                        'assets/icons/google_icon.png'),
-                                    width: 24,
-                                    height: 24,
-                                  ),
-                                  SizedBox(
-                                    width: 16.0,
-                                  ),
-                                  Text(
-                                    'Sign in with Google',
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle1!
-                                        .copyWith(
-                                          color: constants
-                                              .ColorsConstant.primaryColor,
-                                          fontSize: _loginButtonFontSize,
-                                          fontWeight: _loginButtonFontWeight,
-                                        ),
-                                  ),
-                                ]),
                           ),
                   ),
                 ),

@@ -31,7 +31,7 @@ class LoginScreenConstants {
 
   static const String welcomeTitle = 'Welcome \nBack!';
   static const String loginTitle = 'Please login to continue.';
-  static const String emailTitle = 'Email address';
+  static const String emailTitle = 'Email';
   static const String passwordTitle = 'Password';
   static const String forgotPasswordTitle = 'Forgot password?';
   static const String loginButton = 'Login';

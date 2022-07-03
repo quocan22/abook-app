@@ -1,3 +1,4 @@
+import 'package:client/src/screens/verify_account_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -83,8 +84,11 @@ class _SignUpFormState extends State<SignUpForm> {
     return BlocListener<SignupBloc, SignupState>(
         listener: (context, state) {
           if (state is SignupSuccess) {
-            Navigator.of(context)
-                .pushReplacementNamed(RouteNames.login, arguments: state.email);
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (_) => VerifyAccountScreen(
+                      email: state.email,
+                      userId: state.userId,
+                    )));
           }
         },
         child: Form(
@@ -106,7 +110,6 @@ class _SignUpFormState extends State<SignUpForm> {
                     fontSize: _titleTextFormFieldFontSize,
                     fontWeight: _titleTextFormFieldFontWeight)),
             TextFormField(
-              autofocus: true,
               validator: (value) => fullNameValidate(value),
               controller: _fullNameTextController,
               textInputAction: TextInputAction.next,
