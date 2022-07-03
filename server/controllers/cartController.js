@@ -89,8 +89,18 @@ const cartController = {
 
         await newCart.save();
       } else {
-        // push detail to array
-        cart.details.push({ bookId, quantity });
+        const existBookIndex = cart.details.findIndex((d) => {
+          return d.bookId === bookId;
+        });
+
+        if (existBookIndex === -1) {
+          // push detail to array if book does not exist in cart
+          cart.details.push({ bookId, quantity });
+        } else {
+          // add quantity if book exists in cart
+          cart.details[existBookIndex].quantity += quantity;
+          cart.markModified("details");
+        }
 
         await cart.save();
       }
@@ -134,7 +144,7 @@ const cartController = {
 
       const cart = await Carts.findOne({ userId });
 
-      // if cart exist, update corresponding book
+      // if cart exist, update corresponded book
       if (cart) {
         for (let i = 0; i < cart.details.length; i++) {
           if (cart.details[i].bookId === bookId) {
@@ -149,6 +159,30 @@ const cartController = {
       }
 
       res.status(400).json({ msg: "Change quantity failed" });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  removeBookFromCart: async (req, res) => {
+    try {
+      const userId = req.query.userId;
+      const { bookId } = req.body;
+
+      const cart = await Carts.findOne({ userId });
+
+      console.log(cart.details);
+
+      if (cart) {
+        cart.details = cart.details.filter((c) => c.bookId !== bookId);
+
+        await cart.save();
+
+        return res
+          .status(200)
+          .json({ msg: "Remove book from cart successfully" });
+      }
+
+      res.status(400).json({ msg: "Remove book from cart failed" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }

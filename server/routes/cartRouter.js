@@ -12,4 +12,6 @@ router.patch("/add_book", cartController.addBookToCart);
 
 router.patch("/change_quantity", cartController.changeQuantity);
 
+router.post("/remove_book", cartController.removeBookFromCart);
+
 module.exports = router;

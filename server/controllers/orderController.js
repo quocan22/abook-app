@@ -7,12 +7,12 @@ const dateTimeFunc = require("../utils/dateTimeFunc");
 const orderController = {
   createOrder: async (req, res) => {
     try {
-      const { cartId, discountPrice, paidStatus } = req.body;
+      const { userId, discountPrice, address } = req.body;
 
-      const cart = await Carts.findById(cartId);
+      const cart = await Carts.findOne({ userId: userId });
 
       if (!cart) {
-        return res.status(404).json({ msg: "Cannot find this cart" });
+        return res.status(404).json({ msg: "This user has no cart" });
       }
 
       if (cart.details.length < 1) {
@@ -43,15 +43,17 @@ const orderController = {
         userId: cart.userId,
         discountPrice,
         totalPrice: totalPrice - discountPrice,
-        paidStatus,
-        shippingStatus: 0,
+        customerName: address.fullName,
+        customerPhoneNumber: address.phoneNumber,
+        customerAddress: address.address,
+        shippingStatus: 1,
         details: orderDetails,
       });
 
       await newOrder.save();
 
       // After ordering, cart have to be deleted
-      await Carts.findByIdAndDelete(cartId);
+      await Carts.findOneAndDelete({ userId: userId });
 
       res.status(202).json({
         msg: "Create order successfully",
@@ -84,11 +86,6 @@ const orderController = {
         let endStr = id.slice(-3);
         ordersRes[i].billNo = `${startStr}...${endStr}`;
 
-        // Get customer name and customer phone number
-        let customer = await Users.findById(orders[i].userId);
-        ordersRes[i].customerName = customer.userClaim.displayName;
-        ordersRes[i].customerPhone = customer.userClaim.phoneNumber;
-
         // Get total products of order
         ordersRes[i].totalProducts = orders[i].details.length;
 
@@ -118,25 +115,50 @@ const orderController = {
       for (let i = 0; i < order.details.length; i++) {
         const book = await Books.findById(order.details[i].bookId);
 
-        const { name, imageUrl, isAvailable } = book.toObject();
+        const { name, imageUrl, price, isAvailable } = book.toObject();
 
         booksRes[i].name = name;
         booksRes[i].imageUrl = imageUrl;
+        booksRes[i].price = price;
         booksRes[i].isAvailable = isAvailable;
       }
 
-      const { userClaim } = await Users.findById(order.userId);
-
-      // order is a MongoDB document, so it must be converted to an object
-      let orderRes = order.toObject();
-      orderRes.details = booksRes;
-      orderRes.customerName = userClaim.displayName;
-      orderRes.customerPhone = userClaim.phoneNumber;
-      orderRes.customerAddress = userClaim.address;
-
       res.status(200).json({
         msg: "Get order information successfully",
-        data: orderRes,
+        data: order,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  getOrderByUserId: async (req, res) => {
+    try {
+      const { userId } = req.body;
+
+      const orders = await Orders.find({ userId: userId });
+
+      if (!orders) {
+        return res.status(400).json({ msg: "Cannot find this order" });
+      }
+
+      for (let i = 0; i < orders.length; i++) {
+        let booksRes = orders[i].details;
+
+        for (let k = 0; k < orders[i].details.length; k++) {
+          const book = await Books.findById(orders[i].details[k].bookId);
+
+          const { name, imageUrl, price, isAvailable } = book.toObject();
+
+          booksRes[k].name = name;
+          booksRes[k].imageUrl = imageUrl;
+          booksRes[k].price = price;
+          booksRes[k].isAvailable = isAvailable;
+        }
+      }
+
+      res.status(200).json({
+        msg: "Get order by user id successfully",
+        data: orders,
       });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
@@ -146,7 +168,12 @@ const orderController = {
     try {
       const { id, status } = req.body;
 
-      const order = Orders.findById(id);
+      // check if new status is out of status range
+      if (status < 1 || status > 3) {
+        return res.status(400).json({ msg: "Invalid status" });
+      }
+
+      const order = await Orders.findById(id);
 
       if (!order) {
         return res.status(400).json({ msg: "Cannot find this order" });
@@ -174,6 +201,33 @@ const orderController = {
       res.status(201).json({
         msg: "Update order shipping status successfully",
         id: result._id,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  updatePaidStatus: async (req, res) => {
+    try {
+      const { id, status } = req.body;
+
+      // check if new status is out of status range
+      if (status < 1 || status > 2) {
+        return res.status(400).json({ msg: "Invalid status" });
+      }
+
+      const order = await Orders.findById(id);
+
+      if (!order) {
+        return res.status(400).json({ msg: "Cannot find this order" });
+      }
+
+      order.paidStatus = status;
+
+      await order.save();
+
+      res.status(201).json({
+        msg: "Update order paid status successfully",
+        id: order._id,
       });
     } catch (err) {
       return res.status(500).json({ msg: err.message });

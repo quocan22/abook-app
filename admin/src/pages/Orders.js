@@ -202,7 +202,7 @@ export default function Orders() {
                           _id,
                           billNo,
                           customerName,
-                          customerPhone,
+                          customerPhoneNumber,
                           createdAt,
                           totalProducts,
                           totalPrice,
@@ -225,7 +225,7 @@ export default function Orders() {
                           >
                             <TableCell align="left">{billNo}</TableCell>
                             <TableCell align="left">{customerName}</TableCell>
-                            <TableCell align="left">{customerPhone}</TableCell>
+                            <TableCell align="left">{customerPhoneNumber}</TableCell>
                             <TableCell align="left">
                               {dateFormat(createdAt, 'dd/mm/yyyy')}
                             </TableCell>

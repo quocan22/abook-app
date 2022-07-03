@@ -8,10 +8,13 @@ const getOrderInfo = (orderId) => api.get(`${API_MODEL_URL}/${orderId}`);
 
 const updateShippingStatus = (data) => api.post(`${API_MODEL_URL}/shipping_status`, data);
 
+const updatePaidStatus = (data) => api.post(`${API_MODEL_URL}/paid_status`, data);
+
 const OrderService = {
   getAllOrdersNotDetails,
   getOrderInfo,
-  updateShippingStatus
+  updateShippingStatus,
+  updatePaidStatus
 };
 
 export default OrderService;

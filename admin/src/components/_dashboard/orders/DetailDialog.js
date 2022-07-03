@@ -95,6 +95,7 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [paying, setPaying] = useState(false);
   const [order, setOrder] = useState('');
 
   useEffect(() => {
@@ -112,7 +113,7 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
     }
   }, [orderId, change]);
 
-  const handleSubmit = (status) => () => {
+  const updateShippingStatus = (status) => () => {
     if (status === 2) {
       setCompleting(true);
     } else if (status === 3) {
@@ -130,6 +131,21 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
         if (err.response) toast.error(err.response.data.msg);
         setCompleting(false);
         setCancelling(false);
+      });
+  };
+
+  const updatePaidStatus = (status) => () => {
+    setPaying(true);
+
+    OrderService.updatePaidStatus({ id: orderId, status })
+      .then((res) => {
+        toast.success(res.data.msg);
+        setPaying(false);
+        onChange();
+      })
+      .catch((err) => {
+        if (err.response) toast.error(err.response.data.msg);
+        setPaying(false);
       });
   };
 
@@ -161,7 +177,7 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
               <Typography variant="h6">Bill No:&nbsp;{order._id}</Typography>
               <Stack direction="row" spacing={1}>
                 <Chip
-                  label={<strong>{convertPaidStatus(order.paidStatus)}</strong>}
+                  label={<strong>Paid Status: {convertPaidStatus(order.paidStatus)}</strong>}
                   color={
                     (order.paidStatus === 1 && 'warning') ||
                     (order.paidStatus === 2 && 'secondary') ||
@@ -169,7 +185,9 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
                   }
                 />
                 <Chip
-                  label={<strong>{convertShippingStatus(order.shippingStatus)}</strong>}
+                  label={
+                    <strong>Shipping Status: {convertShippingStatus(order.shippingStatus)}</strong>
+                  }
                   color={
                     (order.shippingStatus === 1 && 'warning') ||
                     (order.shippingStatus === 2 && 'secondary') ||
@@ -196,15 +214,21 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
                 <Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Name:</Typography>
-                    <Typography align="right">{order.customerName}</Typography>
+                    <Typography sx={{ ml: 4 }} align="right">
+                      {order.customerName}
+                    </Typography>
                   </Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Phone number:</Typography>
-                    <Typography align="right">{order.customerPhone}</Typography>
+                    <Typography sx={{ ml: 4 }} align="right">
+                      {order.customerPhone}
+                    </Typography>
                   </Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Address:</Typography>
-                    <Typography align="right">{order.customerAddress}</Typography>
+                    <Typography sx={{ ml: 4 }} align="right">
+                      {order.customerAddress}
+                    </Typography>
                   </Stack>
                 </Stack>
               )}
@@ -223,45 +247,74 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
                 <Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Order date:</Typography>
-                    <Typography align="right">
+                    <Typography sx={{ ml: 4 }} align="right">
                       {dateFormat(order.createdAt, 'dd/mm/yyyy')}
                     </Typography>
                   </Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Discount:</Typography>
-                    <Typography align="right">{fCurrency(order.discountPrice)}&nbsp;VNĐ</Typography>
+                    <Typography sx={{ ml: 4 }} align="right">
+                      {fCurrency(order.discountPrice)}&nbsp;VNĐ
+                    </Typography>
                   </Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Total amount:</Typography>
-                    <Typography align="right">{fCurrency(order.totalPrice)}&nbsp;VNĐ</Typography>
+                    <Typography sx={{ ml: 4 }} align="right">
+                      {fCurrency(order.totalPrice)}&nbsp;VNĐ
+                    </Typography>
                   </Stack>
                 </Stack>
               )}
             </Grid>
           </Stack>
           <Divider variant="middle" sx={{ m: 1 }} />
+          {order.paidStatus !== 2 && (
+            <Stack
+              sx={{ my: 2 }}
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography variant="h6">Change Paid Status:</Typography>
+              <Stack direction="row" justifyContent="flex-end" spacing={1}>
+                <LoadingButton
+                  variant="contained"
+                  color="secondary"
+                  endIcon={<Icon icon={checkFill} />}
+                  loadingPosition="end"
+                  loading={paying}
+                  onClick={updatePaidStatus(2)}
+                >
+                  Check As Paid
+                </LoadingButton>
+              </Stack>
+            </Stack>
+          )}
           {order.shippingStatus !== 2 && order.shippingStatus !== 3 && (
-            <Stack direction="row" justifyContent="flex-end" spacing={1}>
-              <LoadingButton
-                variant="contained"
-                color="secondary"
-                endIcon={<Icon icon={checkFill} />}
-                loadingPosition="end"
-                loading={completing}
-                onClick={handleSubmit(2)}
-              >
-                Complete
-              </LoadingButton>
-              <Button
-                variant="contained"
-                color="error"
-                endIcon={<Icon icon={closeFill} />}
-                loadingPosition="end"
-                loading={cancelling}
-                onClick={handleSubmit(3)}
-              >
-                Cancel
-              </Button>
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Typography variant="h6">Change Shipping Status:</Typography>
+              <Stack direction="row" justifyContent="flex-end" spacing={1}>
+                <LoadingButton
+                  variant="contained"
+                  color="secondary"
+                  endIcon={<Icon icon={checkFill} />}
+                  loadingPosition="end"
+                  loading={completing}
+                  onClick={updateShippingStatus(2)}
+                >
+                  Complete
+                </LoadingButton>
+                <LoadingButton
+                  variant="contained"
+                  color="error"
+                  endIcon={<Icon icon={closeFill} />}
+                  loadingPosition="end"
+                  loading={cancelling}
+                  onClick={updateShippingStatus(3)}
+                >
+                  Cancel
+                </LoadingButton>
+              </Stack>
             </Stack>
           )}
           <Typography sx={{ mt: 2 }} variant="h6">

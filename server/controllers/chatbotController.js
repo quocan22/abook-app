@@ -1,10 +1,12 @@
 const dialogflow = require("@google-cloud/dialogflow");
 const uuid = require("uuid");
 
-const dialogflowCredentials = require("../utils/keys");
 const Orders = require("../models/orderModel");
 const Books = require("../models/bookModel");
 const Categories = require("../models/categoryModel");
+
+const dialogflowCredentials = require("../utils/keys");
+const formatCurrency = require("../utils/formatCurrency");
 
 const projectId = dialogflowCredentials.projectId;
 const languageCode = dialogflowCredentials.sessionLanguageCode;
@@ -20,8 +22,11 @@ const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 const BEST_SELLING_ACTION = "bestSell";
 const NEW_ARRIVALS_ACTION = "newArrivals";
 const CATEGORY_SEARCH_ACTION = "categorySearch";
-const SEARCH_BOOK_BY_CATEGORY = "searchBookByCate";
+const SEARCH_BOOK_BY_CATEGORY_ACTION = "searchBookByCate";
 const BEST_DISCOUNT_ACTION = "bestDiscount";
+const MOST_EXPENSIVE_ACTION = "mostExpensive";
+const CHEAPEST_ACTION = "cheapest";
+const GIVE_CATE_TO_FIND_BOOK = "giveCateToFindBook";
 //#endregion
 
 const chatbotController = {
@@ -52,11 +57,20 @@ const chatbotController = {
       case CATEGORY_SEARCH_ACTION:
         categorySearch(res);
         break;
-      case SEARCH_BOOK_BY_CATEGORY:
+      case SEARCH_BOOK_BY_CATEGORY_ACTION:
         searchBookByCate(res, responses);
         break;
       case BEST_DISCOUNT_ACTION:
         bestDiscount(res, responses);
+        break;
+      case MOST_EXPENSIVE_ACTION:
+        mostExpensive(res);
+        break;
+      case CHEAPEST_ACTION:
+        cheapest(res);
+        break;
+      case GIVE_CATE_TO_FIND_BOOK:
+        searchBookByCate(res, responses);
         break;
       case "makeOrder":
         makeOrder(res, responses);
@@ -85,9 +99,12 @@ const chatbotController = {
 
     const responses = await sessionClient.detectIntent(request);
 
-    const result = responses[0].queryResult;
+    const text = responses[0].queryResult.fulfillmentMessages[0].text.text[0];
 
-    res.status(200).json(result);
+    res.status(200).json({
+      type: 1,
+      text: text,
+    });
   },
 };
 
@@ -223,6 +240,44 @@ async function bestDiscount(res) {
       type: 2,
       text: "These are best discount books on ABook Store.",
       data: bestDiscountBooks,
+    });
+  }
+}
+
+async function mostExpensive(res) {
+  const mostExpensiveBook = await Books.find().sort({ price: -1 }).limit(1);
+
+  if (mostExpensiveBook.length > 0) {
+    const price = formatCurrency(mostExpensiveBook[0].price);
+
+    res.status(200).json({
+      type: 2,
+      text: `This is the most expensive book in our store with the price is ${price}.`,
+      data: mostExpensiveBook,
+    });
+  } else {
+    res.status(200).json({
+      type: 1,
+      text: "Sorry, we have a temporary issue so we cannot show you the most expensive book right now.",
+    });
+  }
+}
+
+async function cheapest(res) {
+  const cheapestBook = await Books.find().sort({ price: 1 }).limit(1);
+
+  if (cheapestBook.length > 0) {
+    const price = formatCurrency(cheapestBook[0].price);
+
+    res.status(200).json({
+      type: 2,
+      text: `This is the cheapest book in our store with the price is ${price}.`,
+      data: cheapestBook,
+    });
+  } else {
+    res.status(200).json({
+      type: 1,
+      text: "Sorry, we have a temporary issue so we cannot show you the cheapest book right now.",
     });
   }
 }

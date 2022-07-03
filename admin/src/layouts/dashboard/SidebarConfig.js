@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import pieChart2Fill from '@iconify/icons-eva/pie-chart-2-fill';
+import personFill from '@iconify/icons-eva/person-fill';
 import peopleFill from '@iconify/icons-eva/people-fill';
 import shoppingBagFill from '@iconify/icons-eva/shopping-bag-fill';
 import carFill from '@iconify/icons-eva/car-fill';
@@ -16,6 +17,11 @@ const sidebarConfig = [
   //   path: '/dashboard/app',
   //   icon: getIcon(pieChart2Fill)
   // },
+  {
+    title: 'Profile',
+    path: '/dashboard/profile',
+    icon: getIcon(personFill)
+  },
   {
     title: 'Users',
     path: '/dashboard/users',

@@ -40,10 +40,10 @@ export default function LoginForm() {
     validationSchema: LoginSchema,
     onSubmit: (values, actions) => {
       actions.setSubmitting(true);
-      AuthService.login(values.email, values.password)
+      AuthService.adminLogin(values.email, values.password)
         .then((res) => {
           TokenService.setUser(res.data.data);
-          navigate('/dashboard', { replace: true });
+          navigate('/dashboard/users', { replace: true });
         })
         .catch((err) => {
           if (err.response) {

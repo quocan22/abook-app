@@ -6,6 +6,18 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    customerName: {
+      type: String,
+      default: "",
+    },
+    customerPhoneNumber: {
+      type: String,
+      default: "",
+    },
+    customerAddress: {
+      type: String,
+      default: "",
+    },
     discountPrice: {
       type: Number,
       default: 0,

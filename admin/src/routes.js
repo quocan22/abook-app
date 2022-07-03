@@ -1,13 +1,13 @@
-import { Navigate, useRoutes } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Navigate, useNavigate, useRoutes, useLocation } from 'react-router-dom';
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
-//
+// components
 import Login from './pages/Login';
 import Register from './pages/Register';
-import DashboardApp from './pages/DashboardApp';
 import Products from './pages/Products';
-import Blog from './pages/Blog';
+import Profile from './pages/Profile';
 import Users from './pages/Users';
 import Orders from './pages/Orders';
 import NotFound from './pages/Page404';
@@ -16,23 +16,29 @@ import Feedbacks from './pages/Feedbacks';
 import Report from './pages/Report';
 import BookDetails from './pages/BookDetails';
 import BookReceipt from './pages/BookReceipt';
+// services
+import { TokenService } from './services';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
-  function handleNavigate() {
-    if (!localStorage.getItem('user')) {
-      return <Navigate to="/login" replace />;
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!TokenService.getUser()) {
+      navigate('/login', { replace: true });
+    } else if (location.pathname === '/login') {
+      navigate('/profile', { replace: true });
     }
-    return <Navigate to="/dashboard/users" replace />;
-  }
+  }, [navigate, location]);
+
   return useRoutes([
     {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
-        { element: handleNavigate() },
-        { path: 'app', element: <DashboardApp /> },
+        { path: 'profile', element: <Profile /> },
         { path: 'users', element: <Users /> },
         { path: 'products', element: <Products /> },
         { path: 'orders', element: <Orders /> },
@@ -40,8 +46,7 @@ export default function Router() {
         { path: 'feedbacks', element: <Feedbacks /> },
         { path: 'report', element: <Report /> },
         { path: 'details/:bookId', element: <BookDetails /> },
-        { path: 'book_receipt', element: <BookReceipt /> },
-        { path: 'blog', element: <Blog /> }
+        { path: 'book_receipt', element: <BookReceipt /> }
       ]
     },
     {
@@ -51,7 +56,7 @@ export default function Router() {
         { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
-        { path: '/', element: <Navigate to="/dashboard" /> },
+        { path: '/', element: <Navigate to="/dashboard/profile" /> },
         { path: '*', element: <Navigate to="/404" /> }
       ]
     },

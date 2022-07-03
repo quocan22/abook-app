@@ -8,3 +8,4 @@ export { default as FeedbackService } from './FeedbackService';
 export { default as DiscountService } from './DiscountService';
 export { default as ReportService } from './ReportService';
 export { default as BookReceiptService } from './BookReceiptService';
+export { default as AssetService } from './AssetService';

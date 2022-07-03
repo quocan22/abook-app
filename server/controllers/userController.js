@@ -216,6 +216,63 @@ const userController = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  adminLogin: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      // get user with additional field password - to verify
+      const user = await Users.findOne({ email }).select("+password");
+
+      // check if this user does not exists
+      if (!user) {
+        return res.status(404).json({ msg: "This email does not exist" });
+      }
+
+      if (user.isLocked) {
+        return res.status(401).json({ msg: "This user has been locked" });
+      }
+
+      // compare password from request and password in database
+      const passwordMatched = await bcrypt.compare(password, user.password);
+
+      // check if password is not matched
+      if (!passwordMatched) {
+        return res.status(400).json({ msg: "Password is incorrect" });
+      }
+
+      // block the access if the user is not admin
+      if (user.role !== 2) {
+        return res.status(403).json({ msg: "This user has no access" });
+      }
+
+      // create a refresh token contains id and role
+      const refreshToken = createRefreshToken({
+        id: user._id,
+        role: user.role,
+      });
+
+      // create an access token contains id and role
+      const accessToken = createAccessToken({
+        id: user._id,
+        role: user.role,
+      });
+
+      res.status(200).json({
+        msg: "Login successfully",
+        data: {
+          refreshToken,
+          accessToken,
+          id: user._id,
+          email: user.email,
+          role: user.role,
+          displayName: user.userClaim.displayName,
+          avatarUrl: user.userClaim.avatarUrl,
+        },
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
   updateInfo: async (req, res) => {
     try {
       const { displayName, phoneNumber, address } = req.body;
@@ -447,7 +504,10 @@ const userController = {
       // return user claim information
       res.json({
         msg: "Get user information successfully",
-        data: user.userClaim,
+        data: {
+          email: user.email,
+          ...user.userClaim,
+        },
       });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
@@ -468,8 +528,7 @@ const userController = {
   },
   addAddress: async (req, res) => {
     try {
-      const { userId, name, company, phoneNumber, address, city, zipCode } =
-        req.body;
+      const { userId, fullName, phoneNumber, address } = req.body;
 
       const user = await Users.findById(userId);
 
@@ -478,12 +537,9 @@ const userController = {
       }
 
       const addressBook = {
-        name,
-        company,
+        fullName,
         phoneNumber,
         address,
-        city,
-        zipCode,
       };
 
       user.userClaim.addressBook.push(addressBook);
@@ -498,9 +554,31 @@ const userController = {
       return res.status(500).json({ msg: err.message });
     }
   },
-  getAddressBooks: async (req, res) => {
+  updateAddressBook: async (req, res) => {
     try {
-      const userId = req.query.id;
+      const { userId, address } = req.body;
+
+      const user = await Users.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ msg: "Cannot find this user" });
+      }
+
+      user.userClaim.addressBook = address;
+
+      await user.save();
+
+      res.json({
+        msg: "Update address book successfully",
+        data: address,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  getAddressBook: async (req, res) => {
+    try {
+      const userId = req.params.id;
 
       const user = await Users.findById(userId);
 
