@@ -4,22 +4,22 @@ const fetch = require("node-fetch");
 
 const { cloudinary } = require("../utils/cloudinary");
 const Users = require("../models/userModel");
+const emailService = require("../utils/emailService");
 
-const {
-  ACTIVATE_TOKEN_SECRET,
-  ACCESS_TOKEN_SECRET,
-  REFRESH_TOKEN_SECRET,
-  SERVER_URL,
-} = process.env;
+const { ACTIVATE_TOKEN_SECRET, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } =
+  process.env;
 
 const userController = {
   register: async (req, res) => {
     try {
-      const { email, password, role, userClaim } = req.body;
+      let { email, password, role, userClaim } = req.body;
+
+      email = email.trim();
+      password = password.trim();
 
       // check if miss email or password field in request
       if (!email || !password) {
-        return res.status(422).json({ msg: "Please enter email and password" });
+        return res.status(422).json({ msg: "Email and password are required" });
       }
 
       // check if email invalid
@@ -41,6 +41,7 @@ const userController = {
         password: passwordHash,
         role: role,
         userClaim: userClaim,
+        isActivated: true,
       });
 
       if (req.file) {
@@ -56,7 +57,7 @@ const userController = {
 
       await newUser.save();
 
-      res.json({
+      res.status(200).json({
         msg: "Register successfully!",
       });
     } catch (err) {
@@ -65,7 +66,10 @@ const userController = {
   },
   signup: async (req, res) => {
     try {
-      const { email, password, role, userClaim } = req.body;
+      let { email, password, userClaim } = req.body;
+
+      email = email.trim();
+      password = password.trim();
 
       // check if miss email or password field in request
       if (!email || !password) {
@@ -81,31 +85,28 @@ const userController = {
 
       // check if this email has already registered
       if (user) {
-        return res.status(403).json({ msg: "This email already existed" });
+        return res.status(402).json({ msg: "This email already existed" });
       }
+
+      const passwordHash = await bcrypt.hash(password, 10);
 
       const newUser = new Users({
         email: email.toLowerCase(),
-        password: password,
-        role: role,
+        password: passwordHash,
+        role: 1,
         userClaim: userClaim,
+        isActivated: false,
       });
 
-      await newUser.save();
-
-      const activateToken = createActivateToken(newUser);
-
-      const url = `${SERVER_URL}/api/users/activate/${activateToken}`;
-
-      mailService.sendActivationEmail(email, url);
-
-      res.json({
-        msg: "Sign up successfully! Please activate your email to start.",
-      });
-
-      res.json({
-        msg: "Create account successfully!",
-      });
+      newUser
+        .save()
+        .then((result) => {
+          // handle account verification
+          emailService.sendActivationEmail(result, res);
+        })
+        .catch((err) => {
+          res.status(500).json({ msg: err.message });
+        });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
@@ -178,6 +179,16 @@ const userController = {
 
       if (user.isLocked) {
         return res.status(401).json({ msg: "This user has been locked" });
+      }
+
+      if (!user.isActivated) {
+        return res.status(403).json({
+          msg: "This user has not been activated",
+          data: {
+            email: user.email,
+            userId: user._id,
+          },
+        });
       }
 
       // compare password from request and password in database

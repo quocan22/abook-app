@@ -23,7 +23,7 @@ router.post("/register", upload.single("image"), userController.register);
 
 router.post("/signup", userController.signup);
 
-router.post("/change_password", authentication, userController.changePassword);
+router.post("/change_password", userController.changePassword);
 
 router.post("/fav/add", userController.addBookToFav);
 

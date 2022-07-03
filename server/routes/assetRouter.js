@@ -21,6 +21,6 @@ router
 router
   .route("/avatar/:id")
   .put(upload.single("image"), authentication, assetController.updateAvatar)
-  .delete(upload.single("image"), authentication, assetController.deleteAvatar);
+  .delete(upload.single("image"), assetController.deleteAvatar);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 # Hệ thống kinh doanh sách trực tuyến
 
-## Đồ án môn học "Đồ án 2" - SE122.M11
+## Đồ án KLTN
 
 GV Hướng dẫn: Th.S Lê Thanh Trọng
 
