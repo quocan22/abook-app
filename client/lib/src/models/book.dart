@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:equatable/equatable.dart';
 
 class Book extends Equatable {
@@ -10,7 +12,7 @@ class Book extends Equatable {
   final int price;
   final int quantity;
   final String description;
-  final int avgRate;
+  final double avgRate;
   final List<dynamic> comments;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -46,7 +48,7 @@ class Book extends Equatable {
         price = json['price'],
         quantity = json['quantity'],
         description = json['description'],
-        avgRate = json['avgRate'],
+        avgRate = double.parse(json['avgRate'].toString()),
         comments = json['comments'],
         createdAt = DateTime.parse(json['createdAt']),
         updatedAt = DateTime.parse(json['updatedAt']),

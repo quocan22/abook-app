@@ -13,9 +13,6 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       emit(CategoryLoadInProgress());
       try {
         List<Category>? categories = await service.fetchCategoryList();
-        // if (Categorys != null) {
-        //   Categorys.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-        // }
         emit(CategoryLoadSuccess(categories: categories));
       } catch (e) {
         emit(CategoryLoadFailure(errorMessage: e.toString()));

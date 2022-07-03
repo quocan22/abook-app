@@ -11,7 +11,7 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<List<Book>> fetchBookList() async {
-    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.BOOKS);
+    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.BOOKS);
 
     try {
       dio.Response response = await dioClient.get(uri.toString());
@@ -33,7 +33,7 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<List<Book>>? fetchBookListByCategoryId(String categoryId) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.BOOKSBYCATE);
+    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.BOOKSBYCATE);
 
     try {
       dio.Response response = await dioClient
@@ -56,7 +56,7 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<String> addBookToFav(String bookId, String userId) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.ADDFAV);
+    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.ADDFAV);
 
     try {
       dio.Response response = await dioClient
@@ -77,7 +77,7 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<String> removeBookFromFav(String bookId, String userId) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.REMOVEFAV);
+    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.REMOVEFAV);
 
     try {
       dio.Response response = await dioClient
@@ -89,6 +89,52 @@ class BookServiceImpl implements BookService {
         return responseMsg;
       } else {
         throw Exception('Error when remove fav');
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<Book> getBookDetailById(String bookId) async {
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/books');
+
+    try {
+      dio.Response response = await dioClient.get(uri.toString() + '/$bookId');
+
+      if (response.statusCode == 200) {
+        var book = Book.fromJson(response.data['data']);
+
+        return book;
+      } else {
+        throw Exception('Error when fetching book data');
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<String> sendRateAndComment(
+      String bookId, String userId, int rate, String review) async {
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/books/comment');
+
+    try {
+      dio.Response response = await dioClient.patch(uri.toString(), data: {
+        "bookId": bookId,
+        "userId": userId,
+        "rate": rate,
+        "review": review
+      });
+
+      if (response.statusCode == 200) {
+        String responseMsg = response.data['msg'];
+
+        return responseMsg;
+      } else {
+        throw Exception('Error when send comment');
       }
     } catch (e) {
       print(e.toString());

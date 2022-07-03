@@ -7,6 +7,7 @@ abstract class CartService {
 
   Future<dynamic> getCartDetailByUserId(String userId);
   Future<String> addBookToCart(String userId, String bookId, int quantity);
+  Future<String> removeBookFromCart(String userId, String bookId);
   Future<String> changeBookQuantity(
       String userId, String bookId, int newQuantity);
 }

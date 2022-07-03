@@ -11,7 +11,7 @@ class CategoryServiceImpl implements CategoryService {
 
   @override
   Future<List<Category>>? fetchCategoryList() async {
-    final uri = Uri.http(AppConstants.HOST_NAME, AppConstants.CATEGORIES);
+    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.CATEGORIES);
 
     try {
       dio.Response response = await dioClient.get(uri.toString());

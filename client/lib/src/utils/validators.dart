@@ -15,4 +15,8 @@ class Validators {
   static isValidPassword(String password) {
     return _passwordRegExp.hasMatch(password);
   }
+
+  static isValidPhoneNumber(String phoneNumber) {
+    return numberOnlyRegExp.hasMatch(phoneNumber);
+  }
 }

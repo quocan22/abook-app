@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../config/app_constants.dart' as app_constants;
 import '../models/book.dart';
+import '../utils/format_rules.dart';
 
 class SquaredBookCardWithDiscount extends StatelessWidget {
   final Book book;
@@ -94,7 +95,7 @@ class SquaredBookCardWithDiscount extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
-                                  '${book.price} VNĐ',
+                                  FormatRules.formatPrice(book.price),
                                   style: TextStyle(
                                       decoration: TextDecoration.lineThrough,
                                       fontWeight: FontWeight.normal,
@@ -103,7 +104,9 @@ class SquaredBookCardWithDiscount extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
-                                  '${book.price * (100 - book.discountRatio)} VNĐ',
+                                  FormatRules.formatPrice(book.price *
+                                      (100 - book.discountRatio) ~/
+                                      100),
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -117,20 +120,22 @@ class SquaredBookCardWithDiscount extends StatelessWidget {
                   ),
                   Padding(
                     padding: EdgeInsets.all(5),
-                    child: ColoredBox(
-                      color: Colors.red,
-                      child: SizedBox(
-                        height: 30,
-                        width: 50,
-                        child: Padding(
-                            padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
-                            child: Center(
-                              child: Text(
-                                "- ${book.discountRatio}%",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            )),
-                      ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.all(Radius.circular(8))),
+                      height: 30,
+                      width: 50,
+                      child: Padding(
+                          padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                          child: Center(
+                            child: Text(
+                              "- ${book.discountRatio}%",
+                              style: TextStyle(
+                                  color: Colors.yellow,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          )),
                     ),
                   )
                 ],

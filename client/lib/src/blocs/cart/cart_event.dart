@@ -28,6 +28,16 @@ class CartBookAdded extends CartEvent {
   List<Object?> get props => [userId, bookId, quantity];
 }
 
+class CartBookRemoved extends CartEvent {
+  final String userId;
+  final String bookId;
+
+  CartBookRemoved({required this.userId, required this.bookId});
+
+  @override
+  List<Object?> get props => [userId, bookId];
+}
+
 class CartBookQuantityChanged extends CartEvent {
   final String userId;
   final String bookId;

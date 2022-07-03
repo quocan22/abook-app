@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart' as dio;
 
+import '../../models/address_book.dart';
 import '../../models/user.dart';
 
 abstract class UserService {
@@ -15,4 +16,12 @@ abstract class UserService {
 
   Future<String> updateProfile(
       String userId, String fullName, String address, String phoneNumber);
+
+  Future<List<AddressBook>>? getAddressBookByUserId(String userId);
+
+  Future<String> addAddressBook(
+      String userId, String fullName, String address, String phoneNumber);
+
+  Future<String> updateAddressBookForUser(
+      String userId, List<AddressBook>? addressBookList);
 }

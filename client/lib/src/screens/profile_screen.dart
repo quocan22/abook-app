@@ -3,21 +3,36 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/authentication/authentication_bloc.dart';
 import '../blocs/authentication/authentication_event.dart';
+import '../blocs/order/order_bloc.dart';
+import '../blocs/order/order_event.dart';
+import '../blocs/order/order_state.dart';
 import '../blocs/user_claim/user_claim_bloc.dart';
 import '../blocs/user_claim/user_claim_event.dart';
 import '../blocs/user_claim/user_claim_state.dart';
 import '../config/app_constants.dart';
 import '../constants/constants.dart';
+import '../widgets/order_item.dart';
+import './edit_address_book_screen.dart';
 import './edit_profile_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   final String userId;
 
   const ProfileScreen({Key? key, required this.userId}) : super(key: key);
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen>
+    with AutomaticKeepAliveClientMixin<ProfileScreen> {
+  @override
   Widget build(BuildContext context) {
-    context.read<UserClaimBloc>().add(UserClaimRequested(userId: userId));
+    super.build(context);
+    context
+        .read<UserClaimBloc>()
+        .add(UserClaimRequested(userId: widget.userId));
+    context.read<OrderBloc>().add(OrderRequested(userId: widget.userId));
 
     return SafeArea(
       child: Scaffold(
@@ -106,75 +121,104 @@ class ProfileScreen extends StatelessWidget {
                                         const SizedBox(
                                           height: 16.0,
                                         ),
-                                        IntrinsicHeight(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    'Orders',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline4
-                                                        ?.copyWith(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.black,
+                                        BlocBuilder<OrderBloc, OrderState>(
+                                          builder: (context, state) {
+                                            if (state is OrderLoadSuccess) {
+                                              return IntrinsicHeight(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Text(
+                                                          'Orders',
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .headline4
+                                                                  ?.copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
                                                         ),
-                                                  ),
-                                                  Text(
-                                                    '10',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline4
-                                                        ?.copyWith(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: ColorsConstant
-                                                              .primaryColor,
+                                                        Text(
+                                                          state
+                                                              .orderList!.length
+                                                              .toString(),
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .headline4
+                                                                  ?.copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: ColorsConstant
+                                                                        .primaryColor,
+                                                                  ),
                                                         ),
-                                                  ),
-                                                ],
-                                              ),
-                                              VerticalDivider(
-                                                color: Colors.grey,
-                                                width: 2,
-                                              ),
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    'Pending',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline4
-                                                        ?.copyWith(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.black,
+                                                      ],
+                                                    ),
+                                                    VerticalDivider(
+                                                      color: Colors.grey,
+                                                      width: 2,
+                                                    ),
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Text(
+                                                          'Pending',
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .headline4
+                                                                  ?.copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
                                                         ),
-                                                  ),
-                                                  Text(
-                                                    '1',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline4
-                                                        ?.copyWith(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: ColorsConstant
-                                                              .primaryColor,
+                                                        Text(
+                                                          state.orderList!
+                                                              .where((e) =>
+                                                                  e.shippingStatus ==
+                                                                  1)
+                                                              .length
+                                                              .toString(),
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .headline4
+                                                                  ?.copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: ColorsConstant
+                                                                        .primaryColor,
+                                                                  ),
                                                         ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }
+                                            return SizedBox(
+                                              height: 0,
+                                            );
+                                          },
                                         )
                                       ],
                                     ),
@@ -184,12 +228,7 @@ class ProfileScreen extends StatelessWidget {
                                     right: 0,
                                     child: IconButton(
                                         onPressed: () {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      EditProfileScreen(
-                                                        userId: userId,
-                                                      )));
+                                          openSettingOptions(context);
                                         },
                                         icon: Icon(Icons.settings)),
                                   )
@@ -227,7 +266,7 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 child: Container(
                   padding: EdgeInsets.all(16.0),
                   width: double.infinity,
@@ -250,69 +289,37 @@ class ProfileScreen extends StatelessWidget {
                               .textTheme
                               .headline3!
                               .copyWith(color: ColorsConstant.primaryColor)),
-                      ListView.separated(
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) => Container(
-                                padding: const EdgeInsets.all(8.0),
-                                height: 100,
-                                child: InkWell(
-                                    onTap: () {},
-                                    child: Row(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          child: Image.network(
-                                            'https://images.unsplash.com/photo-1621351183012-e2f9972dd9bf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGJvb2slMjBjb3ZlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60',
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 16.0,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'The two towers',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline4
-                                                  ?.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                            ),
-                                            Text(
-                                              'Tolkien',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline5
-                                                  ?.copyWith(
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    color: Colors.black,
-                                                  ),
-                                            ),
-                                            Spacer(),
-                                            Text(
-                                              '250 000 VNĐ',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    )),
-                              ),
-                          separatorBuilder: (context, index) {
-                            return Divider();
-                          },
-                          shrinkWrap: true,
-                          itemCount: 30)
+                      BlocBuilder<OrderBloc, OrderState>(
+                        builder: (context, state) {
+                          if (state is OrderLoadInProgress) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          if (state is OrderLoadSuccess) {
+                            if (state.orderList!.length == 0) {
+                              return Center(
+                                child: Text('You don\'t have any orders'),
+                              );
+                            }
+                            return ListView.separated(
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return OrderItem(
+                                      order: state.orderList!.elementAt(index));
+                                },
+                                separatorBuilder: (context, index) {
+                                  return Divider();
+                                },
+                                shrinkWrap: true,
+                                itemCount: state.orderList!.length);
+                          }
+                          return Center(
+                            child: Text(
+                                'Oops!!! We have some errors, please check your internet and try again'),
+                          );
+                        },
+                      )
                     ],
                   ),
                 ),
@@ -323,4 +330,132 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
+
+  openSettingOptions(BuildContext parentContext) {
+    return showModalBottomSheet(
+        context: parentContext,
+        builder: (context) {
+          return Container(
+            color: Color(0xFF737373),
+            height: 235,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(20),
+                    topRight: const Radius.circular(20),
+                  )),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    'Account Settings',
+                    style: Theme.of(context).textTheme.headline4?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: ColorsConstant.primaryColor,
+                        ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              ColorsConstant.primaryColor),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          )),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => EditProfileScreen(
+                                    userId: widget.userId,
+                                  )));
+                        },
+                        child: Text(
+                          'My Profile',
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    color: Colors.white,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              ColorsConstant.primaryColor),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          )),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => EditAddressBookScreen(
+                                    userId: widget.userId,
+                                  )));
+                        },
+                        child: Text(
+                          'My Address List',
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    color: Colors.white,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              ColorsConstant.primaryColor),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          )),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          'Cancel',
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    color: Colors.white,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

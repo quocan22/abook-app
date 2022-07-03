@@ -61,8 +61,7 @@ class BookListByCategoryScreen extends StatelessWidget {
     context
         .read<BookByCategoryBloc>()
         .add(BookListByCategoryIdRequested(categoryId: category.id));
-    return SafeArea(
-        child: Scaffold(
+    return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
         elevation: 0,
@@ -78,6 +77,6 @@ class BookListByCategoryScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: _buildBookList(),
-    ));
+    );
   }
 }

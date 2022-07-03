@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../config/app_constants.dart' as app_constants;
 import '../models/book.dart';
+import '../utils/format_rules.dart';
 
 class SquaredBookCard extends StatelessWidget {
   final Book book;
@@ -90,7 +91,7 @@ class SquaredBookCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              '${book.price} VNĐ',
+                              FormatRules.formatPrice(book.price),
                               style: TextStyle(fontWeight: FontWeight.bold),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,

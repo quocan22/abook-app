@@ -10,7 +10,7 @@ class FeedbackServiceImpl implements FeedbackService {
 
   @override
   Future<String> sendFeedback(String email, String feedback) async {
-    final uri = Uri.http(AppConstants.HOST_NAME, '/api/feedbacks');
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/feedbacks');
 
     try {
       dio.Response response = await dioClient

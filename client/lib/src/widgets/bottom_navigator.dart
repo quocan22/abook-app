@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../blocs/cart/cart_bloc.dart';
-import '../blocs/cart/cart_event.dart';
 import '../blocs/cart/cart_state.dart';
 import '../config/app_constants.dart';
 import '../constants/constants.dart';
@@ -19,8 +18,45 @@ class BottomNavigator extends StatefulWidget {
 }
 
 class _BottomNavigator extends State<BottomNavigator> {
-  int _selectedIndex = 0;
+  var _selectedIndex;
+  late List<Widget> _pages;
+  late PageController _pageController;
   String? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [HomeScreen()];
+    _selectedIndex = 0;
+    _updateScreensList();
+
+    _pageController = PageController(initialPage: _selectedIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+
+    super.dispose();
+  }
+
+  _updateScreensList() async {
+    await _checkLogin();
+    setState(() {
+      _pages = [
+        HomeScreen(),
+        FavoriteScreen(
+          userId: userId.toString(),
+        ),
+        CartScreen(
+          userId: userId.toString(),
+        ),
+        ProfileScreen(
+          userId: userId.toString(),
+        )
+      ];
+    });
+  }
 
   Future<void> _onItemTapped(int index) async {
     if (index != 0) {
@@ -28,6 +64,22 @@ class _BottomNavigator extends State<BottomNavigator> {
       if (isLoggedIn) {
         setState(() {
           _selectedIndex = index;
+          if (userId == null || userId.toString().isEmpty) {
+            if (index == 1) {
+              _pages[index] = FavoriteScreen(
+                userId: userId.toString(),
+              );
+            } else if (index == 2) {
+              _pages[index] = CartScreen(
+                userId: userId.toString(),
+              );
+            } else if (index == 3) {
+              _pages[index] = ProfileScreen(
+                userId: userId.toString(),
+              );
+            }
+          }
+          _pageController.jumpToPage(index);
         });
       } else {
         _showLoginDialog();
@@ -35,6 +87,7 @@ class _BottomNavigator extends State<BottomNavigator> {
     } else {
       setState(() {
         _selectedIndex = index;
+        _pageController.jumpToPage(index);
       });
     }
   }
@@ -88,26 +141,14 @@ class _BottomNavigator extends State<BottomNavigator> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          child: (_selectedIndex != 3)
-              ? ((_selectedIndex != 1)
-                  ? ((_selectedIndex != 2)
-                      ? HomeScreen()
-                      : CartScreen(
-                          userId: userId.toString(),
-                        ))
-                  : FavoriteScreen(
-                      userId: userId.toString(),
-                    ))
-              : ProfileScreen(
-                  userId: userId.toString(),
-                )),
+      body: PageView(
+        controller: _pageController,
+        physics: NeverScrollableScrollPhysics(),
+        children: _pages,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
-        elevation: 0,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         items: <BottomNavigationBarItem>[

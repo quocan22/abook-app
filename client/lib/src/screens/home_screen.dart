@@ -16,9 +16,15 @@ import '../widgets/category_card.dart';
 import '../widgets/squared_book_card_with_discount.dart';
 import './chatbot_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>
+    with AutomaticKeepAliveClientMixin<HomeScreen> {
   Widget _buildCarouselBookList() {
     return BlocBuilder<BookBloc, BookState>(
       builder: (context, state) {
@@ -146,80 +152,81 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     context.read<BookBloc>().add(BookRequested());
     context.read<CategoryBloc>().add(CategoryRequested());
-    return SafeArea(
-      child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => ChatbotScreen()));
-          },
-          child: Icon(Icons.question_answer),
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => ChatbotScreen()));
+        },
+        child: Icon(Icons.question_answer),
+      ),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Image(
+              image: AssetImage('assets/images/app_logo_no_bg.png'),
+              width: 24,
+              height: 24,
+            ),
+            Text(
+              AppConstants.appName,
+              style: Theme.of(context).textTheme.headline4?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: ColorsConstant.primaryColor,
+                  ),
+            ),
+            InkWell(
+                onTap: () {
+                  showSearch(context: context, delegate: BookSearchDelegate());
+                },
+                child: Icon(Icons.search, color: Colors.black))
+          ],
         ),
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          automaticallyImplyLeading: false,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            context.read<BookBloc>().add(BookRequested());
+            context.read<CategoryBloc>().add(CategoryRequested());
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Image(
-                image: AssetImage('assets/images/app_logo_no_bg.png'),
-                width: 24,
-                height: 24,
-              ),
+              _buildCarouselBookList(),
               Text(
-                AppConstants.appName,
+                'Categories',
                 style: Theme.of(context).textTheme.headline4?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: ColorsConstant.primaryColor,
+                      color: Colors.black,
                     ),
               ),
-              InkWell(
-                  onTap: () {
-                    showSearch(
-                        context: context, delegate: BookSearchDelegate());
-                  },
-                  child: Icon(Icons.search, color: Colors.black))
+              SizedBox(
+                child: _buildCategoryList(),
+                height: 150,
+              ),
+              Text(
+                'On Sale',
+                style: Theme.of(context).textTheme.headline4?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+              ),
+              Expanded(child: _buildBookList()),
             ],
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-          child: RefreshIndicator(
-            onRefresh: () async {
-              context.read<BookBloc>().add(BookRequested());
-              context.read<CategoryBloc>().add(CategoryRequested());
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildCarouselBookList(),
-                Text(
-                  'Categories',
-                  style: Theme.of(context).textTheme.headline4?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                ),
-                SizedBox(
-                  child: _buildCategoryList(),
-                  height: 150,
-                ),
-                Text(
-                  'On Sale',
-                  style: Theme.of(context).textTheme.headline4?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                ),
-                Expanded(child: _buildBookList()),
-              ],
-            ),
           ),
         ),
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
