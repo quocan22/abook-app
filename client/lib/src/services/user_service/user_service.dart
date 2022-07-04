@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart' as dio;
 
 import '../../models/address_book.dart';
@@ -10,12 +12,17 @@ abstract class UserService {
 
   Future<UserClaim>? fetchUserInfoById(String userId);
 
-  Future<String> register(String email, String password, String fullName);
+  Future<dynamic> register(String email, String password, String fullName);
 
-  Future<String> login(String email, String password);
+  Future<dynamic> login(String email, String password);
 
-  Future<String> updateProfile(
-      String userId, String fullName, String address, String phoneNumber);
+  Future<String> changePassword(
+      String userId, String oldPassword, String newPassword);
+
+  Future<String> updateProfile(String userId, String fullName, String address,
+      String phoneNumber, File? image);
+
+  Future<String> removeProfileImage(String userId);
 
   Future<List<AddressBook>>? getAddressBookByUserId(String userId);
 
@@ -24,4 +31,8 @@ abstract class UserService {
 
   Future<String> updateAddressBookForUser(
       String userId, List<AddressBook>? addressBookList);
+
+  Future<String> verifyOTP(String userId, String otp);
+
+  Future<dynamic> resendOTP(String email);
 }

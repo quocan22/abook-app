@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:client/src/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../blocs/profile/profile_bloc.dart';
 import '../blocs/profile/profile_event.dart';
@@ -24,7 +29,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String _fullName = '';
   String _address = '';
   String _phone = '';
+  late File _imageFile;
+  bool isFileNull = true;
+  bool isDeleteProfileImage = false;
   final _formKey = GlobalKey<FormState>();
+  ImagePicker imagePicker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   String? fullNameValidate(String? value) {
     if (value == null || value.trim().isEmpty) {
@@ -85,23 +99,54 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       SizedBox(
                         height: 50.0,
                       ),
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 8.0,
-                              offset: Offset(0.0, 5.0),
-                            )
-                          ],
+                      Center(
+                        child: SizedBox(
+                          height: 115,
+                          width: 115,
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            fit: StackFit.expand,
+                            children: [
+                              isDeleteProfileImage
+                                  ? CircleAvatar(
+                                      radius: 50.0,
+                                      backgroundImage: AssetImage(
+                                          'assets/images/app_logo_no_bg.png'))
+                                  : isFileNull
+                                      ? CircleAvatar(
+                                          radius: 50.0,
+                                          backgroundImage:
+                                              CachedNetworkImageProvider(
+                                                  state.userClaim!.avatarUrl))
+                                      : ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          child: Image.file(
+                                            _imageFile,
+                                            fit: BoxFit.fitHeight,
+                                          ),
+                                        ),
+                              Positioned(
+                                  bottom: -10,
+                                  right: -25,
+                                  child: RawMaterialButton(
+                                    onPressed: () {
+                                      _changeProfileImage(context);
+                                    },
+                                    elevation: 2.0,
+                                    fillColor: Colors.white70,
+                                    //fillColor: Color(0x60FFFFFF),
+                                    child: Icon(
+                                      Icons.camera_alt_outlined,
+                                      color: Colors.black,
+                                      size: 20,
+                                    ),
+                                    padding: EdgeInsets.all(10.0),
+                                    shape: CircleBorder(),
+                                  )),
+                            ],
+                          ),
                         ),
-                        child: CircleAvatar(
-                            radius: 50.0,
-                            backgroundImage:
-                                NetworkImage(state.userClaim!.avatarUrl)),
                       ),
                       SizedBox(
                         height: 50,
@@ -122,7 +167,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           TextFormField(
                             initialValue: state.userClaim!.displayName,
                             onChanged: (value) => _fullName = value,
-                            autofocus: true,
                             validator: (value) => fullNameValidate(value),
                             textInputAction: TextInputAction.next,
                             inputFormatters: [
@@ -244,12 +288,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  context.read<ProfileBloc>().add(
-                                      ProfileUpdated(
-                                          fullName: _fullName,
-                                          address: _address,
-                                          phoneNumber: _phone,
-                                          userId: widget.userId));
+                                  if (isDeleteProfileImage) {
+                                    context.read<ProfileBloc>().add(
+                                        ProfileUpdated(
+                                            fullName: _fullName,
+                                            address: _address,
+                                            phoneNumber: _phone,
+                                            userId: widget.userId,
+                                            isProfileImageRemoved: true));
+                                    Navigator.of(context).maybePop();
+                                  } else if (isFileNull) {
+                                    context.read<ProfileBloc>().add(
+                                        ProfileUpdated(
+                                            fullName: _fullName,
+                                            address: _address,
+                                            phoneNumber: _phone,
+                                            userId: widget.userId,
+                                            isProfileImageRemoved: false));
+                                    Navigator.of(context).maybePop();
+                                  } else {
+                                    context.read<ProfileBloc>().add(
+                                        ProfileUpdated(
+                                            profileImage: _imageFile,
+                                            fullName: _fullName,
+                                            address: _address,
+                                            phoneNumber: _phone,
+                                            userId: widget.userId,
+                                            isProfileImageRemoved: false));
+                                    Navigator.of(context).maybePop();
+                                  }
                                 }
                               },
                               child: Text(
@@ -278,5 +345,180 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         )),
       ),
     );
+  }
+
+  _changeProfileImage(BuildContext context) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            color: Color(0xFF737373),
+            height: 285,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(20),
+                    topRight: const Radius.circular(20),
+                  )),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    'Change Profile Image',
+                    style: Theme.of(context).textTheme.headline4?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: ColorsConstant.primaryColor,
+                        ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              ColorsConstant.primaryColor),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          )),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          getImageGallery();
+                        },
+                        child: Text(
+                          'From Gallery',
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    color: Colors.white,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              ColorsConstant.primaryColor),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          )),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          getImageCamera();
+                        },
+                        child: Text(
+                          'From Camera',
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    color: Colors.white,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              ColorsConstant.primaryColor),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          )),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          setState(() {
+                            isDeleteProfileImage = true;
+                            isFileNull = true;
+                          });
+                        },
+                        child: Text(
+                          'Remove Current Profile Image',
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    color: Colors.white,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              ColorsConstant.primaryColor),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          )),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          'Cancel',
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    color: Colors.white,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  getImageGallery() async {
+    PickedFile? imageFile =
+        await imagePicker.getImage(source: ImageSource.gallery);
+    if (imageFile != null) {
+      setState(() {
+        _imageFile = File(imageFile.path);
+        isFileNull = false;
+        isDeleteProfileImage = false;
+      });
+    }
+  }
+
+  getImageCamera() async {
+    PickedFile? imageFile =
+        await imagePicker.getImage(source: ImageSource.camera);
+    if (imageFile != null) {
+      setState(() {
+        _imageFile = File(imageFile.path);
+        isFileNull = false;
+        isDeleteProfileImage = false;
+      });
+    }
   }
 }

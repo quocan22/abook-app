@@ -18,6 +18,7 @@ import './blocs/login/login_bloc.dart';
 import './blocs/profile/profile_bloc.dart';
 import './blocs/signup/signup_bloc.dart';
 import './blocs/user_claim/user_claim_bloc.dart';
+import './blocs/verify/verify_bloc.dart';
 import './config/app_constants.dart' as route_names;
 import './config/routes.dart';
 import './constants/app_theme.dart';
@@ -98,6 +99,9 @@ class App extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => OrderBloc(service: _orderService),
+          ),
+          BlocProvider(
+            create: (context) => VerifyBloc(userService: _userService),
           )
         ],
         child: MaterialApp(

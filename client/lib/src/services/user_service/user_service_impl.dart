@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart' as dio;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,7 +35,7 @@ class UserServiceImpl implements UserService {
   }
 
   @override
-  Future<String> login(String email, String password) async {
+  Future<dynamic> login(String email, String password) async {
     final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.LOGIN);
 
     try {
@@ -43,15 +43,13 @@ class UserServiceImpl implements UserService {
           .post(uri.toString(), data: {'email': email, 'password': password});
 
       if (response.statusCode == 200) {
-        String responseMsg = response.data['msg'];
-
         var responseData = response.data['data'];
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('accessToken', responseData['accessToken']);
         await prefs.setString('id', responseData['id']);
 
-        return responseMsg;
+        return response.data;
       } else {
         throw Exception('Error when login');
       }
@@ -59,20 +57,18 @@ class UserServiceImpl implements UserService {
       print(e.toString());
       dio.DioError dioError = e as dio.DioError;
       if (dioError.response?.statusCode == 404) {
-        String responseMsg = dioError.response!.data['msg'];
-
-        return responseMsg;
+        return dioError.response!.data;
+      } else if (dioError.response?.statusCode == 403) {
+        return dioError.response!.data;
       } else if (dioError.response?.statusCode == 400) {
-        String responseMsg = dioError.response!.data['msg'];
-
-        return responseMsg;
+        return dioError.response!.data;
       } else
         throw Exception(e.toString());
     }
   }
 
   @override
-  Future<String> register(
+  Future<dynamic> register(
       String email, String password, String fullName) async {
     final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.REGISTERUSER);
 
@@ -84,35 +80,129 @@ class UserServiceImpl implements UserService {
       });
 
       if (response.statusCode == 200) {
-        String responseMsg = response.data['msg'];
-
-        return responseMsg;
-      } else {
+        return response.data;
+      } else if (response.statusCode == 402) {
+        return response.data;
+      }
+      {
         throw Exception('Error when register new user');
       }
     } catch (e) {
-      print(e.toString());
       dio.DioError dioError = e as dio.DioError;
-      if (dioError.message == 'Http status error [403]') {
-        String responseMsg = dioError.response!.data['msg'];
-
-        return responseMsg;
+      if (dioError.message == 'Http status error [402]') {
+        return dioError.response!.data;
+      } else if (dioError.message == 'This email already existed') {
+        return dioError.response!.data;
       } else
         throw Exception(e.toString());
     }
   }
 
   @override
-  Future<String> updateProfile(String userId, String fullName, String address,
-      String phoneNumber) async {
-    final uri =
-        Uri.https(AppConstants.HOST_NAME, '${AppConstants.USERS}/$userId');
+  Future<String> verifyOTP(String userId, String otp) async {
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/activate/verify_otp');
 
     try {
-      dio.Response response = await dioClient.put(uri.toString(), data: {
-        "displayName": fullName,
-        "address": address,
-        "phoneNumber": phoneNumber
+      dio.Response response = await dioClient
+          .post(uri.toString(), data: {"userId": userId, "otp": otp});
+
+      if (response.statusCode == 200) {
+        return response.data['msg'];
+      } else {
+        throw Exception('Error when register new user');
+      }
+    } catch (e) {
+      dio.DioError dioError = e as dio.DioError;
+      if (dioError.message == 'Http status error [404]') {
+        return dioError.message;
+      } else
+        throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<dynamic> resendOTP(String email) async {
+    final uri =
+        Uri.https(AppConstants.HOST_NAME, '/api/activate/resend_verify_code');
+
+    try {
+      dio.Response response =
+          await dioClient.post(uri.toString(), data: {"email": email});
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception('Error when register new user');
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<String> updateProfile(String userId, String fullName, String address,
+      String phoneNumber, File? image) async {
+    final uri =
+        Uri.https(AppConstants.HOST_NAME, '${AppConstants.USERS}/$userId');
+    dio.FormData formData;
+    try {
+      if (image != null) {
+        String fileName = image.path.split('/').last;
+        formData = dio.FormData.fromMap({
+          "image":
+              await dio.MultipartFile.fromFile(image.path, filename: fileName)
+        });
+        dio.Response response =
+            await dioClient.put(uri.toString(), data: formData);
+
+        if (response.statusCode == 200) {
+          String responseAvaUrl =
+              response.data['data']['userClaim']['avatarUrl'];
+          dio.Response responseProfileDetail = await dioClient
+              .put(uri.toString(), data: {
+            "displayName": fullName,
+            "address": address,
+            "phoneNumber": phoneNumber
+          });
+
+          if (responseProfileDetail.statusCode == 200) {
+            return responseAvaUrl;
+          } else {
+            throw Exception('Error when update info');
+          }
+        } else {
+          throw Exception('Error when update info');
+        }
+      } else {
+        dio.Response responseProfileDetail = await dioClient.put(uri.toString(),
+            data: {
+              "displayName": fullName,
+              "address": address,
+              "phoneNumber": phoneNumber
+            });
+
+        if (responseProfileDetail.statusCode == 200) {
+          return responseProfileDetail.data['msg'];
+        } else {
+          throw Exception('Error when update info');
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<String> changePassword(
+      String userId, String oldPassword, String newPassword) async {
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/users/change_password');
+
+    try {
+      dio.Response response = await dioClient.post(uri.toString(), data: {
+        "userId": userId,
+        "oldPassword": oldPassword,
+        "newPassword": newPassword
       });
 
       if (response.statusCode == 200) {
@@ -120,7 +210,24 @@ class UserServiceImpl implements UserService {
 
         return responseMsg;
       } else {
-        throw Exception('Error when update info');
+        return 'Error when update password';
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  @override
+  Future<String> removeProfileImage(String userId) async {
+    final uri = Uri.https(AppConstants.HOST_NAME, '/api/asset/avatar/$userId');
+
+    try {
+      dio.Response response = await dioClient.delete(uri.toString());
+
+      if (response.statusCode == 200) {
+        return response.data['data']['userClaim']['avatarUrl'];
+      } else {
+        throw Exception('Error when remove avatar');
       }
     } catch (e) {
       throw Exception(e.toString());
@@ -182,10 +289,6 @@ class UserServiceImpl implements UserService {
         Uri.https(AppConstants.HOST_NAME, '/api/users/update_address_book');
 
     try {
-      // print(jsonEncode(addressBookList!.map((e) => e.toJson()).toList()));
-      // var a = addressBookList!.map((e) => e.toJson()).toList();
-      // print(a);
-      // return 'Update address book successfully';
       dio.Response response = await dioClient.post(uri.toString(), data: {
         "userId": userId,
         "address": addressBookList!.map((e) => e.toJson()).toList()

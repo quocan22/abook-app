@@ -1,3 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:client/src/blocs/profile/profile_bloc.dart';
+import 'package:client/src/blocs/profile/profile_state.dart';
+import 'package:client/src/models/user.dart';
+import 'package:client/src/screens/change_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -81,6 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   BlocBuilder<UserClaimBloc, UserClaimState>(
                     builder: (context, state) {
                       if (state is UserClaimLoadSuccess) {
+                        UserClaim userClaim = state.userClaim!;
                         return Padding(
                           padding: EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 16.0),
                           child: Stack(
@@ -248,10 +254,35 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     )
                                   ],
                                 ),
-                                child: CircleAvatar(
-                                    radius: 50.0,
-                                    backgroundImage: NetworkImage(
-                                        state.userClaim!.avatarUrl)),
+                                child: BlocBuilder<ProfileBloc, ProfileState>(
+                                  builder: (context, state) {
+                                    if (state is ProfileInitial) {
+                                      return CircleAvatar(
+                                          radius: 50.0,
+                                          backgroundImage:
+                                              CachedNetworkImageProvider(
+                                                  userClaim.avatarUrl));
+                                    }
+                                    if (state is ProfileUpdateSuccess) {
+                                      if (state.avatarUrl != null) {
+                                        return CircleAvatar(
+                                            radius: 50.0,
+                                            backgroundImage:
+                                                CachedNetworkImageProvider(
+                                                    state.avatarUrl!));
+                                      } else {
+                                        return CircleAvatar(
+                                            radius: 50.0,
+                                            backgroundImage:
+                                                CachedNetworkImageProvider(
+                                                    userClaim.avatarUrl));
+                                      }
+                                    }
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  },
+                                ),
                               ),
                             ],
                           ),
@@ -337,7 +368,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         builder: (context) {
           return Container(
             color: Color(0xFF737373),
-            height: 235,
+            height: 285,
             child: Container(
               decoration: BoxDecoration(
                   color: Colors.white,
@@ -415,6 +446,38 @@ class _ProfileScreenState extends State<ProfileScreen>
                         },
                         child: Text(
                           'My Address List',
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    color: Colors.white,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              ColorsConstant.primaryColor),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          )),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => ChangePasswordScreen(
+                                    userId: widget.userId,
+                                  )));
+                        },
+                        child: Text(
+                          'Change Password',
                           style:
                               Theme.of(context).textTheme.headline6!.copyWith(
                                     color: Colors.white,

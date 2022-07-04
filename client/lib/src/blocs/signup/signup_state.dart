@@ -11,11 +11,12 @@ class SignupInProgress extends SignupState {}
 
 class SignupSuccess extends SignupState {
   final String email;
+  final String userId;
 
-  SignupSuccess({required this.email});
+  SignupSuccess({required this.email, required this.userId});
 
   @override
-  List<Object?> get props => [email];
+  List<Object?> get props => [email, userId];
 }
 
 class SignupFailure extends SignupState {

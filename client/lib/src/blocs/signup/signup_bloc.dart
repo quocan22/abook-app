@@ -10,13 +10,14 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   SignupBloc({required this.userService}) : super(SignupInitial()) {
     on<SignupRequested>((event, emit) async {
       emit(SignupInProgress());
-      final msg = await userService.register(
+      final res = await userService.register(
         event.email,
         event.password,
         event.fullName,
       );
-      if (msg == "Register successfully!") {
-        emit(SignupSuccess(email: event.email));
+      String msg = res['msg'];
+      if (msg == 'Verification otp email sent') {
+        emit(SignupSuccess(email: event.email, userId: res['data']['userId']));
       } else if (msg == "This email already existed") {
         emit(SignupFailure(errorMessage: msg, email: event.email));
       } else {
