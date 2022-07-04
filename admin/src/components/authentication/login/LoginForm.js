@@ -43,7 +43,7 @@ export default function LoginForm() {
       AuthService.adminLogin(values.email, values.password)
         .then((res) => {
           TokenService.setUser(res.data.data);
-          navigate('/dashboard/users', { replace: true });
+          navigate('/dashboard/profile', { replace: true });
         })
         .catch((err) => {
           if (err.response) {

@@ -21,7 +21,6 @@ import Page from '../components/Page';
 import { FeedbackService } from '../services';
 
 const TABLE_HEAD = [
-  { label: 'No.', align: 'left' },
   { label: 'Email', align: 'left' },
   { label: 'Date Time', align: 'left' },
   { label: 'Content', align: 'left' }
@@ -105,10 +104,9 @@ export default function Feedbacks() {
 
                         return (
                           <TableRow style={{ height: 70 }} hover key={index} tabIndex={-1}>
-                            <TableCell align="center">{index + 1}</TableCell>
                             <TableCell align="left">{email}</TableCell>
                             <TableCell align="left">
-                              {dateFormat(createdAt, 'dd/mm/yyyy')}
+                              {dateFormat(createdAt, 'HH:MM - dd/mm/yyyy')}
                             </TableCell>
                             <TableCell align="left">{content}</TableCell>
                           </TableRow>

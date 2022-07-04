@@ -33,6 +33,7 @@ import closeFill from '@iconify/icons-eva/close-fill';
 import checkFill from '@iconify/icons-eva/checkmark-fill';
 import Label from '../../Label';
 import { fCurrency } from '../../../utils/formatNumber';
+import { formatString } from '../../../utils/formatString';
 
 import { OrderService } from '../../../services';
 
@@ -215,19 +216,19 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Name:</Typography>
                     <Typography sx={{ ml: 4 }} align="right">
-                      {order.customerName}
+                      {formatString(order.customerName)}
                     </Typography>
                   </Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Phone number:</Typography>
                     <Typography sx={{ ml: 4 }} align="right">
-                      {order.customerPhone}
+                      {formatString(order.customerPhoneNumber)}
                     </Typography>
                   </Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography>Address:</Typography>
                     <Typography sx={{ ml: 4 }} align="right">
-                      {order.customerAddress}
+                      {formatString(order.customerAddress)}
                     </Typography>
                   </Stack>
                 </Stack>
