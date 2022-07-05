@@ -1,6 +1,7 @@
 const { cloudinary } = require("../utils/cloudinary");
 const Books = require("../models/bookModel");
 const Users = require("../models/userModel");
+const Orders = require("../models/orderModel");
 
 const bookController = {
   getAllBooks: async (req, res) => {
@@ -275,6 +276,66 @@ const bookController = {
       await book.remove();
 
       res.status(202).json({ msg: "Delete book successfully" });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  bestSellerBooksInMonth: async (req, res) => {
+    try {
+      // define the time range is 30 days to the past
+      const from = new Date();
+      from.setMonth(new Date().getMonth() - 1);
+      from.setHours(0, 0, 0, 0);
+      const to = new Date();
+      to.setHours(0, 0, 0, 0);
+
+      const ordersInMonth = await Orders.find({
+        purchaseDate: {
+          $gte: from,
+          $lte: to,
+        },
+      });
+
+      let booksInMonth = [];
+
+      ordersInMonth.forEach((order) => {
+        if (order.paidStatus === 2) {
+          order.details.forEach((detail) => {
+            const matchedIndex = booksInMonth.findIndex((d) => {
+              return d.bookId === detail.bookId;
+            });
+
+            if (matchedIndex === -1) {
+              booksInMonth.push(detail);
+            } else {
+              booksInMonth[matchedIndex].quantity += detail.quantity;
+            }
+          });
+        }
+      });
+
+      if (booksInMonth.length < 1) {
+        res
+          .status(200)
+          .json({ msg: "Not enough data to show most selling book" });
+      } else {
+        let bestSellBooks = [];
+
+        booksInMonth.sort((a, b) => {
+          return b.quantity - a.quantity;
+        });
+
+        for (let i = 0; i < booksInMonth.length; i++) {
+          const book = await Books.findById(booksInMonth[i].bookId);
+
+          bestSellBooks.push(book);
+        }
+
+        res.status(200).json({
+          msg: "3 best selling books this 30 days",
+          data: bestSellBooks,
+        });
+      }
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }

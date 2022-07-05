@@ -34,6 +34,7 @@ import checkFill from '@iconify/icons-eva/checkmark-fill';
 import Label from '../../Label';
 import { fCurrency } from '../../../utils/formatNumber';
 import { formatString } from '../../../utils/formatString';
+import { resizeScaleByWidth } from '../../../utils/resizeImageFromCloudinary';
 
 import { OrderService } from '../../../services';
 
@@ -356,7 +357,7 @@ export default function DetailDialog({ open, handleClose, orderId, change, onCha
                                 />
                               }
                             >
-                              <Avatar alt={row.name} src={row.imageUrl} />
+                              <Avatar alt={row.name} src={resizeScaleByWidth(row.imageUrl, 100)} />
                             </Tooltip>
                             <Typography variant="subtitle2" noWrap>
                               {row.name}

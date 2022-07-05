@@ -118,13 +118,17 @@ function defaultAction(res, responses) {
 }
 
 async function bestSellInMonth(res) {
-  const from = new Date(new Date().getFullYear(), new Date().getMonth());
-  const to = new Date(new Date().getFullYear(), new Date().getMonth() + 1);
+  // define the time range is 30 days to the past
+  const from = new Date();
+  from.setMonth(new Date().getMonth() - 1);
+  from.setHours(0, 0, 0, 0);
+  const to = new Date();
+  to.setHours(0, 0, 0, 0);
 
   const ordersInMonth = await Orders.find({
     purchaseDate: {
       $gte: from,
-      $lt: to,
+      $lte: to,
     },
   });
 
