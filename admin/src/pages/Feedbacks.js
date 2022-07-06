@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import dateFormat from 'dateformat';
+import { filter } from 'lodash';
 import {
   Box,
   Card,
@@ -13,8 +14,14 @@ import {
   TableHead,
   TableRow,
   TablePagination,
-  Typography
+  Typography,
+  OutlinedInput,
+  InputAdornment
 } from '@mui/material';
+import { styled } from '@mui/system';
+import { Icon } from '@iconify/react';
+import searchFill from '@iconify/icons-eva/search-fill';
+
 import Scrollbar from '../components/Scrollbar';
 import Page from '../components/Page';
 
@@ -26,9 +33,24 @@ const TABLE_HEAD = [
   { label: 'Content', align: 'left' }
 ];
 
+const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
+  width: 240,
+  margin: 20,
+  transition: theme.transitions.create(['box-shadow', 'width'], {
+    easing: theme.transitions.easing.easeInOut,
+    duration: theme.transitions.duration.shorter
+  }),
+  '&.Mui-focused': { width: 320, boxShadow: theme.customShadows.z8 },
+  '& fieldset': {
+    borderWidth: `1px !important`,
+    borderColor: `${theme.palette.grey[500_32]} !important`
+  }
+}));
+
 export default function Feedbacks() {
   const [loading, setLoading] = useState(true);
   const [feedbacks, setFeedbacks] = useState([]);
+  const [filterEmail, setFilterEmail] = useState('');
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -54,7 +76,12 @@ export default function Feedbacks() {
     setPage(0);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - feedbacks.length) : 0;
+  const filteredFeedbacks = filter(
+    feedbacks,
+    (_feedback) => _feedback.email.toLowerCase().indexOf(filterEmail.toLowerCase()) !== -1
+  );
+
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredFeedbacks.length) : 0;
 
   return (
     <Page title="Feedbacks | ABook">
@@ -64,6 +91,17 @@ export default function Feedbacks() {
         </Typography>
 
         <Card>
+          <SearchStyle
+            autoComplete="nope"
+            placeholder="Search feedback by email..."
+            value={filterEmail}
+            onChange={(e) => setFilterEmail(e.target.value)}
+            startAdornment={
+              <InputAdornment position="start">
+                <Box component={Icon} icon={searchFill} sx={{ color: 'text.disabled' }} />
+              </InputAdornment>
+            }
+          />
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               {loading ? (
@@ -97,7 +135,7 @@ export default function Feedbacks() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {feedbacks
+                    {filteredFeedbacks
                       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       .map((row, index) => {
                         const { email, createdAt, content } = row;

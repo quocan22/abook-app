@@ -13,7 +13,9 @@ import {
   TextField,
   MenuItem,
   Stack,
-  Pagination
+  Pagination,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 
 import { CategoryService } from '../../../services';
@@ -48,7 +50,9 @@ ProductSearchBar.propTypes = {
   itemPerPage: PropTypes.number,
   page: PropTypes.number,
   handleChangePage: PropTypes.func,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
+  filterOnSale: PropTypes.bool,
+  handleChangeFilterOnSale: PropTypes.func
 };
 
 export default function ProductSearchBar({
@@ -60,7 +64,9 @@ export default function ProductSearchBar({
   itemPerPage,
   page,
   handleChangePage,
-  loading
+  loading,
+  filterOnSale,
+  handleChangeFilterOnSale
 }) {
   const [cates, setCates] = useState([]);
 
@@ -100,10 +106,14 @@ export default function ProductSearchBar({
               </MenuItem>
             ))}
           </TextField>
+          <FormControlLabel
+            sx={{ ml: 2 }}
+            label="Show On Sale"
+            control={<Checkbox checked={filterOnSale} onChange={handleChangeFilterOnSale} />}
+          />
         </Stack>
         {!loading && (
           <Pagination
-            size="large"
             color="primary"
             showFirstButton
             showLastButton
