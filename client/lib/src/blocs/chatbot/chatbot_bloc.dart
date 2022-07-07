@@ -46,5 +46,8 @@ class ChatbotBloc extends Bloc<ChatbotEvent, ChatbotState> {
         emit(ChatbotLoadFailure(errorMessage: e.toString()));
       }
     });
+    on<ChatbotStateReset>((event, emit) async {
+      emit(ChatbotInitial());
+    });
   }
 }

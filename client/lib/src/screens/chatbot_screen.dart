@@ -30,6 +30,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   @override
   void initState() {
+    super.initState();
     messageWidgetList = [
       SizedBox(
         height: 200,
@@ -41,7 +42,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         ),
       )
     ];
-    super.initState();
+    context
+        .read<ChatbotBloc>()
+        .add(ChatbotEventSent(eventName: 'welcomeToAbook'));
   }
 
   @override
@@ -54,9 +57,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Widget build(BuildContext context) {
     context.read<BookBloc>().add(BookRequested());
     context.read<CategoryBloc>().add(CategoryRequested());
-    context
-        .read<ChatbotBloc>()
-        .add(ChatbotEventSent(eventName: 'welcomeToAbook'));
 
     return Scaffold(
       appBar: AppBar(
@@ -68,6 +68,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             messageWidgetList.clear();
+            context.read<ChatbotBloc>().add(ChatbotStateReset());
             Navigator.of(context).maybePop();
           },
         ),
@@ -100,7 +101,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 );
               }
               if (state is ChatbotLoadFailure) {
-                return const Center(child: Text('fail'));
+                return const Center(
+                    child: Text('There are some errors. Please try again.'));
               }
               if (state is ChatbotLoadSuccess) {
                 if (state.type == 1) {

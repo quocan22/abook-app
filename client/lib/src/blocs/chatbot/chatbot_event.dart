@@ -24,3 +24,5 @@ class ChatbotEventSent extends ChatbotEvent {
   @override
   List<Object?> get props => [eventName];
 }
+
+class ChatbotStateReset extends ChatbotEvent {}
