@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:client/src/services/book_service/book_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/user.dart';
+import '../../services/book_service/book_service.dart';
 import '../../services/user_service/user_service.dart';
 import './user_claim_event.dart';
 import './user_claim_state.dart';

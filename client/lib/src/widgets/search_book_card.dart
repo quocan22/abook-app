@@ -28,18 +28,21 @@ class SearchBookCard extends StatelessWidget {
           },
           child: Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: CachedNetworkImage(
-                  imageUrl: book.imageUrl,
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                  fit: BoxFit.cover,
+              SizedBox(
+                width: 100,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: CachedNetworkImage(
+                    imageUrl: book.imageUrl,
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    fit: BoxFit.cover,
+                  ),
+                  // Image.network(
+                  //   book.imageUrl,
+                  //   fit: BoxFit.cover,
+                  // ),
                 ),
-                // Image.network(
-                //   book.imageUrl,
-                //   fit: BoxFit.cover,
-                // ),
               ),
               SizedBox(
                 width: 16.0,
@@ -50,6 +53,7 @@ class SearchBookCard extends StatelessWidget {
                   children: [
                     Text(
                       book.name,
+                      overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.headline4?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.black,

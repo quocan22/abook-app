@@ -23,6 +23,7 @@ dependencies:
   intl: ^0.17.0
   palette_generator: ^0.3.3
   image_picker: ^0.7.2+1
+  global_configuration: ^2.0.0-nullsafety.1
 
 dev_dependencies:
   flutter_test:
@@ -31,6 +32,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/env/
     - assets/images/
     - assets/icons/
     - assets/

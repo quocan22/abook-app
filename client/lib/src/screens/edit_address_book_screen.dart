@@ -1,4 +1,3 @@
-import 'package:client/src/models/address_book.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -6,6 +5,7 @@ import '../blocs/address_book/address_book_bloc.dart';
 import '../blocs/address_book/address_book_event.dart';
 import '../blocs/address_book/address_book_state.dart';
 import '../constants/constants.dart';
+import '../models/address_book.dart';
 import '../widgets/address_book_item.dart';
 import './add_or_update_address_book_screen.dart';
 

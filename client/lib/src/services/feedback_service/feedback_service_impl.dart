@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart' as dio;
+import 'package:global_configuration/global_configuration.dart';
 
-import '../../config/app_constants.dart';
 import './feedback_service.dart';
 
 class FeedbackServiceImpl implements FeedbackService {
@@ -10,7 +10,8 @@ class FeedbackServiceImpl implements FeedbackService {
 
   @override
   Future<String> sendFeedback(String email, String feedback) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/feedbacks');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('FEEDBACK'));
 
     try {
       dio.Response response = await dioClient

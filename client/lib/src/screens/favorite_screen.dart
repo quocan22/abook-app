@@ -83,16 +83,25 @@ class _FavoriteScreenState extends State<FavoriteScreen>
                         favBook.add(book);
                       }
                     }
-                    return Padding(
-                      padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-                      child: GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2),
-                          itemCount: favBook.length,
-                          itemBuilder: (context, index) {
-                            return FavBookItem(book: favBook.elementAt(index));
-                          }),
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        context
+                            .read<UserClaimBloc>()
+                            .add(UserClaimRequested(userId: widget.userId));
+                        context.read<BookBloc>().add(BookRequested());
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                        child: GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                            itemCount: favBook.length,
+                            itemBuilder: (context, index) {
+                              return FavBookItem(
+                                  book: favBook.elementAt(index));
+                            }),
+                      ),
                     );
                   } else {
                     return Center(

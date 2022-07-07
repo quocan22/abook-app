@@ -1,4 +1,3 @@
-import 'package:client/src/screens/verify_account_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +7,7 @@ import '../blocs/signup/signup_event.dart';
 import '../blocs/signup/signup_state.dart';
 import '../config/app_constants.dart';
 import '../constants/constants.dart' as constants;
+import '../screens/verify_account_screen.dart';
 import '../utils/validators.dart';
 
 class SignUpForm extends StatefulWidget {

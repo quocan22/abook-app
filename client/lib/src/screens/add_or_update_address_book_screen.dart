@@ -1,11 +1,11 @@
-import 'package:client/src/blocs/address_book/address_book_bloc.dart';
-import 'package:client/src/blocs/address_book/address_book_event.dart';
-import 'package:client/src/models/address_book.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/address_book/address_book_bloc.dart';
+import '../blocs/address_book/address_book_event.dart';
 import '../constants/constants.dart' as constants;
+import '../models/address_book.dart';
 import '../utils/validators.dart';
 
 class AddOrUpdateAddressBookScreen extends StatefulWidget {

@@ -14,4 +14,5 @@ abstract class BookService {
   Future<Book>? getBookDetailById(String bookId);
   Future<String> sendRateAndComment(
       String bookId, String userId, int rate, String review);
+  Future<List<Book>>? getBestSellerBookList();
 }

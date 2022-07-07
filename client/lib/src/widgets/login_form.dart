@@ -1,15 +1,14 @@
-import 'package:client/src/blocs/verify/verify_bloc.dart';
-import 'package:client/src/blocs/verify/verify_event.dart';
-import 'package:client/src/blocs/verify/verify_state.dart';
-import 'package:client/src/screens/verify_account_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/login/login_bloc.dart';
 import '../blocs/login/login_event.dart';
 import '../blocs/login/login_state.dart';
+import '../blocs/verify/verify_bloc.dart';
+import '../blocs/verify/verify_event.dart';
 import '../config/app_constants.dart' as app_constants;
 import '../constants/constants.dart' as constants;
+import '../screens/verify_account_screen.dart';
 import '../utils/validators.dart';
 
 class LoginForm extends StatefulWidget {
@@ -59,12 +58,10 @@ class _LoginFormState extends State<LoginForm> {
     double _passwordTitleAndpasswordTextFormFieldSpacing = 5;
     double _titleTextFormFieldFontSize = 15.5;
     double _textFormFieldFontSize = 19;
-    double _forgotPasswordFontSize = 16;
     double _loginButtonFontSize = 18;
     double _signUpTitleFontSize = 16;
     double _signUpTextFontSize = 19;
     FontWeight _titleTextFormFieldFontWeight = FontWeight.w300;
-    FontWeight _forgotPasswordFontWeight = FontWeight.w500;
     FontWeight _loginButtonFontWeight = FontWeight.w400;
     FontWeight _signUpTitleFontWeight = FontWeight.w300;
 

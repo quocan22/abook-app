@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart' as dio;
+import 'package:global_configuration/global_configuration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../config/app_constants.dart';
 import '../../models/address_book.dart';
 import '../../models/user.dart';
 import './user_service.dart';
@@ -15,8 +15,8 @@ class UserServiceImpl implements UserService {
 
   @override
   Future<UserClaim> fetchUserInfoById(String userId) async {
-    final uri =
-        Uri.https(AppConstants.HOST_NAME, '${AppConstants.USERS}/$userId');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        '${GlobalConfiguration().getValue('USERS')}/$userId');
 
     try {
       dio.Response response = await dioClient.get(uri.toString());
@@ -36,7 +36,8 @@ class UserServiceImpl implements UserService {
 
   @override
   Future<dynamic> login(String email, String password) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.LOGIN);
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('LOGIN'));
 
     try {
       dio.Response response = await dioClient
@@ -70,7 +71,8 @@ class UserServiceImpl implements UserService {
   @override
   Future<dynamic> register(
       String email, String password, String fullName) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.REGISTERUSER);
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('REGISTER_USER'));
 
     try {
       dio.Response response = await dioClient.post(uri.toString(), data: {
@@ -100,7 +102,8 @@ class UserServiceImpl implements UserService {
 
   @override
   Future<String> verifyOTP(String userId, String otp) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/activate/verify_otp');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('VERIFY_OTP'));
 
     try {
       dio.Response response = await dioClient
@@ -122,8 +125,8 @@ class UserServiceImpl implements UserService {
 
   @override
   Future<dynamic> resendOTP(String email) async {
-    final uri =
-        Uri.https(AppConstants.HOST_NAME, '/api/activate/resend_verify_code');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('RESEND_OTP'));
 
     try {
       dio.Response response =
@@ -142,8 +145,8 @@ class UserServiceImpl implements UserService {
   @override
   Future<String> updateProfile(String userId, String fullName, String address,
       String phoneNumber, File? image) async {
-    final uri =
-        Uri.https(AppConstants.HOST_NAME, '${AppConstants.USERS}/$userId');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        '${GlobalConfiguration().getValue('USERS')}/$userId');
     dio.FormData formData;
     try {
       if (image != null) {
@@ -196,7 +199,8 @@ class UserServiceImpl implements UserService {
   @override
   Future<String> changePassword(
       String userId, String oldPassword, String newPassword) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/users/change_password');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('CHANGE_PASSWORD'));
 
     try {
       dio.Response response = await dioClient.post(uri.toString(), data: {
@@ -219,7 +223,8 @@ class UserServiceImpl implements UserService {
 
   @override
   Future<String> removeProfileImage(String userId) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/asset/avatar/$userId');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        '${GlobalConfiguration().getValue('AVATAR')}/$userId');
 
     try {
       dio.Response response = await dioClient.delete(uri.toString());
@@ -236,8 +241,8 @@ class UserServiceImpl implements UserService {
 
   @override
   Future<List<AddressBook>> getAddressBookByUserId(String userId) async {
-    final uri =
-        Uri.https(AppConstants.HOST_NAME, '/api/users/address_book/$userId');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        '${GlobalConfiguration().getValue('ADDRESS_BOOK')}/$userId');
 
     try {
       dio.Response response = await dioClient.get(uri.toString());
@@ -259,8 +264,8 @@ class UserServiceImpl implements UserService {
   @override
   Future<String> addAddressBook(String userId, String fullName, String address,
       String phoneNumber) async {
-    final uri =
-        Uri.https(AppConstants.HOST_NAME, '/api/users/add_address_book');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('ADD_ADDRESS_BOOK'));
 
     try {
       dio.Response response = await dioClient.post(uri.toString(), data: {
@@ -285,8 +290,8 @@ class UserServiceImpl implements UserService {
   @override
   Future<String> updateAddressBookForUser(
       String userId, List<AddressBook>? addressBookList) async {
-    final uri =
-        Uri.https(AppConstants.HOST_NAME, '/api/users/update_address_book');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('UPDATE_ADDRESS_BOOK'));
 
     try {
       dio.Response response = await dioClient.post(uri.toString(), data: {

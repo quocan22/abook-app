@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:global_configuration/global_configuration.dart';
 
 class AppConfig {
   static final AppConfig _singleton = AppConfig._internal();
@@ -13,6 +14,7 @@ class AppConfig {
 
   Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
+    await GlobalConfiguration().loadFromPath('assets/env/env.json');
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

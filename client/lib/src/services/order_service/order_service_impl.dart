@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart' as dio;
+import 'package:global_configuration/global_configuration.dart';
 
 import '../../models/address_book.dart';
-import '../../config/app_constants.dart';
 import '../../models/order.dart';
 import './order_service.dart';
 
@@ -12,7 +12,8 @@ class OrderServiceImpl implements OrderService {
 
   @override
   Future<List<Order>> getOrderListByUserId(String userId) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/orders/get_by_user_id');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('ORDERS_BY_USER_ID'));
 
     try {
       dio.Response response =
@@ -36,7 +37,8 @@ class OrderServiceImpl implements OrderService {
   @override
   Future<String> createNewOrder(
       String userId, int discountPrice, AddressBook address) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/orders');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('ORDERS'));
 
     try {
       dio.Response response = await dioClient.post(uri.toString(), data: {

@@ -1,9 +1,9 @@
-import 'package:client/src/blocs/profile/profile_bloc.dart';
-import 'package:client/src/blocs/profile/profile_event.dart';
-import 'package:client/src/blocs/profile/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/profile/profile_bloc.dart';
+import '../blocs/profile/profile_event.dart';
+import '../blocs/profile/profile_state.dart';
 import '../blocs/user_claim/user_claim_bloc.dart';
 import '../blocs/user_claim/user_claim_event.dart';
 import '../blocs/user_claim/user_claim_state.dart';

@@ -35,7 +35,7 @@ class OrderItem extends StatelessWidget {
                     height: 8.0,
                   ),
                   Text(
-                    'Bill No: ${billId}',
+                    'Bill No: $billId',
                     style: Theme.of(context).textTheme.headline4?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,

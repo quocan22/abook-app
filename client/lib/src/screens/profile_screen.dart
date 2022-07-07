@@ -1,8 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:client/src/blocs/profile/profile_bloc.dart';
-import 'package:client/src/blocs/profile/profile_state.dart';
-import 'package:client/src/models/user.dart';
-import 'package:client/src/screens/change_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,12 +7,16 @@ import '../blocs/authentication/authentication_event.dart';
 import '../blocs/order/order_bloc.dart';
 import '../blocs/order/order_event.dart';
 import '../blocs/order/order_state.dart';
+import '../blocs/profile/profile_bloc.dart';
+import '../blocs/profile/profile_state.dart';
 import '../blocs/user_claim/user_claim_bloc.dart';
 import '../blocs/user_claim/user_claim_event.dart';
 import '../blocs/user_claim/user_claim_state.dart';
 import '../config/app_constants.dart';
 import '../constants/constants.dart';
+import '../models/user.dart';
 import '../widgets/order_item.dart';
+import './change_password_screen.dart';
 import './edit_address_book_screen.dart';
 import './edit_profile_screen.dart';
 
@@ -73,289 +73,302 @@ class _ProfileScreenState extends State<ProfileScreen>
             ],
           ),
         ),
-        body: SingleChildScrollView(
-          physics: ScrollPhysics(),
-          child: Column(
-            children: [
-              SizedBox(
-                height: AppBar().preferredSize.height,
-              ),
-              Stack(
-                alignment: Alignment.topCenter,
-                children: <Widget>[
-                  BlocBuilder<UserClaimBloc, UserClaimState>(
-                    builder: (context, state) {
-                      if (state is UserClaimLoadSuccess) {
-                        UserClaim userClaim = state.userClaim!;
-                        return Padding(
-                          padding: EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 16.0),
-                          child: Stack(
-                            alignment: Alignment.topCenter,
-                            children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 2,
-                                        blurRadius: 8,
-                                        offset: Offset(0, 3)),
-                                  ],
-                                ),
-                                margin: EdgeInsets.only(top: 100 / 2),
-                                child: Stack(children: [
-                                  Container(
-                                    padding: EdgeInsets.fromLTRB(
-                                        16.0, 16.0 + 100 / 2, 16.0, 16.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: <Widget>[
-                                        Text(state.userClaim!.displayName,
-                                            textAlign: TextAlign.center,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline2!
-                                                .copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: ColorsConstant
-                                                        .primaryColor)),
-                                        const SizedBox(
-                                          height: 16.0,
-                                        ),
-                                        BlocBuilder<OrderBloc, OrderState>(
-                                          builder: (context, state) {
-                                            if (state is OrderLoadSuccess) {
-                                              return IntrinsicHeight(
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceEvenly,
-                                                  children: [
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          'Orders',
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .headline4
-                                                                  ?.copyWith(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Colors
-                                                                        .black,
-                                                                  ),
-                                                        ),
-                                                        Text(
-                                                          state
-                                                              .orderList!.length
-                                                              .toString(),
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .headline4
-                                                                  ?.copyWith(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: ColorsConstant
-                                                                        .primaryColor,
-                                                                  ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    VerticalDivider(
-                                                      color: Colors.grey,
-                                                      width: 2,
-                                                    ),
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          'Pending',
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .headline4
-                                                                  ?.copyWith(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Colors
-                                                                        .black,
-                                                                  ),
-                                                        ),
-                                                        Text(
-                                                          state.orderList!
-                                                              .where((e) =>
-                                                                  e.shippingStatus ==
-                                                                  1)
-                                                              .length
-                                                              .toString(),
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .headline4
-                                                                  ?.copyWith(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: ColorsConstant
-                                                                        .primaryColor,
-                                                                  ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            }
-                                            return SizedBox(
-                                              height: 0,
-                                            );
-                                          },
-                                        )
-                                      ],
-                                    ),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            context
+                .read<UserClaimBloc>()
+                .add(UserClaimRequested(userId: widget.userId));
+            context
+                .read<OrderBloc>()
+                .add(OrderRequested(userId: widget.userId));
+          },
+          child: SingleChildScrollView(
+            physics: ScrollPhysics(),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: AppBar().preferredSize.height,
+                ),
+                Stack(
+                  alignment: Alignment.topCenter,
+                  children: <Widget>[
+                    BlocBuilder<UserClaimBloc, UserClaimState>(
+                      builder: (context, state) {
+                        if (state is UserClaimLoadSuccess) {
+                          UserClaim userClaim = state.userClaim!;
+                          return Padding(
+                            padding:
+                                EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 16.0),
+                            child: Stack(
+                              alignment: Alignment.topCenter,
+                              children: <Widget>[
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 8,
+                                          offset: Offset(0, 3)),
+                                    ],
                                   ),
-                                  Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: IconButton(
-                                        onPressed: () {
-                                          openSettingOptions(context);
-                                        },
-                                        icon: Icon(Icons.settings)),
-                                  )
-                                ]),
-                              ),
-                              Container(
-                                width: 100,
-                                height: 100,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 5.0,
-                                      offset: Offset(0.0, 5.0),
+                                  margin: EdgeInsets.only(top: 100 / 2),
+                                  child: Stack(children: [
+                                    Container(
+                                      padding: EdgeInsets.fromLTRB(
+                                          16.0, 16.0 + 100 / 2, 16.0, 16.0),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: <Widget>[
+                                          Text(state.userClaim!.displayName,
+                                              textAlign: TextAlign.center,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline2!
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: ColorsConstant
+                                                          .primaryColor)),
+                                          const SizedBox(
+                                            height: 16.0,
+                                          ),
+                                          BlocBuilder<OrderBloc, OrderState>(
+                                            builder: (context, state) {
+                                              if (state is OrderLoadSuccess) {
+                                                return IntrinsicHeight(
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    children: [
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            'Orders',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .headline4
+                                                                ?.copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                          ),
+                                                          Text(
+                                                            state.orderList!
+                                                                .length
+                                                                .toString(),
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .headline4
+                                                                ?.copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: ColorsConstant
+                                                                      .primaryColor,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      VerticalDivider(
+                                                        color: Colors.grey,
+                                                        width: 2,
+                                                      ),
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            'Pending',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .headline4
+                                                                ?.copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                          ),
+                                                          Text(
+                                                            state.orderList!
+                                                                .where((e) =>
+                                                                    e.shippingStatus ==
+                                                                    1)
+                                                                .length
+                                                                .toString(),
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .headline4
+                                                                ?.copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: ColorsConstant
+                                                                      .primaryColor,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }
+                                              return SizedBox(
+                                                height: 0,
+                                              );
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: IconButton(
+                                          onPressed: () {
+                                            openSettingOptions(context);
+                                          },
+                                          icon: Icon(Icons.settings)),
                                     )
-                                  ],
+                                  ]),
                                 ),
-                                child: BlocBuilder<ProfileBloc, ProfileState>(
-                                  builder: (context, state) {
-                                    if (state is ProfileInitial) {
-                                      return CircleAvatar(
-                                          radius: 50.0,
-                                          backgroundImage:
-                                              CachedNetworkImageProvider(
-                                                  userClaim.avatarUrl));
-                                    }
-                                    if (state is ProfileUpdateSuccess) {
-                                      if (state.avatarUrl != null) {
-                                        return CircleAvatar(
-                                            radius: 50.0,
-                                            backgroundImage:
-                                                CachedNetworkImageProvider(
-                                                    state.avatarUrl!));
-                                      } else {
+                                Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 5.0,
+                                        offset: Offset(0.0, 5.0),
+                                      )
+                                    ],
+                                  ),
+                                  child: BlocBuilder<ProfileBloc, ProfileState>(
+                                    builder: (context, state) {
+                                      if (state is ProfileInitial) {
                                         return CircleAvatar(
                                             radius: 50.0,
                                             backgroundImage:
                                                 CachedNetworkImageProvider(
                                                     userClaim.avatarUrl));
                                       }
-                                    }
-                                    return Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  },
+                                      if (state is ProfileUpdateSuccess) {
+                                        if (state.avatarUrl != null) {
+                                          return CircleAvatar(
+                                              radius: 50.0,
+                                              backgroundImage:
+                                                  CachedNetworkImageProvider(
+                                                      state.avatarUrl!));
+                                        } else {
+                                          return CircleAvatar(
+                                              radius: 50.0,
+                                              backgroundImage:
+                                                  CachedNetworkImageProvider(
+                                                      userClaim.avatarUrl));
+                                        }
+                                      }
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    },
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    },
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                child: Container(
-                  padding: EdgeInsets.all(16.0),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 8,
-                          offset: Offset(0, 3)),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Text("My Orders",
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline3!
-                              .copyWith(color: ColorsConstant.primaryColor)),
-                      BlocBuilder<OrderBloc, OrderState>(
-                        builder: (context, state) {
-                          if (state is OrderLoadInProgress) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          if (state is OrderLoadSuccess) {
-                            if (state.orderList!.length == 0) {
+                              ],
+                            ),
+                          );
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  child: Container(
+                    padding: EdgeInsets.all(16.0),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 8,
+                            offset: Offset(0, 3)),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Text("My Orders",
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline3!
+                                .copyWith(color: ColorsConstant.primaryColor)),
+                        BlocBuilder<OrderBloc, OrderState>(
+                          builder: (context, state) {
+                            if (state is OrderLoadInProgress) {
                               return Center(
-                                child: Text('You don\'t have any orders'),
+                                child: CircularProgressIndicator(),
                               );
                             }
-                            return ListView.separated(
-                                physics: NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return OrderItem(
-                                      order: state.orderList!.elementAt(index));
-                                },
-                                separatorBuilder: (context, index) {
-                                  return Divider();
-                                },
-                                shrinkWrap: true,
-                                itemCount: state.orderList!.length);
-                          }
-                          return Center(
-                            child: Text(
-                                'Oops!!! We have some errors, please check your internet and try again'),
-                          );
-                        },
-                      )
-                    ],
+                            if (state is OrderLoadSuccess) {
+                              if (state.orderList!.length == 0) {
+                                return Center(
+                                  child: Text('You don\'t have any orders'),
+                                );
+                              }
+                              return ListView.separated(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    return OrderItem(
+                                        order:
+                                            state.orderList!.elementAt(index));
+                                  },
+                                  separatorBuilder: (context, index) {
+                                    return Divider();
+                                  },
+                                  shrinkWrap: true,
+                                  itemCount: state.orderList!.length);
+                            }
+                            return Center(
+                              child: Text(
+                                  'Oops!!! We have some errors, please check your internet and try again'),
+                            );
+                          },
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),

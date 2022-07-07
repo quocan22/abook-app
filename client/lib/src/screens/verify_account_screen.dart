@@ -1,8 +1,8 @@
-import 'package:client/src/widgets/verify_account_form.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constants.dart' as constants;
 import '../widgets/logo.dart';
+import '../widgets/verify_account_form.dart';
 
 class VerifyAccountScreen extends StatelessWidget {
   final String email;

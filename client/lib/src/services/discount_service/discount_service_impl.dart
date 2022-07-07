@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart' as dio;
+import 'package:global_configuration/global_configuration.dart';
 
-import '../../config/app_constants.dart';
 import '../../models/discount.dart';
 import './discount_service.dart';
 
@@ -11,7 +11,8 @@ class DiscountServiceImpl implements DiscountService {
 
   @override
   Future<List<Discount>>? getAllDiscount() async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/discounts');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('DISCOUNTS'));
 
     try {
       dio.Response response = await dioClient.get(uri.toString());

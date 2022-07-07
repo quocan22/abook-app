@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
-import 'package:client/src/models/user.dart';
-import 'package:client/src/services/user_service/user_service.dart';
 
 import '../../models/book.dart';
+import '../../models/user.dart';
 import '../../services/book_service/book_service.dart';
+import '../../services/user_service/user_service.dart';
 import './book_detail_event.dart';
 import './book_detail_state.dart';
 
@@ -17,7 +17,7 @@ class BookDetailBloc extends Bloc<BookDetailEvent, BookDetailState> {
       emit(BookDetailLoadInProgress());
       try {
         Book? book = await service.getBookDetailById(event.bookId);
-        if (!book!.comments.isEmpty) {
+        if (book!.comments.isNotEmpty) {
           for (var item in book.comments) {
             UserClaim? userClaim =
                 await userService.fetchUserInfoById(item['userId']);

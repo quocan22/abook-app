@@ -12,9 +12,6 @@ class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
       emit(FeedbackSendInProgress());
       try {
         await service.sendFeedback(event.email, event.feedback);
-        // if (Feedbacks != null) {
-        //   Feedbacks.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-        // }
         emit(FeedbackSendSuccess());
       } catch (e) {
         emit(FeedbackSendFailure(errorMessage: e.toString()));

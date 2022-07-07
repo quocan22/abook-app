@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart' as dio;
+import 'package:global_configuration/global_configuration.dart';
 
-import '../../config/app_constants.dart';
 import './chatbot_service.dart';
 
 class ChatbotServiceImpl implements ChatbotService {
@@ -10,7 +10,8 @@ class ChatbotServiceImpl implements ChatbotService {
 
   @override
   Future<dynamic> sendMessage(String message) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/chatbot/text_query');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('CHATBOT_SEND_TEXT'));
 
     try {
       dio.Response response =
@@ -18,8 +19,6 @@ class ChatbotServiceImpl implements ChatbotService {
 
       if (response.statusCode == 200) {
         return response.data;
-        // print(responseMsg);
-        // return responseMsg;
       } else {
         throw Exception('Error when send message chatbot');
       }
@@ -31,7 +30,8 @@ class ChatbotServiceImpl implements ChatbotService {
 
   @override
   Future<dynamic> sendEvent(String eventName) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/chatbot/event_query');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('CHATBOT_SEND_EVENT'));
 
     try {
       dio.Response response =
@@ -39,8 +39,6 @@ class ChatbotServiceImpl implements ChatbotService {
 
       if (response.statusCode == 200) {
         return response.data;
-        // print(responseMsg);
-        // return responseMsg;
       } else {
         throw Exception('Error when send event chatbot');
       }

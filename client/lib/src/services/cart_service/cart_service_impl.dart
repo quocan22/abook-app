@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart' as dio;
+import 'package:global_configuration/global_configuration.dart';
 
-import '../../config/app_constants.dart';
 import './cart_service.dart';
 
 class CartServiceImpl implements CartService {
@@ -10,7 +10,8 @@ class CartServiceImpl implements CartService {
 
   @override
   Future<dynamic> getCartDetailByUserId(String userId) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/carts/details');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('CART_DETAIL'));
 
     try {
       dio.Response response = await dioClient
@@ -30,7 +31,8 @@ class CartServiceImpl implements CartService {
   @override
   Future<String> addBookToCart(
       String userId, String bookId, int quantity) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/carts/add_book');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('ADD_BOOK_TO_CART'));
 
     try {
       dio.Response response = await dioClient.patch(uri.toString(),
@@ -50,7 +52,8 @@ class CartServiceImpl implements CartService {
 
   @override
   Future<String> removeBookFromCart(String userId, String bookId) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/carts/remove_book');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('REMOVE_BOOK_FROM_CART'));
 
     try {
       dio.Response response = await dioClient.post(uri.toString(),
@@ -70,7 +73,8 @@ class CartServiceImpl implements CartService {
   @override
   Future<String> changeBookQuantity(
       String userId, String bookId, int newQuantity) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/carts/change_quantity');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('CART_CHANGE_BOOK_QUANTITY'));
 
     try {
       dio.Response response = await dioClient.patch(uri.toString(),

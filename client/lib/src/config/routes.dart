@@ -4,12 +4,12 @@ import '../models/book.dart';
 import '../models/category.dart';
 import '../screens/book_detail_screen.dart';
 import '../screens/book_list_by_category_screen.dart';
-import '../widgets/bottom_navigator.dart';
 import '../screens/forgot_password_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
 import '../screens/root_screen.dart';
 import '../screens/signup_screen.dart';
+import '../widgets/bottom_navigator.dart';
 import './app_constants.dart' as app_constants;
 
 class Routes {

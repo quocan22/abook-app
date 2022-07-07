@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:client/src/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +12,7 @@ import '../blocs/profile/profile_state.dart';
 import '../blocs/user_claim/user_claim_bloc.dart';
 import '../blocs/user_claim/user_claim_event.dart';
 import '../blocs/user_claim/user_claim_state.dart';
+import '../constants/constants.dart';
 import '../constants/constants.dart' as constants;
 import '../utils/validators.dart';
 

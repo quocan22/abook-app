@@ -2,6 +2,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/best_seller_book/best_seller_book_bloc.dart';
+import '../blocs/best_seller_book/best_seller_book_event.dart';
+import '../blocs/best_seller_book/best_seller_book_state.dart';
 import '../blocs/book/book_bloc.dart';
 import '../blocs/book/book_event.dart';
 import '../blocs/book/book_state.dart';
@@ -11,6 +14,7 @@ import '../blocs/category/category_state.dart';
 import '../constants/constants.dart';
 import '../models/book.dart';
 import '../widgets/auto_slide_book_card.dart';
+import '../widgets/best_seller_book_item.dart';
 import '../widgets/book_search_delegate.dart';
 import '../widgets/category_card.dart';
 import '../widgets/squared_book_card_with_discount.dart';
@@ -40,15 +44,19 @@ class _HomeScreenState extends State<HomeScreen>
         }
         if (state is BookLoadSuccess) {
           if (state.books != null) {
+            List<Book> newBooks = [];
+            for (var i = 0; i < 10; i++) {
+              newBooks.add(state.books!.elementAt(i));
+            }
             //state.books!.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
             return CarouselSlider(
               options: CarouselOptions(
                 aspectRatio: 2.0,
                 autoPlay: true,
-                enlargeCenterPage: true,
-                viewportFraction: 0.5,
+                enlargeCenterPage: false,
+                viewportFraction: 0.3,
               ),
-              items: state.books!
+              items: newBooks
                   .map((i) => AutoSlideBookCard(
                         book: i,
                       ))
@@ -150,11 +158,55 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  Widget _buildBestSellerBookList() {
+    return BlocBuilder<BestSellerBookBloc, BestSellerBookState>(
+      builder: (context, state) {
+        if (state is BestSellerBookLoadInProgress) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.red,
+            ),
+          );
+        }
+        if (state is BestSellerBookLoadFailure) {
+          return const Center(child: Text('fail'));
+        }
+        if (state is BestSellerBookLoadSuccess) {
+          if (state.bookList != null) {
+            return CarouselSlider(
+              options: CarouselOptions(
+                aspectRatio: 2.0,
+                autoPlay: true,
+                enlargeCenterPage: true,
+                viewportFraction: 0.5,
+              ),
+              items: state.bookList!
+                  .map((i) => BestSellerBookItem(
+                        book: i,
+                      ))
+                  .toList(),
+            );
+          } else {
+            //temp screen
+            return const Center(
+              child: Text('BOOKS NULL'),
+            );
+          }
+        }
+        //temp screen
+        return const Center(
+          child: Text('BLOC NO STATE'),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     context.read<BookBloc>().add(BookRequested());
     context.read<CategoryBloc>().add(CategoryRequested());
+    context.read<BestSellerBookBloc>().add(BestSellerBookRequested());
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -196,31 +248,49 @@ class _HomeScreenState extends State<HomeScreen>
           onRefresh: () async {
             context.read<BookBloc>().add(BookRequested());
             context.read<CategoryBloc>().add(CategoryRequested());
+            context.read<BestSellerBookBloc>().add(BestSellerBookRequested());
           },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildCarouselBookList(),
-              Text(
-                'Categories',
-                style: Theme.of(context).textTheme.headline4?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-              ),
-              SizedBox(
-                child: _buildCategoryList(),
-                height: 150,
-              ),
-              Text(
-                'On Sale',
-                style: Theme.of(context).textTheme.headline4?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-              ),
-              Expanded(child: _buildBookList()),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'New Book',
+                  style: Theme.of(context).textTheme.headline4?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                ),
+                SizedBox(height: 120, child: _buildCarouselBookList()),
+                Text(
+                  'Best Seller',
+                  style: Theme.of(context).textTheme.headline4?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                ),
+                SizedBox(height: 200, child: _buildBestSellerBookList()),
+                Text(
+                  'Categories',
+                  style: Theme.of(context).textTheme.headline4?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                ),
+                SizedBox(
+                  child: _buildCategoryList(),
+                  height: 150,
+                ),
+                Text(
+                  'On Sale',
+                  style: Theme.of(context).textTheme.headline4?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                ),
+                SizedBox(height: 200, child: _buildBookList()),
+              ],
+            ),
           ),
         ),
       ),

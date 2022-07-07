@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart' as dio;
+import 'package:global_configuration/global_configuration.dart';
 
-import '../../config/app_constants.dart';
 import '../../models/book.dart';
 import './book_service.dart';
 
@@ -11,7 +11,8 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<List<Book>> fetchBookList() async {
-    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.BOOKS);
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('BOOKS'));
 
     try {
       dio.Response response = await dioClient.get(uri.toString());
@@ -33,7 +34,8 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<List<Book>>? fetchBookListByCategoryId(String categoryId) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.BOOKSBYCATE);
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('BOOKS_BY_CATEGORY'));
 
     try {
       dio.Response response = await dioClient
@@ -56,7 +58,8 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<String> addBookToFav(String bookId, String userId) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.ADDFAV);
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('ADD_FAV'));
 
     try {
       dio.Response response = await dioClient
@@ -77,7 +80,8 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<String> removeBookFromFav(String bookId, String userId) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.REMOVEFAV);
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('REMOVE_FAV'));
 
     try {
       dio.Response response = await dioClient
@@ -98,7 +102,8 @@ class BookServiceImpl implements BookService {
 
   @override
   Future<Book> getBookDetailById(String bookId) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/books');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('BOOKS'));
 
     try {
       dio.Response response = await dioClient.get(uri.toString() + '/$bookId');
@@ -119,7 +124,8 @@ class BookServiceImpl implements BookService {
   @override
   Future<String> sendRateAndComment(
       String bookId, String userId, int rate, String review) async {
-    final uri = Uri.https(AppConstants.HOST_NAME, '/api/books/comment');
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('BOOK_RATE_AND_COMMENT'));
 
     try {
       dio.Response response = await dioClient.patch(uri.toString(), data: {
@@ -135,6 +141,29 @@ class BookServiceImpl implements BookService {
         return responseMsg;
       } else {
         throw Exception('Error when send comment');
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<List<Book>> getBestSellerBookList() async {
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('BEST_SELLER_BOOK'));
+
+    try {
+      dio.Response response = await dioClient.get(uri.toString());
+
+      if (response.statusCode == 200) {
+        Iterable responseData = response.data['data'];
+        var books =
+            List<Book>.from(responseData.map((model) => Book.fromJson(model)));
+
+        return books;
+      } else {
+        throw Exception('Error when fetching best seller book');
       }
     } catch (e) {
       print(e.toString());

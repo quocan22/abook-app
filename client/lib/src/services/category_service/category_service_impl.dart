@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart' as dio;
+import 'package:global_configuration/global_configuration.dart';
 
-import '../../config/app_constants.dart';
 import '../../models/category.dart';
 import './category_service.dart';
 
@@ -11,7 +11,8 @@ class CategoryServiceImpl implements CategoryService {
 
   @override
   Future<List<Category>>? fetchCategoryList() async {
-    final uri = Uri.https(AppConstants.HOST_NAME, AppConstants.CATEGORIES);
+    final uri = Uri.https(GlobalConfiguration().getValue('HOST_NAME'),
+        GlobalConfiguration().getValue('CATEGORIES'));
 
     try {
       dio.Response response = await dioClient.get(uri.toString());

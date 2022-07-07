@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import './blocs/address_book/address_book_bloc.dart';
 import './blocs/authentication/authentication_bloc.dart';
+import './blocs/best_seller_book/best_seller_book_bloc.dart';
 import './blocs/book/book_bloc.dart';
 import './blocs/book_detail/book_detail_bloc.dart';
 import './blocs/book_by_category/book_by_category_bloc.dart';
@@ -102,6 +103,9 @@ class App extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => VerifyBloc(userService: _userService),
+          ),
+          BlocProvider(
+            create: (context) => BestSellerBookBloc(service: _bookService),
           )
         ],
         child: MaterialApp(

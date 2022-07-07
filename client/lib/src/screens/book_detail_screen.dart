@@ -268,17 +268,17 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   ),
                                   Row(
                                     children: [
-                                      MaterialButton(
-                                        onPressed: () {},
-                                        color: ColorsConstant.primaryColor,
-                                        textColor: Colors.white,
-                                        child: Icon(
-                                          Icons.share,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                      ),
+                                      // MaterialButton(
+                                      //   onPressed: () {},
+                                      //   color: ColorsConstant.primaryColor,
+                                      //   textColor: Colors.white,
+                                      //   child: Icon(
+                                      //     Icons.share,
+                                      //   ),
+                                      //   shape: RoundedRectangleBorder(
+                                      //       borderRadius:
+                                      //           BorderRadius.circular(10)),
+                                      // ),
                                       Spacer(),
                                       BlocBuilder<CartBloc, CartState>(
                                         builder: (context, state) {
