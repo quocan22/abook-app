@@ -4,6 +4,7 @@ const uuid = require("uuid");
 const Orders = require("../models/orderModel");
 const Books = require("../models/bookModel");
 const Categories = require("../models/categoryModel");
+const Users = require("../models/userModel");
 
 const dialogflowCredentials = require("../utils/keys");
 const formatCurrency = require("../utils/formatCurrency");
@@ -27,6 +28,9 @@ const BEST_DISCOUNT_ACTION = "bestDiscount";
 const MOST_EXPENSIVE_ACTION = "mostExpensive";
 const CHEAPEST_ACTION = "cheapest";
 const GIVE_CATE_TO_FIND_BOOK = "giveCateToFindBook";
+const BUY_A_BOOK_ACTION = "buyABook";
+const MAKE_ORDER_ACTION = "makeOrder";
+const CONFIRM_ORDER_ACTION = "confirmOrder";
 //#endregion
 
 const chatbotController = {
@@ -72,8 +76,14 @@ const chatbotController = {
       case GIVE_CATE_TO_FIND_BOOK:
         searchBookByCate(res, responses);
         break;
-      case "makeOrder":
+      case BUY_A_BOOK_ACTION:
+        buyABook(res, responses);
+        break;
+      case MAKE_ORDER_ACTION:
         makeOrder(res, responses);
+        break;
+      case CONFIRM_ORDER_ACTION:
+        confirmOrder(res, responses);
         break;
       default:
         defaultAction(res, responses);
@@ -151,7 +161,9 @@ async function bestSellInMonth(res) {
   });
 
   if (booksInMonth.length < 1) {
-    res.status(200).json({ msg: "Not enough data to show most selling book" });
+    res
+      .status(200)
+      .json({ type: 1, text: "Not enough data to show most selling book" });
   } else {
     let bestSellId = "";
     let maxQuantity = 0;
@@ -286,14 +298,97 @@ async function cheapest(res) {
   }
 }
 
+async function buyABook(res, responses) {
+  const result = responses[0].queryResult;
+  const message = result.fulfillmentMessages[0].text.text[0];
+
+  if (result.allRequiredParamsPresent) {
+    res.status(200).json({ type: 1, text: message });
+  } else {
+    if (
+      !result.parameters.fields.bookName ||
+      !result.parameters.fields.bookName.stringValue
+    ) {
+      return res.status(200).json({
+        type: 1,
+        text: "Sorry we have a problem while trying to find the book you want.",
+      });
+    }
+
+    const bookName = result.parameters.fields.bookName.stringValue;
+
+    const book = await Books.findOne({ name: bookName });
+
+    if (!book) {
+      return res.status(200).json({
+        type: 1,
+        text: "Sorry we have a problem while trying to find the book you want.",
+      });
+    }
+
+    return res.status(200).json({
+      type: 2,
+      text: message,
+      data: [book],
+    });
+  }
+}
+
 async function makeOrder(res, responses) {
   const result = responses[0].queryResult;
-  if (!result.allRequiredParamsPresent) {
-    const message = result.fulfillmentMessages[0].text.text[0];
-    res.status(200).json({ msg: message });
-  } else {
-    res.status(200).json({ msg: "Your order is ready." });
+  const message = result.fulfillmentMessages[0].text.text[0];
+  res.status(200).json({ type: 1, text: message });
+}
+
+async function confirmOrder(res, responses) {
+  const { bookName, quantity, email, name, phoneNumber, address } =
+    responses[0].queryResult.parameters.fields;
+
+  console.log(responses[0].queryResult);
+
+  const user = await Users.findOne({ email: email.stringValue });
+
+  let userId = "";
+
+  if (user) {
+    userId = user._id;
   }
+
+  const book = await Books.findOne({ name: bookName.stringValue });
+
+  if (!book) {
+    res.status(200).json({
+      type: 1,
+      text: "We encounter a sudden problem. We apologize for this inconvenient.",
+    });
+  }
+
+  const sellPrice = book.price - (book.price * book.discountRatio) / 100;
+  const totalPrice = sellPrice * quantity.numberValue;
+
+  const newOrder = new Orders({
+    userId: userId,
+    totalPrice,
+    customerName: name.stringValue,
+    customerPhoneNumber: phoneNumber.stringValue,
+    customerAddress: address.stringValue,
+    details: [
+      {
+        bookId: book._id.valueOf(),
+        quantity: quantity.numberValue,
+        sellPrice,
+      },
+    ],
+  });
+
+  await newOrder.save();
+
+  const message = responses[0].queryResult.fulfillmentMessages[0].text.text[0];
+
+  res.status(200).json({
+    type: 1,
+    text: message,
+  });
 }
 
 module.exports = chatbotController;

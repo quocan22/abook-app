@@ -340,6 +340,21 @@ const bookController = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  getBooksName: async (req, res) => {
+    try {
+      const books = await Books.find();
+
+      const result = [];
+
+      for (let i = 0; i < books.length; i++) {
+        result.push(books[i].name);
+      }
+
+      res.status(200).json({ result });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
 };
 
 function updateAvgRate(comments) {
