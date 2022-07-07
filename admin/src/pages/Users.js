@@ -34,6 +34,7 @@ import {
   EditUserDialog
 } from '../components/_dashboard/user';
 import { formatString } from '../utils/formatString';
+import { resizeScaleByWidth } from '../utils/resizeImageFromCloudinary';
 // ----------------------------------------------------------------------
 import { UserService } from '../services';
 
@@ -226,7 +227,10 @@ export default function Users() {
                           <TableRow hover key={_id} tabIndex={-1} role="checkbox">
                             <TableCell component="th" scope="row">
                               <Stack direction="row" alignItems="center" spacing={2}>
-                                <Avatar alt={userClaim.displayName} src={userClaim.avatarUrl} />
+                                <Avatar
+                                  alt={userClaim.displayName}
+                                  src={resizeScaleByWidth(userClaim.avatarUrl, 200)}
+                                />
                                 <Typography variant="subtitle2" noWrap>
                                   {formatString(userClaim.displayName)}
                                 </Typography>

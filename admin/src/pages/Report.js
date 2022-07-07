@@ -26,6 +26,7 @@ import { ReportMenu } from '../components/_dashboard/report';
 import SearchNotFound from '../components/SearchNotFound';
 import { BookReceiptService, ReportService } from '../services';
 import { fCurrency } from '../utils/formatNumber';
+import { resizeScaleByWidth } from '../utils/resizeImageFromCloudinary';
 
 const TABLE_HEAD_ANNUAL_REVENUE = [
   { label: 'Month', align: 'center' },
@@ -303,7 +304,7 @@ export default function Report() {
                           <TableCell align="center">{index + 1}</TableCell>
                           <TableCell component="th" scope="row">
                             <Stack direction="row" alignItems="center" spacing={2}>
-                              <Avatar alt={name} src={imageUrl} />
+                              <Avatar alt={name} src={resizeScaleByWidth(imageUrl, 100)} />
                               <Typography variant="subtitle2" noWrap>
                                 {name}
                               </Typography>

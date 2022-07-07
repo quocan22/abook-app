@@ -18,14 +18,18 @@ import { BookService } from '../services';
 
 const ITEM_PER_PAGE = 12;
 
-function applyFilter(array, name, cate) {
-  const stabilize = filter(
+function applyFilter(array, name, cate, onSale) {
+  let stabilize = filter(
     array,
     (_book) => _book.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
   );
 
   if (cate && cate !== 'all') {
-    return stabilize.filter((_book) => _book.categoryId === cate);
+    stabilize = filter(stabilize, (_book) => _book.categoryId === cate);
+  }
+
+  if (onSale) {
+    stabilize = filter(stabilize, (_book) => _book.discountRatio > 0);
   }
 
   return stabilize;
@@ -37,6 +41,7 @@ export default function Products() {
   const [page, setPage] = useState(1);
   const [filterName, setFilterName] = useState('');
   const [filterCate, setFilterCate] = useState('all');
+  const [filterOnSale, setFilterOnSale] = useState(false);
 
   const [openAddDialog, setOpenAddDialog] = useState(false);
 
@@ -47,6 +52,7 @@ export default function Products() {
     BookService.getAllBooks()
       .then((res) => {
         setBooks(res.data.data);
+        console.log(res.data.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -76,7 +82,12 @@ export default function Products() {
     setProductChange(!productChange);
   };
 
-  const filteredBooks = applyFilter(books, filterName, filterCate);
+  const onFilterOnSaleChange = (event) => {
+    setFilterOnSale(event.target.checked);
+    setPage(1);
+  };
+
+  const filteredBooks = applyFilter(books, filterName, filterCate, filterOnSale);
 
   const isBookNotFound = filteredBooks.length === 0;
 
@@ -124,6 +135,8 @@ export default function Products() {
           page={page}
           handleChangePage={handleChangePage}
           loading={loading}
+          filterOnSale={filterOnSale}
+          handleChangeFilterOnSale={onFilterOnSaleChange}
         />
 
         {isBookNotFound && !loading && <SearchNotFound searching searchQuery={filterName} />}
@@ -150,19 +163,6 @@ export default function Products() {
           )}
           onChange={onProductChange}
         />
-
-        {/* {!loading && (
-          <Pagination
-            sx={{ mt: 2, mr: 0 }}
-            size="large"
-            color="primary"
-            showFirstButton
-            showLastButton
-            count={parseInt(filteredBooks.length / ITEM_PER_PAGE, 10) + 1}
-            page={page}
-            onChange={handleChangePage}
-          />
-        )} */}
       </Container>
     </Page>
   );

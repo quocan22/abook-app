@@ -200,7 +200,7 @@ const orderController = {
 
       res.status(201).json({
         msg: "Update order shipping status successfully",
-        id: result._id,
+        id: order._id,
       });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
