@@ -18,6 +18,7 @@ import '../config/app_constants.dart';
 import '../constants/constants.dart';
 import '../models/book.dart';
 import '../utils/format_rules.dart';
+import './share_screen.dart';
 
 class BookDetailScreen extends StatefulWidget {
   final Book book;
@@ -120,9 +121,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           filter: ImageFilter.blur(
               sigmaX: _sigmaXOfBackgroudImage, sigmaY: _sigmaYOfBackgroudImage),
           child: Scaffold(
-              backgroundColor: Colors.white.withOpacity(0.5),
+              backgroundColor: Colors.black.withOpacity(0.5),
               appBar: AppBar(
-                iconTheme: IconThemeData(color: Colors.black),
+                iconTheme: IconThemeData(color: Colors.white),
                 elevation: 0,
                 backgroundColor: Colors.transparent,
                 automaticallyImplyLeading: true,
@@ -170,11 +171,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                 (context, url, error) =>
                                                     Icon(Icons.error),
                                           ),
-                                          // Image.network(
-                                          //   book.imageUrl,
-                                          //   width: 150,
-                                          //   fit: BoxFit.cover,
-                                          // ),
                                         ),
                                         SizedBox(
                                           width: 16.0,
@@ -194,20 +190,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                     ?.copyWith(
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      color: Colors.black,
+                                                      color: Colors.white,
                                                     ),
                                               ),
-                                              // Text(
-                                              //   state.book!.author,
-                                              //   style: Theme.of(context)
-                                              //       .textTheme
-                                              //       .headline5
-                                              //       ?.copyWith(
-                                              //         fontWeight:
-                                              //             FontWeight.normal,
-                                              //         color: Colors.black,
-                                              //       ),
-                                              // ),
                                               Row(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.end,
@@ -240,22 +225,53 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                   Text(
                                                       '(${state.book!.comments.length})',
                                                       style: TextStyle(
-                                                        fontSize: 16,
-                                                      ))
+                                                          fontSize: 16,
+                                                          color: Colors.white))
                                                 ],
                                               ),
                                               Spacer(),
+                                              Visibility(
+                                                visible:
+                                                    widget.book.discountRatio !=
+                                                        0,
+                                                child: Text(
+                                                  FormatRules.formatPrice(
+                                                      widget.book.price),
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headline5
+                                                      ?.copyWith(
+                                                        decoration:
+                                                            TextDecoration
+                                                                .lineThrough,
+                                                        fontWeight:
+                                                            FontWeight.w100,
+                                                        fontSize: 15,
+                                                        color: Colors.white
+                                                            .withOpacity(0.7),
+                                                      ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
                                               Text(
-                                                FormatRules.formatPrice(
-                                                    state.book!.price),
+                                                FormatRules.formatPrice(widget
+                                                        .book.price *
+                                                    (100 -
+                                                        widget.book
+                                                            .discountRatio) ~/
+                                                    100),
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .headline5
                                                     ?.copyWith(
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      color: Colors.black,
+                                                      color: Colors.white,
                                                     ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ],
                                           ),
@@ -268,17 +284,22 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   ),
                                   Row(
                                     children: [
-                                      // MaterialButton(
-                                      //   onPressed: () {},
-                                      //   color: ColorsConstant.primaryColor,
-                                      //   textColor: Colors.white,
-                                      //   child: Icon(
-                                      //     Icons.share,
-                                      //   ),
-                                      //   shape: RoundedRectangleBorder(
-                                      //       borderRadius:
-                                      //           BorderRadius.circular(10)),
-                                      // ),
+                                      MaterialButton(
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (_) => ShareScreen(
+                                                      book: widget.book)));
+                                        },
+                                        color: ColorsConstant.primaryColor,
+                                        textColor: Colors.white,
+                                        child: Icon(
+                                          Icons.share,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                      ),
                                       Spacer(),
                                       BlocBuilder<CartBloc, CartState>(
                                         builder: (context, state) {
@@ -414,19 +435,17 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                         .headline4
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.black,
+                                          color: Colors.white,
                                         ),
                                   ),
                                   Text(
                                     state.book!.description,
-                                    maxLines: 7,
-                                    overflow: TextOverflow.ellipsis,
                                     style: Theme.of(context)
                                         .textTheme
                                         .headline6
                                         ?.copyWith(
                                           fontWeight: FontWeight.normal,
-                                          color: Colors.black,
+                                          color: Colors.white,
                                         ),
                                   ),
                                   SizedBox(
@@ -439,7 +458,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                         .headline4
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.black,
+                                          color: Colors.white,
                                         ),
                                   ),
                                   currentBook.comments.isEmpty
@@ -452,7 +471,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                 .headline6
                                                 ?.copyWith(
                                                   fontWeight: FontWeight.normal,
-                                                  color: Colors.black,
+                                                  color: Colors.white,
                                                 ),
                                           ),
                                         )
@@ -500,7 +519,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                                         FontWeight
                                                                             .bold,
                                                                     color: Colors
-                                                                        .black,
+                                                                        .white,
                                                                   ),
                                                         ),
                                                         Text(
@@ -515,7 +534,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                                         FontWeight
                                                                             .normal,
                                                                     color: Colors
-                                                                        .black,
+                                                                        .white,
                                                                   ),
                                                         ),
                                                         Row(
@@ -588,6 +607,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                                   index]
                                                               ['commentDate']),
                                                           style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
                                                               fontStyle:
                                                                   FontStyle
                                                                       .italic),
@@ -736,7 +757,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       width: double.infinity,
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.blue, width: 0.5)),
-        color: Colors.white.withOpacity(0.5),
+        color: Colors.black.withOpacity(0.5),
       ),
     );
   }
