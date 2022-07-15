@@ -326,7 +326,7 @@ async function buyABook(res, responses) {
       });
     }
 
-    if (!book.available) {
+    if (!book.isAvailable) {
       return res.status(200).json({
         type: 2,
         text: "We found this book for you, but this book does not continue business.",
