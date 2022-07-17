@@ -186,7 +186,7 @@ async function bestSellInMonth(res) {
 }
 
 async function newArrivals(res) {
-  const books = await Books.find().sort({ createdAt: 1 });
+  const books = await Books.find().sort({ createdAt: -1 });
 
   if (books.length < 1) {
     res.status(200).json({
@@ -196,7 +196,7 @@ async function newArrivals(res) {
   } else {
     res.status(200).json({
       type: 2,
-      text: "Chúng tôi có 3 quyển sách mới dành cho bạn.",
+      text: "Đây là những quyển sách mới nhất của ABook.",
       data: books.slice(0, 3),
     });
   }
