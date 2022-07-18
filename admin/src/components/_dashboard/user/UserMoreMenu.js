@@ -9,7 +9,7 @@ import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
 
-import { UserService } from '../../../services';
+import { UserService, TokenService } from '../../../services';
 
 // ----------------------------------------------------------------------
 
@@ -32,6 +32,12 @@ export default function UserMoreMenu({ isLocked, userId, handleEditClick, setIdO
   };
 
   const changeLockStatus = () => {
+    if (userId === TokenService.getUser().id) {
+      toast.error('You cannot lock yourself');
+      setIsOpen(false);
+      return;
+    }
+
     const status = !isLocked;
 
     UserService.changeLockStatus({ userId, status })

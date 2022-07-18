@@ -26,8 +26,8 @@ const removeUser = () => {
 
 const updateUser = (displayName, avatarUrl) => {
   const user = JSON.parse(localStorage.getItem('user'));
-  user.displayName = displayName;
-  user.avatarUrl = avatarUrl;
+  if (displayName) user.displayName = displayName;
+  if (avatarUrl) user.avatarUrl = avatarUrl;
 
   setUser(user);
 };
