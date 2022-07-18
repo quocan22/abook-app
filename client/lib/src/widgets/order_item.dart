@@ -60,7 +60,13 @@ class OrderItem extends StatelessWidget {
             ),
             order.shippingStatus == 1
                 ? Chip(label: Text('Shipping'), backgroundColor: Colors.yellow)
-                : Chip(label: Text('Completed'), backgroundColor: Colors.green)
+                : order.shippingStatus == 2
+                    ? Chip(
+                        label: Text('Completed'),
+                        backgroundColor: Colors.greenAccent)
+                    : Chip(
+                        label: Text('Cancelled'),
+                        backgroundColor: Colors.redAccent)
           ],
         ),
         Row(

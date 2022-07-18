@@ -109,30 +109,75 @@ class _BookCartItemState extends State<BookCartItem> {
                                     color: Colors.black,
                                   ),
                         ),
-                        Text(
-                          FormatRules.formatPrice(widget.book.price),
-                          style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            fontSize:
-                                (widget.book.discountRatio == 0) ? 15 : 10,
-                            decoration: (widget.book.discountRatio == 0)
-                                ? TextDecoration.none
-                                : TextDecoration.lineThrough,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        Row(
+                          children: [
+                            Text(
+                              FormatRules.formatPrice(widget.book.price),
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize:
+                                    (widget.book.discountRatio == 0) ? 15 : 10,
+                                decoration: (widget.book.discountRatio == 0)
+                                    ? TextDecoration.none
+                                    : TextDecoration.lineThrough,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Visibility(
+                              visible: !widget.book.isAvailable &&
+                                  (widget.book.discountRatio == 0),
+                              child: Text(
+                                ' (Stop business)',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: (widget.book.discountRatio == 0)
+                                      ? 15
+                                      : 10,
+                                  decoration: (widget.book.discountRatio == 0)
+                                      ? TextDecoration.none
+                                      : TextDecoration.lineThrough,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
-                        Visibility(
-                          visible: widget.book.discountRatio != 0,
-                          child: Text(
-                            FormatRules.formatPrice(widget.book.price *
-                                (100 - widget.book.discountRatio) ~/
-                                100),
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 15),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        Row(
+                          children: [
+                            Visibility(
+                              visible: widget.book.discountRatio != 0,
+                              child: Text(
+                                FormatRules.formatPrice(widget.book.price *
+                                    (100 - widget.book.discountRatio) ~/
+                                    100),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 15),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Visibility(
+                              visible: !widget.book.isAvailable &&
+                                  (widget.book.discountRatio != 0),
+                              child: Text(
+                                ' (Stop business)',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: (widget.book.discountRatio == 0)
+                                      ? 15
+                                      : 10,
+                                  decoration: (widget.book.discountRatio == 0)
+                                      ? TextDecoration.none
+                                      : TextDecoration.lineThrough,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                         Spacer(),
                         Row(

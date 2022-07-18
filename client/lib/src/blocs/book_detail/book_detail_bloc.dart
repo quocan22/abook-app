@@ -37,6 +37,14 @@ class BookDetailBloc extends Bloc<BookDetailEvent, BookDetailState> {
         await service.sendRateAndComment(
             event.bookId, event.userId, event.rate, event.review);
         Book? book = await service.getBookDetailById(event.bookId);
+        if (book!.comments.isNotEmpty) {
+          for (var item in book.comments) {
+            UserClaim? userClaim =
+                await userService.fetchUserInfoById(item['userId']);
+            item['displayName'] = userClaim!.displayName;
+            item['avatarUrl'] = userClaim.avatarUrl;
+          }
+        }
         emit(BookDetailLoadSuccess(book: book));
       } catch (e) {
         emit(BookDetailLoadFailure(errorMessage: e.toString()));

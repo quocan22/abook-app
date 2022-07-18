@@ -40,15 +40,12 @@ class _HomeScreenState extends State<HomeScreen>
           );
         }
         if (state is BookLoadFailure) {
-          return const Center(child: Text('fail'));
+          return const Center(child: Text('Failed'));
         }
         if (state is BookLoadSuccess) {
           if (state.books != null) {
-            List<Book> newBooks = [];
-            for (var i = 0; i < 10; i++) {
-              newBooks.add(state.books!.elementAt(i));
-            }
-            //state.books!.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+            List<Book> newBooks = state.books!;
+            newBooks.sort((a, b) => b.createdAt.compareTo(a.createdAt));
             return CarouselSlider(
               options: CarouselOptions(
                 aspectRatio: 2.0,
@@ -57,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen>
                 viewportFraction: 0.3,
               ),
               items: newBooks
+                  .getRange(0, 10)
                   .map((i) => AutoSlideBookCard(
                         book: i,
                       ))

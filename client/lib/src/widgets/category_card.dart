@@ -35,10 +35,14 @@ class CategoryCard extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
                 color: Colors.black.withOpacity(0.3)),
-            child: Center(
-              child: Text(
-                category.categoryName,
-                style: TextStyle(color: Colors.white, fontSize: 20),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  category.categoryName,
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
           ),

@@ -32,9 +32,14 @@ class BookDetailScreen extends StatefulWidget {
 class _BookDetailScreenState extends State<BookDetailScreen> {
   int userRate = 0;
   var _textEditingController = TextEditingController();
+  bool isLoaded = false;
 
   @override
   void initState() {
+    context
+        .read<BookDetailBloc>()
+        .add(BookDetailRequestedById(bookId: widget.book.id));
+    _checkLogin();
     super.initState();
   }
 
@@ -102,10 +107,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    context
-        .read<BookDetailBloc>()
-        .add(BookDetailRequestedById(bookId: widget.book.id));
-
     var _sigmaXOfBackgroudImage = 10.0;
     var _sigmaYOfBackgroudImage = 10.0;
 
@@ -140,7 +141,19 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               body: BlocBuilder<BookDetailBloc, BookDetailState>(
                 builder: (context, state) {
                   if (state is BookDetailLoadSuccess) {
+                    isLoaded = true;
                     Book currentBook = state.book!;
+
+                    List<dynamic> _tempReview = currentBook.comments
+                        .where((e) => e['userId'] == userId)
+                        .toList();
+
+                    dynamic _yourReview =
+                        (_tempReview.isEmpty) ? null : _tempReview.first;
+
+                    List<dynamic> _otherReview = currentBook.comments
+                        .where((e) => e['userId'] != userId)
+                        .toList();
 
                     return Column(
                       children: [
@@ -338,6 +351,15 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                   _showLoginDialog();
                                                   return;
                                                 }
+                                                if (widget.book.isAvailable ==
+                                                    false) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              'This book is no longer available for sale')));
+                                                  return;
+                                                }
+
                                                 context.read<CartBloc>().add(
                                                     CartBookAdded(
                                                         userId: userId!,
@@ -347,8 +369,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                     .showSnackBar(SnackBar(
                                                         content: Text(
                                                             'Added book to your cart')));
-                                                Navigator.of(context)
-                                                    .maybePop();
+                                                // Navigator.of(context)
+                                                //     .maybePop();
                                               },
                                               color:
                                                   ColorsConstant.primaryColor,
@@ -386,6 +408,12 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                       .add(BookRemovedFav(
                                                           bookId:
                                                               widget.book.id));
+                                                  context
+                                                      .read<BookDetailBloc>()
+                                                      .add(
+                                                          BookDetailRequestedById(
+                                                              bookId: widget
+                                                                  .book.id));
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(SnackBar(
                                                           content: Text(
@@ -396,14 +424,20 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                       .add(BookAddedFav(
                                                           bookId:
                                                               widget.book.id));
+                                                  context
+                                                      .read<BookDetailBloc>()
+                                                      .add(
+                                                          BookDetailRequestedById(
+                                                              bookId: widget
+                                                                  .book.id));
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(SnackBar(
                                                           content: Text(
                                                               'Added to your favorite books')));
                                                 }
 
-                                                Navigator.maybePop(
-                                                    context, true);
+                                                // Navigator.maybePop(
+                                                //     context, true);
                                               }
                                             },
                                             color: ColorsConstant.primaryColor,
@@ -451,6 +485,159 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   SizedBox(
                                     height: 25,
                                   ),
+                                  (_yourReview != null)
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Your Review',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline4
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                            ),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    width: 40,
+                                                    height: 40,
+                                                    child: CircleAvatar(
+                                                        radius: 50.0,
+                                                        backgroundImage:
+                                                            CachedNetworkImageProvider(
+                                                                _yourReview[
+                                                                    'avatarUrl'])),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 16.0,
+                                                  ),
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          _yourReview[
+                                                              'displayName'],
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .headline4
+                                                                  ?.copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                        ),
+                                                        Text(
+                                                          _yourReview['review'],
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .headline5
+                                                                  ?.copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .normal,
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                        ),
+                                                        Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            Icon(
+                                                              (_yourReview[
+                                                                          'rate'] >=
+                                                                      1)
+                                                                  ? Icons.star
+                                                                  : Icons
+                                                                      .star_border,
+                                                              color:
+                                                                  Colors.yellow,
+                                                              size: 17,
+                                                            ),
+                                                            Icon(
+                                                                (_yourReview[
+                                                                            'rate'] >=
+                                                                        2)
+                                                                    ? Icons.star
+                                                                    : Icons
+                                                                        .star_border,
+                                                                color: Colors
+                                                                    .yellow,
+                                                                size: 17),
+                                                            Icon(
+                                                                (_yourReview[
+                                                                            'rate'] >=
+                                                                        3)
+                                                                    ? Icons.star
+                                                                    : Icons
+                                                                        .star_border,
+                                                                color: Colors
+                                                                    .yellow,
+                                                                size: 17),
+                                                            Icon(
+                                                                (_yourReview[
+                                                                            'rate'] >=
+                                                                        4)
+                                                                    ? Icons.star
+                                                                    : Icons
+                                                                        .star_border,
+                                                                color: Colors
+                                                                    .yellow,
+                                                                size: 17),
+                                                            Icon(
+                                                                (_yourReview[
+                                                                            'rate'] ==
+                                                                        5)
+                                                                    ? Icons.star
+                                                                    : Icons
+                                                                        .star_border,
+                                                                color: Colors
+                                                                    .yellow,
+                                                                size: 17),
+                                                          ],
+                                                        ),
+                                                        Text(
+                                                          commentDate(_yourReview[
+                                                              'commentDate']),
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontStyle:
+                                                                  FontStyle
+                                                                      .italic),
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 25,
+                                            ),
+                                          ],
+                                        )
+                                      : Center(),
                                   Text(
                                     'Ratings & Review',
                                     style: Theme.of(context)
@@ -461,7 +648,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                           color: Colors.white,
                                         ),
                                   ),
-                                  currentBook.comments.isEmpty
+                                  _otherReview.isEmpty
                                       ? Center(
                                           child: Text(
                                             'This book has no any reviews',
@@ -492,10 +679,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                     child: CircleAvatar(
                                                         radius: 50.0,
                                                         backgroundImage:
-                                                            NetworkImage(currentBook
-                                                                        .comments[
-                                                                    index]
-                                                                ['avatarUrl'])),
+                                                            NetworkImage(
+                                                                _otherReview[
+                                                                        index][
+                                                                    'avatarUrl'])),
                                                   ),
                                                   SizedBox(
                                                     width: 16.0,
@@ -507,8 +694,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          currentBook.comments[
-                                                                  index]
+                                                          _otherReview[index]
                                                               ['displayName'],
                                                           style:
                                                               Theme.of(context)
@@ -523,8 +709,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                                   ),
                                                         ),
                                                         Text(
-                                                          currentBook.comments[
-                                                              index]['review'],
+                                                          _otherReview[index]
+                                                              ['review'],
                                                           style:
                                                               Theme.of(context)
                                                                   .textTheme
@@ -543,8 +729,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                                   .end,
                                                           children: [
                                                             Icon(
-                                                              (currentBook.comments[
-                                                                              index]
+                                                              (_otherReview[index]
                                                                           [
                                                                           'rate'] >=
                                                                       1)
@@ -556,7 +741,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                               size: 17,
                                                             ),
                                                             Icon(
-                                                                (currentBook.comments[index]
+                                                                (_otherReview[index]
                                                                             [
                                                                             'rate'] >=
                                                                         2)
@@ -567,7 +752,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                                     .yellow,
                                                                 size: 17),
                                                             Icon(
-                                                                (currentBook.comments[index]
+                                                                (_otherReview[index]
                                                                             [
                                                                             'rate'] >=
                                                                         3)
@@ -578,7 +763,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                                     .yellow,
                                                                 size: 17),
                                                             Icon(
-                                                                (currentBook.comments[index]
+                                                                (_otherReview[index]
                                                                             [
                                                                             'rate'] >=
                                                                         4)
@@ -589,7 +774,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                                     .yellow,
                                                                 size: 17),
                                                             Icon(
-                                                                (currentBook.comments[index]
+                                                                (_otherReview[index]
                                                                             [
                                                                             'rate'] ==
                                                                         5)
@@ -627,22 +812,29 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                             return Divider();
                                           },
                                           shrinkWrap: true,
-                                          itemCount:
-                                              currentBook.comments.length),
+                                          itemCount: _otherReview.length),
                                 ],
                               ),
                             ),
                           ),
                         ),
-                        Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: buildCommentInput())
+                        Visibility(
+                          visible: !currentBook.comments
+                              .map((e) => e['userId'])
+                              .toList()
+                              .contains(userId),
+                          child: Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: buildCommentInput()),
+                        )
                       ],
                     );
                   } else {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
                   }
                 },
               ))),
@@ -651,6 +843,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   Widget buildCommentInput() {
     return Container(
+      padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
       child: Column(
         children: [
           Padding(

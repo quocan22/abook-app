@@ -76,9 +76,7 @@ class _CartScreenState extends State<CartScreen>
         builder: (context, state) {
           if (state is CartLoadInProgress) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.red,
-              ),
+              child: CircularProgressIndicator(),
             );
           }
           if (state is CartLoadFailure) {
@@ -124,16 +122,25 @@ class _CartScreenState extends State<CartScreen>
                           height: MediaQuery.of(context).size.height,
                           width: double.infinity,
                           padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-                          child: ListView.builder(
-                              itemBuilder: (context, index) {
-                                return BookCartItem(
-                                    userId: widget.userId,
-                                    book: bookList[index],
-                                    quantity: cartDetailList[index]
-                                        ['quantity']);
-                              },
-                              shrinkWrap: true,
-                              itemCount: bookList.length)),
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              context
+                                  .read<DiscountBloc>()
+                                  .add(DiscountRequested());
+                              context.read<CartBloc>().add(
+                                  CartDetailRequested(userId: widget.userId));
+                            },
+                            child: ListView.builder(
+                                itemBuilder: (context, index) {
+                                  return BookCartItem(
+                                      userId: widget.userId,
+                                      book: bookList[index],
+                                      quantity: cartDetailList[index]
+                                          ['quantity']);
+                                },
+                                shrinkWrap: true,
+                                itemCount: bookList.length),
+                          )),
                       Positioned(
                           left: 0,
                           right: 0,
@@ -335,6 +342,16 @@ class _CartScreenState extends State<CartScreen>
                                       )),
                                     ),
                                     onPressed: () async {
+                                      if (bookList
+                                          .where((e) => e.isAvailable == true)
+                                          .toList()
+                                          .isNotEmpty) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'There are some books that have gone out of business')));
+                                        return;
+                                      }
                                       AddressBook? addressBook =
                                           await Navigator.of(context).push(
                                               MaterialPageRoute(

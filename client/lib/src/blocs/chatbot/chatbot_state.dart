@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../models/book.dart';
-import '../../models/category.dart';
+import '../../models/message.dart';
 
 abstract class ChatbotState extends Equatable {
   const ChatbotState();
@@ -24,14 +23,11 @@ class ChatbotLoadFailure extends ChatbotState {
 }
 
 class ChatbotLoadSuccess extends ChatbotState {
-  final int? type;
-  final String? text;
-  final List<Book>? listBook;
-  final List<Category>? listCategory;
+  final List<Message>? msgList;
+  final bool isChanged;
 
-  const ChatbotLoadSuccess(
-      {this.type, this.text, this.listBook, this.listCategory});
+  const ChatbotLoadSuccess({this.msgList, required this.isChanged});
 
   @override
-  List<Object?> get props => [type, text, listBook, listCategory];
+  List<Object?> get props => [msgList, isChanged];
 }
