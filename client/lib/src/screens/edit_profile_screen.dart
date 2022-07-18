@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/profile/profile_bloc.dart';
 import '../blocs/profile/profile_event.dart';
@@ -42,7 +43,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   String? fullNameValidate(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return constants.FailureProcess.invalidFullName;
+      return 'editProfileScreen.fullNameBlankMsg'.tr();
     }
     return null;
   }
@@ -77,7 +78,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           automaticallyImplyLeading: true,
           iconTheme: IconThemeData(color: Colors.black),
           title: Text(
-            'Profile',
+            'editProfileScreen.editProfileTitle'.tr(),
             style: Theme.of(context).textTheme.headline4?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: constants.ColorsConstant.primaryColor,
@@ -154,7 +155,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(constants.SignUpScreenConstants.fullName,
+                          Text('editProfileScreen.fullName'.tr(),
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2!
@@ -193,7 +194,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     fontSize: _textFormFieldFontSize),
                           ),
                           const SizedBox(height: _signUpFormSpacing),
-                          Text('Address',
+                          Text('editProfileScreen.address'.tr(),
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2!
@@ -231,7 +232,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     fontSize: _textFormFieldFontSize),
                           ),
                           const SizedBox(height: _signUpFormSpacing),
-                          Text('Phone Number',
+                          Text('editProfileScreen.phoneNumber'.tr(),
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText2!
@@ -320,7 +321,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 }
                               },
                               child: Text(
-                                'Update',
+                                'editProfileScreen.update'.tr(),
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline6!

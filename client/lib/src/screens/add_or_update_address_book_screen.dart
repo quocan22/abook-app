@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/address_book/address_book_bloc.dart';
 import '../blocs/address_book/address_book_event.dart';
@@ -41,21 +42,21 @@ class _AddOrUpdateAddressBookScreenState
 
   String? fullNameValidate(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return constants.FailureProcess.invalidFullName;
+      return 'addOrUpdateAddressBookScreen.fullNameBlankMsg'.tr();
     }
     return null;
   }
 
   String? phoneNumberValidate(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Phone Number cannot be left blank';
+      return 'addOrUpdateAddressBookScreen.phoneNumBlankMsg'.tr();
     }
     return null;
   }
 
   String? addressValidate(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Address cannot be left blank';
+      return 'addOrUpdateAddressBookScreen.addressBlankMsg'.tr();
     }
     return null;
   }
@@ -78,8 +79,8 @@ class _AddOrUpdateAddressBookScreenState
         iconTheme: IconThemeData(color: Colors.black),
         title: Text(
           (widget.isNew != null && widget.isNew == true)
-              ? 'Add New Address'
-              : 'Update Address',
+              ? 'addOrUpdateAddressBookScreen.addNewAddress'.tr()
+              : 'addOrUpdateAddressBookScreen.updateAddress'.tr(),
           style: Theme.of(context).textTheme.headline4?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: constants.ColorsConstant.primaryColor,
@@ -95,7 +96,7 @@ class _AddOrUpdateAddressBookScreenState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(constants.SignUpScreenConstants.fullName,
+              Text('addOrUpdateAddressBookScreen.fullName'.tr(),
                   style: Theme.of(context).textTheme.bodyText2!.copyWith(
                       color: constants.ColorsConstant.textFieldTitle,
                       fontSize: _titleTextFormFieldFontSize,
@@ -124,7 +125,7 @@ class _AddOrUpdateAddressBookScreenState
                     fontSize: _textFormFieldFontSize),
               ),
               const SizedBox(height: _signUpFormSpacing),
-              Text('Phone Number',
+              Text('addOrUpdateAddressBookScreen.phoneNumber'.tr(),
                   style: Theme.of(context).textTheme.bodyText2!.copyWith(
                       color: constants.ColorsConstant.textFieldTitle,
                       fontSize: _titleTextFormFieldFontSize,
@@ -153,7 +154,7 @@ class _AddOrUpdateAddressBookScreenState
                     color: constants.ColorsConstant.textField,
                     fontSize: _textFormFieldFontSize),
               ),
-              Text('Address',
+              Text('addOrUpdateAddressBookScreen.address'.tr(),
                   style: Theme.of(context).textTheme.bodyText2!.copyWith(
                       color: constants.ColorsConstant.textFieldTitle,
                       fontSize: _titleTextFormFieldFontSize,
@@ -213,7 +214,7 @@ class _AddOrUpdateAddressBookScreenState
                     }
                   },
                   child: Text(
-                    'Save',
+                    'addOrUpdateAddressBookScreen.save'.tr(),
                     style: Theme.of(context).textTheme.headline6!.copyWith(
                           color: Colors.white,
                         ),

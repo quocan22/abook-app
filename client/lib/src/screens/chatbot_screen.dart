@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/book/book_bloc.dart';
 import '../blocs/book/book_event.dart';
@@ -26,22 +27,9 @@ class ChatbotScreen extends StatefulWidget {
 class _ChatbotScreenState extends State<ChatbotScreen> {
   final _textEditingController = TextEditingController();
 
-  List<Widget> messageWidgetList = [];
-
   @override
   void initState() {
     super.initState();
-    messageWidgetList = [
-      SizedBox(
-        height: 200,
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Image.asset('assets/images/ABook_chatbot_logo.png'),
-          ),
-        ),
-      )
-    ];
     context
         .read<ChatbotBloc>()
         .add(ChatbotEventSent(eventName: 'welcomeToAbook'));
@@ -49,7 +37,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   @override
   void dispose() {
-    messageWidgetList.clear();
     super.dispose();
   }
 
@@ -67,7 +54,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            messageWidgetList.clear();
             context.read<ChatbotBloc>().add(ChatbotStateReset());
             Navigator.of(context).maybePop();
           },
@@ -93,41 +79,62 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         children: <Widget>[
           Expanded(child: BlocBuilder<ChatbotBloc, ChatbotState>(
             builder: (context, state) {
-              if (state is ChatbotLoadInProgress) {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.red,
-                  ),
-                );
-              }
               if (state is ChatbotLoadFailure) {
-                return const Center(
-                    child: Text('There are some errors. Please try again.'));
+                return Center(
+                    child: Text('chatbotScreen.errorWithChatbot'.tr()));
               }
               if (state is ChatbotLoadSuccess) {
-                if (state.type == 1) {
-                  messageWidgetList.insert(
-                      0, buildTextChatItem(text: state.text!, yourMsg: false));
-                } else if (state.type == 2) {
-                  messageWidgetList.insert(
-                      0,
-                      buildBookChatItem(
-                          text: state.text!, bookList: state.listBook!));
-                } else {
-                  messageWidgetList.insert(
-                      0,
-                      buildCategoryChatItem(
-                          text: state.text!,
-                          categoryList: state.listCategory!));
-                }
                 return ListView.builder(
-                  itemBuilder: (context, index) => messageWidgetList[index],
+                  itemBuilder: (context, index) {
+                    switch (state.msgList!
+                        .elementAt(state.msgList!.length - index - 1)
+                        .type) {
+                      case 1:
+                        if (state.msgList!
+                                    .elementAt(
+                                        state.msgList!.length - index - 1)
+                                    .isYourMsg !=
+                                null &&
+                            state.msgList!
+                                .elementAt(state.msgList!.length - index - 1)
+                                .isYourMsg!) {
+                          return buildTextChatItem(
+                              text: state.msgList!
+                                  .elementAt(state.msgList!.length - index - 1)
+                                  .text,
+                              yourMsg: true);
+                        }
+                        return buildTextChatItem(
+                            text: state.msgList!
+                                .elementAt(state.msgList!.length - index - 1)
+                                .text,
+                            yourMsg: false);
+                      case 2:
+                        return buildBookChatItem(
+                            text: state.msgList!
+                                .elementAt(state.msgList!.length - index - 1)
+                                .text,
+                            bookList: state.msgList!
+                                .elementAt(state.msgList!.length - index - 1)
+                                .listBook!);
+                      case 3:
+                        return buildCategoryChatItem(
+                            text: state.msgList!
+                                .elementAt(state.msgList!.length - index - 1)
+                                .text,
+                            categoryList: state.msgList!
+                                .elementAt(state.msgList!.length - index - 1)
+                                .listCategory!);
+                      default:
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                    }
+                  },
+                  itemCount: state.msgList!.length,
                   reverse: true,
-                  itemCount: messageWidgetList.length,
                 );
-                // }
               }
-              //temp screen
               return Center(
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
@@ -158,7 +165,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   style: TextStyle(color: Colors.blue, fontSize: 15.0),
                   controller: _textEditingController,
                   decoration: InputDecoration.collapsed(
-                    hintText: '  Type your message...',
+                    hintText: 'chatbotScreen.typeYourMessage'.tr(),
                     hintStyle: TextStyle(color: Colors.blue),
                   ),
                 ),
@@ -317,15 +324,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   void onSendMessage(String text) {
     FocusManager.instance.primaryFocus?.unfocus();
     if (text.trim() != '') {
-      setState(() {
-        messageWidgetList.insert(
-            0, buildTextChatItem(text: text, yourMsg: true));
-        context.read<ChatbotBloc>().add(ChatbotMessageSent(msg: text));
-        _textEditingController.clear();
-      });
+      // setState(() {
+      context.read<ChatbotBloc>().add(ChatbotMessageSent(msg: text));
+      _textEditingController.clear();
+      // });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Nothing to send'),
+        content: Text('chatbotScreen.nothingToSend'.tr()),
         duration: Duration(seconds: 1),
       ));
     }

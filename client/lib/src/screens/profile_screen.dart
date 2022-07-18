@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/authentication/authentication_bloc.dart';
 import '../blocs/authentication/authentication_event.dart';
@@ -55,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 height: 24,
               ),
               Text(
-                'My Profile',
+                'profileScreen.profileScreenTitle'.tr(),
                 style: Theme.of(context).textTheme.headline4?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: ColorsConstant.primaryColor,
@@ -153,7 +154,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                                 .center,
                                                         children: [
                                                           Text(
-                                                            'Orders',
+                                                            'profileScreen.totalOrder'
+                                                                .tr(),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                             style: Theme.of(
                                                                     context)
                                                                 .textTheme
@@ -194,7 +199,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                                 .center,
                                                         children: [
                                                           Text(
-                                                            'Pending',
+                                                            'profileScreen.pendingOrder'
+                                                                .tr(),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                             style: Theme.of(
                                                                     context)
                                                                 .textTheme
@@ -325,7 +334,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                     child: Column(
                       children: [
-                        Text("My Orders",
+                        Text('profileScreen.myOrder'.tr(),
                             textAlign: TextAlign.center,
                             style: Theme.of(context)
                                 .textTheme
@@ -394,7 +403,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    'Account Settings',
+                    'profileScreen.accSettings'.tr(),
                     style: Theme.of(context).textTheme.headline4?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: ColorsConstant.primaryColor,
@@ -426,7 +435,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   )));
                         },
                         child: Text(
-                          'My Profile',
+                          'profileScreen.myProfile'.tr(),
                           style:
                               Theme.of(context).textTheme.headline6!.copyWith(
                                     color: Colors.white,
@@ -458,7 +467,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   )));
                         },
                         child: Text(
-                          'My Address List',
+                          'profileScreen.myAddressList'.tr(),
                           style:
                               Theme.of(context).textTheme.headline6!.copyWith(
                                     color: Colors.white,
@@ -490,7 +499,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   )));
                         },
                         child: Text(
-                          'Change Password',
+                          'profileScreen.changePass'.tr(),
                           style:
                               Theme.of(context).textTheme.headline6!.copyWith(
                                     color: Colors.white,
@@ -516,7 +525,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         onPressed: () => Navigator.pop(context),
                         child: Text(
-                          'Cancel',
+                          'profileScreen.cancel'.tr(),
                           style:
                               Theme.of(context).textTheme.headline6!.copyWith(
                                     color: Colors.white,

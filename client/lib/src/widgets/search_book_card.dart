@@ -34,7 +34,8 @@ class SearchBookCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.0),
                   child: CachedNetworkImage(
                     imageUrl: book.imageUrl,
-                    placeholder: (context, url) => CircularProgressIndicator(),
+                    placeholder: (context, url) =>
+                        Center(child: CircularProgressIndicator()),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                     fit: BoxFit.cover,
                   ),

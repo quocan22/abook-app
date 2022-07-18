@@ -37,7 +37,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       }
     });
     on<CartBookRemoved>((event, emit) async {
-      emit(CartLoadInProgress());
+      // emit(CartLoadInProgress());
       try {
         String? msg =
             await service.removeBookFromCart(event.userId, event.bookId);
@@ -54,7 +54,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       }
     });
     on<CartBookQuantityChanged>((event, emit) async {
-      emit(CartLoadInProgress());
+      // emit(CartLoadInProgress());
       try {
         String? msg = await service.changeBookQuantity(
             event.userId, event.bookId, event.newQuantity);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/address_book/address_book_bloc.dart';
 import '../blocs/address_book/address_book_event.dart';
@@ -28,8 +29,8 @@ class _ChooseAddressBookScreenState extends State<ChooseAddressBookScreen> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-            'Are you sure you want to place an order?',
+          title: Text(
+            'chooseAddressBookScreen.confirmOrderMsg'.tr(),
             style: TextStyle(color: Colors.blue),
           ),
           actions: <Widget>[
@@ -40,7 +41,7 @@ class _ChooseAddressBookScreenState extends State<ChooseAddressBookScreen> {
                   orderConfirmed = true;
                 });
               },
-              child: Text('Yes'),
+              child: Text('chooseAddressBookScreen.yes'.tr()),
               color: ColorsConstant.primaryColor,
               textColor: Colors.white,
             ),
@@ -48,7 +49,7 @@ class _ChooseAddressBookScreenState extends State<ChooseAddressBookScreen> {
               onPressed: () {
                 Navigator.of(context).maybePop();
               },
-              child: Text('No'),
+              child: Text('chooseAddressBookScreen.no'.tr()),
             ),
           ],
         );
@@ -69,7 +70,7 @@ class _ChooseAddressBookScreenState extends State<ChooseAddressBookScreen> {
           automaticallyImplyLeading: true,
           iconTheme: IconThemeData(color: Colors.black),
           title: Text(
-            'My Address',
+            'chooseAddressBookScreen.myAddress'.tr(),
             style: Theme.of(context).textTheme.headline4?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: ColorsConstant.primaryColor,
@@ -89,12 +90,11 @@ class _ChooseAddressBookScreenState extends State<ChooseAddressBookScreen> {
                 if (state is AddressBookLoadSuccess) {
                   if (state.addressBookList == null) {
                     return Center(
-                      child:
-                          Text('We have any errors when get address book list'),
+                      child: Text('chooseAddressBookScreen.errorMsg'.tr()),
                     );
                   } else if (state.addressBookList!.isEmpty) {
                     return Center(
-                      child: Text('We don\'t have any address book'),
+                      child: Text('chooseAddressBookScreen.noAddressBook'.tr()),
                     );
                   } else {
                     return Padding(
@@ -119,7 +119,7 @@ class _ChooseAddressBookScreenState extends State<ChooseAddressBookScreen> {
                   }
                 }
                 return Center(
-                  child: Text('We have any errors when get address book list'),
+                  child: Text('chooseAddressBookScreen.errorMsg'.tr()),
                 );
               },
             )),
@@ -145,7 +145,7 @@ class _ChooseAddressBookScreenState extends State<ChooseAddressBookScreen> {
                             )));
                   },
                   child: Text(
-                    'Add New Address',
+                    'chooseAddressBookScreen.addNewAddress'.tr(),
                     style: Theme.of(context).textTheme.headline6!.copyWith(
                           color: Colors.white,
                         ),

@@ -25,6 +25,7 @@ dependencies:
   image_picker: ^0.7.2+1
   global_configuration: ^2.0.0-nullsafety.1
   path_provider: ^2.0.11
+  easy_localization: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -36,6 +37,7 @@ flutter:
     - assets/env/
     - assets/images/
     - assets/icons/
+    - assets/translations/
     - assets/
 
   fonts:

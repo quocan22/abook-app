@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../constants/constants.dart';
 import '../models/book.dart';
@@ -34,8 +35,8 @@ class _ShareScreenState extends State<ShareScreen> {
     File imgFile = new File('${directory!.path}/${widget.book.name}photo.png');
     print(directory);
     imgFile.writeAsBytes(pngBytes);
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('Save image successfully!!!')));
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('shareScreen.saveImageSuccessMsg'.tr())));
   }
 
   @override
@@ -233,7 +234,7 @@ class _ShareScreenState extends State<ShareScreen> {
               ),
               onPressed: () async => takePicture(),
               child: Text(
-                'Save Image',
+                'shareScreen.saveImage'.tr(),
                 style: Theme.of(context).textTheme.headline6!.copyWith(
                       color: Colors.white,
                     ),

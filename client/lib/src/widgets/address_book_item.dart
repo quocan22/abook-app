@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../constants/constants.dart';
 import '../models/address_book.dart';
@@ -28,14 +29,14 @@ class _AddressBookItemState extends State<AddressBookItem> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-            'Do you want to remove this address?',
+          title: Text(
+            'addressBookItem.removeConfirmMsg'.tr(),
             style: TextStyle(color: Colors.blue),
           ),
           actions: <Widget>[
             MaterialButton(
               onPressed: widget.onRemove,
-              child: Text('Yes'),
+              child: Text('addressBookItem.yes'.tr()),
               color: ColorsConstant.primaryColor,
               textColor: Colors.white,
             ),
@@ -43,7 +44,7 @@ class _AddressBookItemState extends State<AddressBookItem> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('No'),
+              child: Text('addressBookItem.no'.tr()),
             ),
           ],
         );

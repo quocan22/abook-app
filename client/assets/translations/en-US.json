@@ -1,0 +1,150 @@
+{
+  "languageCode": "en-US",
+  "currencyLabel": "VND",
+  "homeScreen": {
+    "newBook": "New Arrivals",
+    "bestSeller": "Best Seller",
+    "categories": "Categories",
+    "onSale": "On Sale"
+  },
+  "favScreen": {
+    "favScreenTitle": "My favorites"
+  },
+  "cartScreen": {
+    "cartScreenTitle": "Cart",
+    "noBookInCartMsg": "You don't have any books in your cart",
+    "discountCode": "Discount code",
+    "apply": "Apply",
+    "clear": "Clear",
+    "totalPrice": "Total Price",
+    "checkOut": "Check Out",
+    "booksOutOfBusiness": "There are some books that have gone out of business",
+    "invalidDiscountCode": "This code is not valid or out of date"
+  },
+  "profileScreen": {
+    "profileScreenTitle": "My Profile",
+    "totalOrder": "Orders",
+    "pendingOrder": "Pending",
+    "myOrder": "My Orders",
+    "accSettings": "Account Settings",
+    "myProfile": "My Profile",
+    "myAddressList": "My Address List",
+    "changePass": "Change Password",
+    "cancel": "Cancel"
+  },
+  "bookDetailScreen": {
+    "today": "Today",
+    "yesterDay": "YesterDay",
+    "buy": "Buy",
+    "descriptions": "Descriptions",
+    "yourReview": "Your Review",
+    "ratingAndReview": "Ratings & Reviews",
+    "typeYourReview": "Type Your Review ...",
+    "bookAlreadyInCart": "This book is already added in your cart",
+    "noSaleBookMsg": "This book is no longer available for sale",
+    "addBookToCart": "Added book to your cart",
+    "removeFavBookMsg": "Removed from your favorite books",
+    "addFavBookMsg": "Added to your favorite books",
+    "noReview": "This book has no any reviews",
+    "rateBeforeReview": "Please rate before review"
+  },
+  "loginDialog": {
+    "needLoginMsg": "You need to login before using this feature",
+    "goToLogin": "Go to Login",
+    "cancel": "Cancel"
+  },
+  "addOrUpdateAddressBookScreen": {
+    "fullNameBlankMsg": "Full name cannot be left blank",
+    "phoneNumBlankMsg": "Phone Number cannot be left blank",
+    "addressBlankMsg": "Address cannot be left blank",
+    "addNewAddress": "Add New Address",
+    "updateAddress": "Update Address",
+    "phoneNumber": "Phone Number",
+    "fullName": "Full Name",
+    "address": "Address",
+    "save": "Save"
+  },
+  "changePasswordScreen": {
+    "currentPass": "Current Password",
+    "newPass": "New Password",
+    "repeatYourNewPassword": "Repeat Your New Password",
+    "updatePassword": "Update Password",
+    "passErrorMsg": "Password cannot be left blank",
+    "invalidPassErrorMsg": "Password is invalid",
+    "repeatPassMsg": "Please repeat your new password",
+    "passNotMatch": "Not match with new password",
+    "changePassSuccessMsg": "Change password successfully",
+    "changePassTitle": "Change Your Password"
+  },
+  "chatbotScreen": {
+    "errorWithChatbot": "There are some errors. Please try again",
+    "typeYourMessage": "  Type your message...",
+    "nothingToSend": "Nothing to send"
+  },
+  "chooseAddressBookScreen": {
+    "confirmOrderMsg": "Are you sure you want to place an order?",
+    "yes": "Yes",
+    "no": "No",
+    "myAddress": "My Address",
+    "noAddressBook": "We do not have any address book",
+    "errorMsg": "We have any errors when get address book list",
+    "addNewAddress": "Add New Address"
+  },
+  "editProfileScreen": {
+    "fullNameBlankMsg": "Full name cannot be left blank",
+    "invalidPassMsg": "Password must have at least 8 characters, including uppercase, lowercase, numbers, special characters",
+    "invalidEmailMsg": "Invalid Email",
+    "editProfileTitle": "Profile",
+    "fullName": "Full Name",
+    "address": "Address",
+    "phoneNumber": "Phone Number",
+    "update": "Update"
+  },
+  "feedbackScreen": {
+    "invalidEmailMsg": "Invalid Email",
+    "emptyFeedback": "Your feedback is empty",
+    "feedbackTitle": "Feedback",
+    "feedbackSentSuccessMsg": "Your feedback is sent",
+    "errorMsg": "There are some errors occurred",
+    "email": "Email",
+    "feedback": "Feedback",
+    "sendFeedBack": "Send Your Feedback"
+  },
+  "shareScreen": {
+    "saveImageSuccessMsg": "Save image successfully!!!",
+    "saveImage": "Save Image"
+  },
+  "orderDetailScreen": {
+    "orderDetailTitle": "Order Details",
+    "errorMsg": "There are some errors occurred"
+  },
+  "addressBookItem": {
+    "removeConfirmMsg": "Do you want to remove this address?",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "bookCartItem": {
+    "stopBusiness": " (Stop business)",
+    "removeConfirmMsg": "Do you want to remove this book from your cart?",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "bookSearchDelegate": {
+    "name": "Name",
+    "author": "Author",
+    "price": "Price",
+    "category": "Category"
+  },
+  "orderItem": {
+    "billNo": "Bill No",
+    "orderAt": "Order At",
+    "totalBooks": "Total Books",
+    "shipping": "Shipping",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "totalPrice": "Total Price:",
+    "addBookToCartMsg": "Added book to your cart",
+    "buyAgain": "Buy Again",
+    "details": "Details"
+  }
+}

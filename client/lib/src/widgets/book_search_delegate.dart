@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tiengviet/tiengviet.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/book/book_bloc.dart';
 import '../blocs/book/book_event.dart';
@@ -56,146 +57,152 @@ class BookSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    context.read<BookBloc>().add(BookRequested());
-    context.read<CategoryBloc>().add(CategoryRequested());
+    // context.read<BookBloc>().add(BookRequested());
+    // context.read<CategoryBloc>().add(CategoryRequested());
 
-    return BlocBuilder<BookBloc, BookState>(
-      builder: (context, state) {
-        if (state is BookLoadInProgress) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: Colors.red,
+    return Column(children: [
+      SizedBox(
+        height: 50,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 8.0,
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: FilterChip(
+                      selectedColor: Colors.blue,
+                      selected: filters[0],
+                      label: Text('bookSearchDelegate.name'.tr()),
+                      onSelected: (_) {
+                        filters = [true, false, false, false];
+                        query = query.trim();
+                      }),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: FilterChip(
+                      label: Text('bookSearchDelegate.author'.tr()),
+                      selectedColor: Colors.blue,
+                      selected: filters[1],
+                      onSelected: (_) {
+                        filters = [false, true, false, false];
+                        query = query.trim();
+                      }),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: FilterChip(
+                      selectedColor: Colors.blue,
+                      selected: filters[2],
+                      label: Text('bookSearchDelegate.price'.tr()),
+                      onSelected: (_) {
+                        filters = [false, false, true, false];
+                        query = query.trim();
+                      }),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: FilterChip(
+                      selectedColor: Colors.blue,
+                      selected: filters[3],
+                      label: Text('bookSearchDelegate.category'.tr()),
+                      onSelected: (_) {
+                        filters = [false, false, false, true];
+                        query = query.trim();
+                      }),
+                ),
+              ],
             ),
-          );
-        }
-        if (state is BookLoadFailure) {
-          return const Center(child: Text('fail'));
-        }
-        if (state is BookLoadSuccess) {
-          if (state.books != null) {
-            final String lowerQuery = TiengViet.parse(query.toLowerCase());
-            Iterable<Book> filterList = [];
+          ),
+        ),
+      ),
+      Expanded(
+        child: BlocBuilder<BookBloc, BookState>(
+          builder: (context, state) {
+            if (state is BookLoadInProgress) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (state is BookLoadFailure) {
+              return const Center(child: Text('Failed'));
+            }
+            if (state is BookLoadSuccess) {
+              if (state.books != null) {
+                final String lowerQuery = TiengViet.parse(query.toLowerCase());
+                Iterable<Book> filterList = [];
 
-            for (var i = 0; i < 4; i++) {
-              if (filters[i] == true) {
-                if (i == 0) {
-                  filterList = state.books!.where((b) =>
-                      TiengViet.parse(b.name.toLowerCase())
-                          .contains(lowerQuery));
-                } else if (i == 1) {
-                  filterList = state.books!.where((b) =>
-                      TiengViet.parse(b.author.toLowerCase())
-                          .contains(lowerQuery));
-                } else if (i == 3) {
-                  Iterable<Category> filterdCategory = [];
-                  List<Category> categoryList = getCategoryList(context);
-                  filterdCategory = categoryList.where((c) =>
-                      TiengViet.parse(c.categoryName.toLowerCase())
-                          .contains(lowerQuery));
-                  List<String> a = filterdCategory.map((e) => e.id).toList();
-                  filterList =
-                      state.books!.where((b) => a.contains(b.categoryId));
-                } else {
-                  filterList = state.books!.where((b) =>
-                      TiengViet.parse(b.price.toString().toLowerCase())
-                          .contains(lowerQuery));
+                for (var i = 0; i < 4; i++) {
+                  if (filters[i] == true) {
+                    if (i == 0) {
+                      filterList = state.books!.where((b) =>
+                          TiengViet.parse(b.name.toLowerCase())
+                              .contains(lowerQuery));
+                    } else if (i == 1) {
+                      filterList = state.books!.where((b) =>
+                          TiengViet.parse(b.author.toLowerCase())
+                              .contains(lowerQuery));
+                    } else if (i == 3) {
+                      Iterable<Category> filterdCategory = [];
+                      List<Category> categoryList = getCategoryList(context);
+                      filterdCategory = categoryList.where((c) =>
+                          TiengViet.parse(c.categoryName.toLowerCase())
+                              .contains(lowerQuery));
+                      List<String> a =
+                          filterdCategory.map((e) => e.id).toList();
+                      filterList =
+                          state.books!.where((b) => a.contains(b.categoryId));
+                    } else {
+                      filterList = state.books!.where((b) =>
+                          TiengViet.parse(b.price.toString().toLowerCase())
+                              .contains(lowerQuery));
+                    }
+                  }
                 }
+
+                return Column(
+                  children: [
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<BookBloc>().add(BookRequested());
+                          context.read<CategoryBloc>().add(CategoryRequested());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ListView.separated(
+                              itemBuilder: (context, index) => SearchBookCard(
+                                    book: filterList.elementAt(index),
+                                  ),
+                              separatorBuilder: (context, index) {
+                                return Divider();
+                              },
+                              shrinkWrap: true,
+                              itemCount: filterList.length),
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              } else {
+                //temp screen
+                return const Center(
+                  child: Text('BOOKS NULL'),
+                );
               }
             }
-
-            return Column(
-              children: [
-                SizedBox(
-                  height: 50,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      left: 8.0,
-                    ),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                          child: FilterChip(
-                              selectedColor: Colors.blue,
-                              selected: filters[0],
-                              label: Text('Name'),
-                              onSelected: (_) {
-                                filters = [true, false, false, false];
-                                context.read<BookBloc>().add(BookRequested());
-                              }),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                          child: FilterChip(
-                              label: Text('Author'),
-                              selectedColor: Colors.blue,
-                              selected: filters[1],
-                              onSelected: (_) {
-                                filters = [false, true, false, false];
-                                context.read<BookBloc>().add(BookRequested());
-                              }),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                          child: FilterChip(
-                              selectedColor: Colors.blue,
-                              selected: filters[2],
-                              label: Text('Price'),
-                              onSelected: (_) {
-                                filters = [false, false, true, false];
-                                context.read<BookBloc>().add(BookRequested());
-                              }),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                          child: FilterChip(
-                              selectedColor: Colors.blue,
-                              selected: filters[3],
-                              label: Text('Category'),
-                              onSelected: (_) {
-                                filters = [false, false, false, true];
-                                context.read<BookBloc>().add(BookRequested());
-                              }),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () async {
-                      context.read<BookBloc>().add(BookRequested());
-                      context.read<CategoryBloc>().add(CategoryRequested());
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: ListView.separated(
-                          itemBuilder: (context, index) => SearchBookCard(
-                                book: filterList.elementAt(index),
-                              ),
-                          separatorBuilder: (context, index) {
-                            return Divider();
-                          },
-                          shrinkWrap: true,
-                          itemCount: filterList.length),
-                    ),
-                  ),
-                )
-              ],
-            );
-          } else {
             //temp screen
             return const Center(
-              child: Text('BOOKS NULL'),
+              child: Text('BLOC NO STATE'),
             );
-          }
-        }
-        //temp screen
-        return const Center(
-          child: Text('BLOC NO STATE'),
-        );
-      },
-    );
+          },
+        ),
+      ),
+    ]);
   }
 
   List<Category> getCategoryList(BuildContext context) {

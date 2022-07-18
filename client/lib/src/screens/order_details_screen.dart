@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/book/book_bloc.dart';
 import '../blocs/book/book_state.dart';
@@ -27,7 +28,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         automaticallyImplyLeading: true,
         iconTheme: IconThemeData(color: Colors.black),
         title: Text(
-          'Order Details',
+          'orderDetailScreen.orderDetailTitle'.tr(),
           style: Theme.of(context).textTheme.headline4?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: ColorsConstant.primaryColor,
@@ -54,7 +55,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             );
           }
           return Center(
-            child: Text('We have any errors'),
+            child: Text('orderDetailScreen.errorMsg'.tr()),
           );
         },
       ),

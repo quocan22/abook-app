@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/address_book/address_book_bloc.dart';
 import '../blocs/address_book/address_book_event.dart';
@@ -33,7 +34,7 @@ class _EditAddressBookScreenState extends State<EditAddressBookScreen> {
           automaticallyImplyLeading: true,
           iconTheme: IconThemeData(color: Colors.black),
           title: Text(
-            'My Address',
+            'chooseAddressBookScreen.myAddress'.tr(),
             style: Theme.of(context).textTheme.headline4?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: ColorsConstant.primaryColor,
@@ -53,12 +54,11 @@ class _EditAddressBookScreenState extends State<EditAddressBookScreen> {
                 if (state is AddressBookLoadSuccess) {
                   if (state.addressBookList == null) {
                     return Center(
-                      child:
-                          Text('We have any errors when get address book list'),
+                      child: Text('chooseAddressBookScreen.errorMsg'.tr()),
                     );
                   } else if (state.addressBookList!.isEmpty) {
                     return Center(
-                      child: Text('We don\'t have any address book'),
+                      child: Text('chooseAddressBookScreen.noAddressBook'.tr()),
                     );
                   } else {
                     return Padding(
@@ -115,7 +115,7 @@ class _EditAddressBookScreenState extends State<EditAddressBookScreen> {
                   }
                 }
                 return Center(
-                  child: Text('We have any errors when get address book list'),
+                  child: Text('chooseAddressBookScreen.errorMsg'.tr()),
                 );
               },
             )),
@@ -141,7 +141,7 @@ class _EditAddressBookScreenState extends State<EditAddressBookScreen> {
                             )));
                   },
                   child: Text(
-                    'Add New Address',
+                    'chooseAddressBookScreen.addNewAddress'.tr(),
                     style: Theme.of(context).textTheme.headline6!.copyWith(
                           color: Colors.white,
                         ),

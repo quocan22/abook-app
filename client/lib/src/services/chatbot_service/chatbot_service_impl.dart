@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart' as dio;
 import 'package:global_configuration/global_configuration.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import './chatbot_service.dart';
 
@@ -14,8 +15,8 @@ class ChatbotServiceImpl implements ChatbotService {
         GlobalConfiguration().getValue('CHATBOT_SEND_TEXT'));
 
     try {
-      dio.Response response =
-          await dioClient.post(uri.toString(), data: {'text': message});
+      dio.Response response = await dioClient.post(uri.toString(),
+          data: {'text': message, 'languageCode': 'languageCode'.tr()});
 
       if (response.statusCode == 200) {
         return response.data;
@@ -34,8 +35,8 @@ class ChatbotServiceImpl implements ChatbotService {
         GlobalConfiguration().getValue('CHATBOT_SEND_EVENT'));
 
     try {
-      dio.Response response =
-          await dioClient.post(uri.toString(), data: {'event': eventName});
+      dio.Response response = await dioClient.post(uri.toString(),
+          data: {'event': eventName, 'languageCode': 'languageCode'.tr()});
 
       if (response.statusCode == 200) {
         return response.data;
