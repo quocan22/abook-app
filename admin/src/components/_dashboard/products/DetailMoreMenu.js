@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { Icon } from '@iconify/react';
 import { useRef, useState } from 'react';
-import editFill from '@iconify/icons-eva/edit-fill';
 import trashFill from '@iconify/icons-eva/trash-fill';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 // material
@@ -51,13 +50,6 @@ export default function DetailMoreMenu({ bookId, index, onChange }) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }}>
-          <ListItemIcon>
-            <Icon icon={editFill} width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
-
         <MenuItem onClick={deleteComment} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={trashFill} width={24} height={24} />
