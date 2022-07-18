@@ -1,0 +1,151 @@
+{
+    "languageCode": "vi-VN",
+    "currencyLabel": "VNĐ",
+    "homeScreen": {
+      "newBook": "Sách mới",
+      "bestSeller": "Sách bán chạy",
+      "categories": "Danh mục",
+      "onSale": "Đang khuyến mãi"
+    },
+    "favScreen": {
+      "favScreenTitle": "Yêu thích"
+    },
+    "cartScreen": {
+      "cartScreenTitle": "Giỏ hàng",
+      "noBookInCartMsg": "Bạn chưa có sách nào trong giỏ hàng",
+      "discountCode": "Mã giảm giá",
+      "apply": "Áp dụng",
+      "clear": "Xóa",
+      "totalPrice": "Thành tiền",
+      "checkOut": "Đặt hàng",
+      "booksOutOfBusiness": "Có một vài cuốn sách đã ngừng kinh doanh",
+      "invalidDiscountCode": "Mã giảm giá không hợp lệ hoặc đã hết hạn"
+    },
+    "profileScreen": {
+      "profileScreenTitle": "Tài khoản",
+      "totalOrder": "Tổng đơn mua",
+      "pendingOrder": "Đơn đang giao",
+      "myOrder": "Đơn hàng của tôi",
+      "accSettings": "Các cài đặt tài khoản",
+      "myProfile": "Hồ sơ của tôi",
+      "myAddressList": "Sổ địa chỉ",
+      "changePass": "Thay đổi mật khẩu",
+      "cancel": "Hủy"
+    },
+    "bookDetailScreen": {
+      "today": "Hôm nay",
+      "yesterDay": "Hôm qua",
+      "buy": "Mua",
+      "descriptions": "Mô tả",
+      "yourReview": "Đánh giá của bạn",
+      "ratingAndReview": "Các đánh giá khác",
+      "typeYourReview": "Viết đánh giá ...",
+      "bookAlreadyInCart": "Cuốn sách này đã có trong giỏ hàng",
+      "noSaleBookMsg": "Cuốn sách này hiện đã ngừng kinh doanh",
+      "addBookToCart": "Đã thêm sách vào giỏ hàng",
+      "removeFavBookMsg": "Đã xóa sách khỏi mục yêu thích",
+      "addFavBookMsg": "Đã thêm sách vào mục yêu thích",
+      "noReview": "Chưa có đánh giá nào",
+      "rateBeforeReview": "Hãy xếp hạng sách trước khi viết đánh giá"
+    },
+    "loginDialog": {
+      "needLoginMsg": "Bạn cần đăng nhập để sử dụng chức năng này",
+      "goToLogin": "Đăng nhập",
+      "cancel": "Hủy"
+    },
+    "addOrUpdateAddressBookScreen": {
+      "fullNameBlankMsg": "Tên người dùng không được để trống",
+      "phoneNumBlankMsg": "Số điện thoại không được để trống",
+      "addressBlankMsg": "Địa chỉ không được để trống",
+      "addNewAddress": "Thêm địa chỉ mới",
+      "updateAddress": "Cập nhật địa chỉ",
+      "phoneNumber": "Số điện thoại",
+      "fullName": "Họ và Tên",
+      "address": "Đia chỉ",
+      "save": "Lưu"
+    },
+    "changePasswordScreen": {
+      "currentPass": "Mật khẩu hiện tại",
+      "newPass": "Mật khẩu mới",
+      "repeatYourNewPassword": "Nhập lại mật khẩu mới",
+      "updatePassword": "Cập nhật mật khẩu",
+      "passErrorMsg": "Mật khẩu không thể để trống",
+      "invalidPassErrorMsg": "Mật khẩu không đúng định dạng",
+      "repeatPassMsg": "Hãy nhập lại mật khẩu mới",
+      "passNotMatch": "Không trùng với mật khẩu mới",
+      "changePassSuccessMsg": "Đổi mật khẩu thành công",
+      "changePassTitle": "Thay đổi mật khẩu"
+    },
+    "chatbotScreen": {
+      "errorWithChatbot": "Có một vài lỗi xảy ra. Vui lòng thử lại",
+      "typeYourMessage": "  Nhập tin nhắn...",
+      "nothingToSend": "Không có nội dung để gửi"
+    },
+    "chooseAddressBookScreen": {
+      "confirmOrderMsg": "Bạn có chắc chắn muốn đặt hàng?",
+      "yes": "Có",
+      "no": "Không",
+      "myAddress": "Sổ địa chỉ",
+      "noAddressBook": "Bạn chưa có bất kì địa chỉ nào",
+      "errorMsg": "Đã xảy lỗi khi lấy địa chỉ",
+      "addNewAddress": "Thêm địa chỉ mới"
+    },
+    "editProfileScreen": {
+      "fullNameBlankMsg": "Tên người dùng không được để trống",
+      "invalidPassMsg": "Mật khẩu phải đúng định dạng",
+      "invalidEmailMsg": "Email không đúng định dạng",
+      "editProfileTitle": "Tài khoản",
+      "fullName": "Họ và Tên",
+      "address": "Địa chỉ",
+      "phoneNumber": "Số điện thoại",
+      "update": "Cập nhật"
+    },
+    "feedbackScreen": {
+      "invalidEmailMsg": "Email không hợp lệ",
+      "emptyFeedback": "Phản hồi của bạn đang trống",
+      "feedbackTitle": "Gửi phản hồi",
+      "feedbackSentSuccessMsg": "Phản hồi của bạn đã được gửi đi",
+      "errorMsg": "Đã xảy lỗi, vui lòng thử lại",
+      "email": "Email",
+      "feedback": "Phản hồi",
+      "sendFeedBack": "Gửi"
+    },
+    "shareScreen": {
+      "saveImageSuccessMsg": "Lưu ảnh thành công!!!",
+      "saveImage": "Lưu ảnh"
+    },
+    "orderDetailScreen": {
+      "orderDetailTitle": "Chi tiết đơn hàng",
+      "errorMsg": "Đã xảy lỗi. Vui lòng thử lại"
+    },
+    "addressBookItem": {
+      "removeConfirmMsg": "Bạn chắn chắn xóa địa chỉ này chứ?",
+      "yes": "Có",
+      "no": "Không"
+    },
+    "bookCartItem": {
+      "stopBusiness": " (Ngừng kinh doanh)",
+      "removeConfirmMsg": "Bạn có chắc chắn xóa sách này khỏi giỏ hàng?",
+      "yes": "Có",
+      "no": "Không"
+    },
+    "bookSearchDelegate": {
+      "name": "Tên sách",
+      "author": "Tác giả",
+      "price": "Giá",
+      "category": "Danh mục"
+    },
+    "orderItem": {
+      "billNo": "Mã đơn",
+      "orderAt": "Ngày",
+      "totalBooks": "Số lượng sách",
+      "shipping": "Đang giao",
+      "completed": "Đã giao",
+      "cancelled": "Đã hủy",
+      "totalPrice": "Thành tiền:",
+      "addBookToCartMsg": "Đã thêm sách vào giỏ hàng",
+      "buyAgain": "Mua lại",
+      "details": "Chi tiết"
+    }
+  }
+  

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/book/book_bloc.dart';
 import '../blocs/book/book_event.dart';
@@ -46,7 +47,7 @@ class _FavoriteScreenState extends State<FavoriteScreen>
               height: 24,
             ),
             Text(
-              'My favorites',
+              'favScreen.favScreenTitle'.tr(),
               style: Theme.of(context).textTheme.headline4?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: ColorsConstant.primaryColor,

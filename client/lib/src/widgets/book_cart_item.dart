@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/cart/cart_bloc.dart';
 import '../blocs/cart/cart_event.dart';
@@ -31,8 +32,8 @@ class _BookCartItemState extends State<BookCartItem> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-            'Do you want to remove this book from your cart?',
+          title: Text(
+            'bookCartItem.removeConfirmMsg'.tr(),
             style: TextStyle(color: Colors.blue),
           ),
           content: SingleChildScrollView(
@@ -49,7 +50,7 @@ class _BookCartItemState extends State<BookCartItem> {
                     userId: widget.userId, bookId: widget.book.id));
                 Navigator.of(context).pop();
               },
-              child: Text('Yes'),
+              child: Text('bookCartItem.yes'.tr()),
               color: ColorsConstant.primaryColor,
               textColor: Colors.white,
             ),
@@ -57,7 +58,7 @@ class _BookCartItemState extends State<BookCartItem> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('No'),
+              child: Text('bookCartItem.no'.tr()),
             ),
           ],
         );
@@ -128,7 +129,7 @@ class _BookCartItemState extends State<BookCartItem> {
                               visible: !widget.book.isAvailable &&
                                   (widget.book.discountRatio == 0),
                               child: Text(
-                                ' (Stop business)',
+                                'bookCartItem.stopBusiness'.tr(),
                                 style: TextStyle(
                                   fontWeight: FontWeight.normal,
                                   fontSize: (widget.book.discountRatio == 0)

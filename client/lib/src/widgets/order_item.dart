@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/src/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/cart/cart_bloc.dart';
 import '../blocs/cart/cart_event.dart';
@@ -35,21 +36,21 @@ class OrderItem extends StatelessWidget {
                     height: 8.0,
                   ),
                   Text(
-                    'Bill No: $billId',
+                    '${'orderItem.billNo'.tr()}: $billId',
                     style: Theme.of(context).textTheme.headline4?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                   ),
                   Text(
-                    'Order At: ${DateFormat('dd/MM/yyyy – hh:mm').format(order.createdAt)}',
+                    '${'orderItem.orderAt'.tr()}: ${DateFormat('dd/MM/yyyy – hh:mm').format(order.createdAt)}',
                     style: Theme.of(context).textTheme.headline5?.copyWith(
                           fontWeight: FontWeight.normal,
                           color: Colors.black,
                         ),
                   ),
                   Text(
-                    'Total Books: ${order.details.length}',
+                    '${'orderItem.totalBooks'.tr()}: ${order.details.length}',
                     style: Theme.of(context).textTheme.headline5?.copyWith(
                           fontWeight: FontWeight.normal,
                           color: Colors.black,
@@ -59,20 +60,22 @@ class OrderItem extends StatelessWidget {
               ),
             ),
             order.shippingStatus == 1
-                ? Chip(label: Text('Shipping'), backgroundColor: Colors.yellow)
+                ? Chip(
+                    label: Text('orderItem.shipping'.tr()),
+                    backgroundColor: Colors.yellow)
                 : order.shippingStatus == 2
                     ? Chip(
-                        label: Text('Completed'),
+                        label: Text('orderItem.completed'.tr()),
                         backgroundColor: Colors.greenAccent)
                     : Chip(
-                        label: Text('Cancelled'),
+                        label: Text('orderItem.cancelled'.tr()),
                         backgroundColor: Colors.redAccent)
           ],
         ),
         Row(
           children: [
             Text(
-              'Total Prices:',
+              'orderItem.totalPrice'.tr(),
               style: Theme.of(context).textTheme.headline5?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -99,8 +102,8 @@ class OrderItem extends StatelessWidget {
                           bookId: order.details[i]['bookId'],
                           quantity: order.details[i]['quantity']));
                     }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Added book to your cart')));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('orderItem.addBookToCartMsg'.tr())));
                   },
                   style: ButtonStyle(
                     elevation: MaterialStateProperty.all<double>(0),
@@ -113,7 +116,7 @@ class OrderItem extends StatelessWidget {
                         MaterialStateProperty.all<Color>(Colors.white),
                   ),
                   child: Text(
-                    'Buy Again',
+                    'orderItem.buyAgain'.tr(),
                     style: TextStyle(color: ColorsConstant.primaryColor),
                   )),
             ),
@@ -138,7 +141,7 @@ class OrderItem extends StatelessWidget {
                         MaterialStateProperty.all<Color>(Colors.white),
                   ),
                   child: Text(
-                    'Details',
+                    'orderItem.details'.tr(),
                     style: TextStyle(color: ColorsConstant.primaryColor),
                   )),
             ),

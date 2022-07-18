@@ -25,7 +25,7 @@ class BookListByCategoryScreen extends StatelessWidget {
           );
         }
         if (state is BookByCategoryLoadFailure) {
-          return const Center(child: Text('fail'));
+          return const Center(child: Text('Failed'));
         }
         if (state is BookByCategoryLoadSuccess) {
           if (state.books != null) {

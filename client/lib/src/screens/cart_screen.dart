@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/book/book_bloc.dart';
 import '../blocs/book/book_state.dart';
@@ -58,7 +59,7 @@ class _CartScreenState extends State<CartScreen>
               height: 24,
             ),
             Text(
-              'Cart',
+              'cartScreen.cartScreenTitle'.tr(),
               style: Theme.of(context).textTheme.headline4?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: ColorsConstant.primaryColor,
@@ -80,8 +81,8 @@ class _CartScreenState extends State<CartScreen>
             );
           }
           if (state is CartLoadFailure) {
-            return const Center(
-              child: Text('You don\'t have any books in your cart'),
+            return Center(
+              child: Text('cartScreen.noBookInCartMsg'.tr()),
             );
           }
           if (state is CartLoadSuccess) {
@@ -179,7 +180,9 @@ class _CartScreenState extends State<CartScreen>
                                                   controller:
                                                       _discountTextFieldController,
                                                   decoration: InputDecoration(
-                                                    labelText: 'Discount code',
+                                                    labelText:
+                                                        'cartScreen.discountCode'
+                                                            .tr(),
                                                     enabledBorder:
                                                         OutlineInputBorder(
                                                       borderSide: const BorderSide(
@@ -229,7 +232,8 @@ class _CartScreenState extends State<CartScreen>
                                                               context)
                                                           .showSnackBar(SnackBar(
                                                               content: Text(
-                                                                  'This code is not valid or out of date')));
+                                                                  'cartScreen.invalidDiscountCode'
+                                                                      .tr())));
                                                     }
                                                   } else {
                                                     _discountTextFieldController
@@ -238,7 +242,8 @@ class _CartScreenState extends State<CartScreen>
                                                             context)
                                                         .showSnackBar(SnackBar(
                                                             content: Text(
-                                                                'This code is not valid or out of date')));
+                                                                'cartScreen.invalidDiscountCode'
+                                                                    .tr())));
                                                   }
                                                 } else {
                                                   _discountTextFieldController
@@ -265,8 +270,10 @@ class _CartScreenState extends State<CartScreen>
                                                             .primaryColor),
                                               ),
                                               child: _appliedDiscount == 0
-                                                  ? Text('Apply')
-                                                  : Text('Clear')),
+                                                  ? Text(
+                                                      'cartScreen.apply'.tr())
+                                                  : Text(
+                                                      'cartScreen.clear'.tr())),
                                         ],
                                       );
                                     }
@@ -299,7 +306,7 @@ class _CartScreenState extends State<CartScreen>
                                 Row(
                                   children: [
                                     Text(
-                                      'Total price',
+                                      'cartScreen.totalPrice'.tr(),
                                       style: Theme.of(context)
                                           .textTheme
                                           .headline5
@@ -343,13 +350,14 @@ class _CartScreenState extends State<CartScreen>
                                     ),
                                     onPressed: () async {
                                       if (bookList
-                                          .where((e) => e.isAvailable == true)
+                                          .where((e) => e.isAvailable == false)
                                           .toList()
                                           .isNotEmpty) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                                 content: Text(
-                                                    'There are some books that have gone out of business')));
+                                                    'cartScreen.booksOutOfBusiness'
+                                                        .tr())));
                                         return;
                                       }
                                       AddressBook? addressBook =
@@ -372,7 +380,7 @@ class _CartScreenState extends State<CartScreen>
                                       }
                                     },
                                     child: Text(
-                                      'Check Out',
+                                      'cartScreen.checkOut'.tr(),
                                       style: Theme.of(context)
                                           .textTheme
                                           .headline6!
@@ -394,8 +402,8 @@ class _CartScreenState extends State<CartScreen>
                 },
               );
             } else {
-              return const Center(
-                child: Text('You don\'t have any books in your cart'),
+              return Center(
+                child: Text('cartScreen.noBookInCartMsg'.tr()),
               );
             }
           }

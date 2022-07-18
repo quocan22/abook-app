@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/book/book_bloc.dart';
 import '../blocs/book/book_event.dart';
@@ -79,8 +80,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           Expanded(child: BlocBuilder<ChatbotBloc, ChatbotState>(
             builder: (context, state) {
               if (state is ChatbotLoadFailure) {
-                return const Center(
-                    child: Text('There are some errors. Please try again.'));
+                return Center(
+                    child: Text('chatbotScreen.errorWithChatbot'.tr()));
               }
               if (state is ChatbotLoadSuccess) {
                 return ListView.builder(
@@ -164,7 +165,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                   style: TextStyle(color: Colors.blue, fontSize: 15.0),
                   controller: _textEditingController,
                   decoration: InputDecoration.collapsed(
-                    hintText: '  Type your message...',
+                    hintText: 'chatbotScreen.typeYourMessage'.tr(),
                     hintStyle: TextStyle(color: Colors.blue),
                   ),
                 ),
@@ -329,7 +330,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       // });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Nothing to send'),
+        content: Text('chatbotScreen.nothingToSend'.tr()),
         duration: Duration(seconds: 1),
       ));
     }

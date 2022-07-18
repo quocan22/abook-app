@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import './blocs/address_book/address_book_bloc.dart';
 import './blocs/authentication/authentication_bloc.dart';
@@ -109,6 +110,9 @@ class App extends StatelessWidget {
           )
         ],
         child: MaterialApp(
+          locale: context.locale,
+          supportedLocales: context.supportedLocales,
+          localizationsDelegates: context.localizationDelegates,
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           onGenerateRoute: Routes.onGenerateRoute,

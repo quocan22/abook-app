@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/feedback/feedback_bloc.dart';
 import '../blocs/feedback/feedback_event.dart';
@@ -24,14 +25,14 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   String? emailValidate(String? value) {
     if (!Validators.isValidEmail(value!)) {
-      return constants.FailureProcess.invalidEmail;
+      return 'feedbackScreen.invalidEmailMsg'.tr();
     }
     return null;
   }
 
   String? feedbackValidate(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Your feedback is empty';
+      return 'feedbackScreen.emptyFeedback'.tr();
     }
     return null;
   }
@@ -53,7 +54,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         backgroundColor: Colors.transparent,
         automaticallyImplyLeading: true,
         title: Text(
-          'Feedback',
+          'feedbackScreen.feedbackTitle'.tr(),
           style: Theme.of(context).textTheme.headline4?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: ColorsConstant.primaryColor,
@@ -66,11 +67,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           if (state is FeedbackSendSuccess) {
             _feedbackTextController.clear();
             _emailTextController.clear();
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Your feedback is sent')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('feedbackScreen.feedbackSentSuccessMsg'.tr())));
           } else if (state is FeedbackSendFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('There are some errors occurred')));
+                SnackBar(content: Text('feedbackScreen.errorMsg'.tr())));
           }
         },
         child: SingleChildScrollView(
@@ -85,7 +86,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   SizedBox(
                     height: 20,
                   ),
-                  Text("Email",
+                  Text('feedbackScreen.email'.tr(),
                       style: Theme.of(context).textTheme.bodyText2!.copyWith(
                           color: constants.ColorsConstant.textFieldTitle,
                           fontSize: 19,
@@ -108,7 +109,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         fontSize: 20),
                   ),
                   const SizedBox(height: 10),
-                  Text('Feedback',
+                  Text('feedbackScreen.feedback'.tr(),
                       style: Theme.of(context).textTheme.bodyText2!.copyWith(
                           color: constants.ColorsConstant.textFieldTitle,
                           fontSize: 19,
@@ -156,7 +157,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         }
                       },
                       child: Text(
-                        'Send Your Feedback',
+                        'feedbackScreen.sendFeedBack'.tr(),
                         style: Theme.of(context).textTheme.headline6!.copyWith(
                               color: Colors.white,
                             ),

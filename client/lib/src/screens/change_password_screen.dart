@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/profile/profile_bloc.dart';
 import '../blocs/profile/profile_event.dart';
@@ -33,20 +34,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   String? passwordValidate(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Password cannot be left blank';
+      return 'changePasswordScreen.passErrorMsg'.tr();
     }
     if (!Validators.isValidPassword(value)) {
-      return constants.FailureProcess.invalidPassword;
+      return 'changePasswordScreen.invalidPassErrorMsg'.tr();
     }
     return null;
   }
 
   String? repeatPasswordCheck(String? newPass) {
     if (newPass == null || newPass.trim().isEmpty) {
-      return 'Please repeat your new password';
+      return 'changePasswordScreen.repeatPassMsg'.tr();
     }
     if (newPass != _newPassword) {
-      return 'Not match';
+      return 'changePasswordScreen.passNotMatch'.tr();
     }
 
     return null;
@@ -71,8 +72,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           if (state is ProfileUpdateSuccess) {
             if (state.msg != null ||
                 state.msg != 'Change password successfully') {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Change Password Fail')));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content:
+                      Text('changePasswordScreen.changePassSuccessMsg'.tr())));
             } else {
               context
                   .read<UserClaimBloc>()
@@ -88,7 +90,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             automaticallyImplyLeading: true,
             iconTheme: IconThemeData(color: Colors.black),
             title: Text(
-              'Change Your Password',
+              'changePasswordScreen.changePassTitle'.tr(),
               style: Theme.of(context).textTheme.headline4?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: constants.ColorsConstant.primaryColor,
@@ -107,7 +109,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Current Password',
+                        Text('changePasswordScreen.currentPass'.tr(),
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText2!
@@ -138,7 +140,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                   fontSize: _textFormFieldFontSize),
                         ),
                         const SizedBox(height: _signUpFormSpacing),
-                        Text('New Password',
+                        Text('changePasswordScreen.newPass'.tr(),
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText2!
@@ -169,7 +171,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                   fontSize: _textFormFieldFontSize),
                         ),
                         const SizedBox(height: _signUpFormSpacing),
-                        Text('Repeat Your New Password',
+                        Text('changePasswordScreen.repeatYourNewPassword'.tr(),
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText2!
@@ -225,7 +227,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               }
                             },
                             child: Text(
-                              'Update Password',
+                              'changePasswordScreen.updatePassword'.tr(),
                               style: Theme.of(context)
                                   .textTheme
                                   .headline6!

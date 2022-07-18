@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tiengviet/tiengviet.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/book/book_bloc.dart';
 import '../blocs/book/book_event.dart';
@@ -66,53 +67,56 @@ class BookSearchDelegate extends SearchDelegate {
           padding: const EdgeInsets.only(
             left: 8.0,
           ),
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                child: FilterChip(
-                    selectedColor: Colors.blue,
-                    selected: filters[0],
-                    label: Text('Name'),
-                    onSelected: (_) {
-                      filters = [true, false, false, false];
-                      query = query.trim();
-                    }),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                child: FilterChip(
-                    label: Text('Author'),
-                    selectedColor: Colors.blue,
-                    selected: filters[1],
-                    onSelected: (_) {
-                      filters = [false, true, false, false];
-                      query = query.trim();
-                    }),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                child: FilterChip(
-                    selectedColor: Colors.blue,
-                    selected: filters[2],
-                    label: Text('Price'),
-                    onSelected: (_) {
-                      filters = [false, false, true, false];
-                      query = query.trim();
-                    }),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                child: FilterChip(
-                    selectedColor: Colors.blue,
-                    selected: filters[3],
-                    label: Text('Category'),
-                    onSelected: (_) {
-                      filters = [false, false, false, true];
-                      query = query.trim();
-                    }),
-              ),
-            ],
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: FilterChip(
+                      selectedColor: Colors.blue,
+                      selected: filters[0],
+                      label: Text('bookSearchDelegate.name'.tr()),
+                      onSelected: (_) {
+                        filters = [true, false, false, false];
+                        query = query.trim();
+                      }),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: FilterChip(
+                      label: Text('bookSearchDelegate.author'.tr()),
+                      selectedColor: Colors.blue,
+                      selected: filters[1],
+                      onSelected: (_) {
+                        filters = [false, true, false, false];
+                        query = query.trim();
+                      }),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: FilterChip(
+                      selectedColor: Colors.blue,
+                      selected: filters[2],
+                      label: Text('bookSearchDelegate.price'.tr()),
+                      onSelected: (_) {
+                        filters = [false, false, true, false];
+                        query = query.trim();
+                      }),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: FilterChip(
+                      selectedColor: Colors.blue,
+                      selected: filters[3],
+                      label: Text('bookSearchDelegate.category'.tr()),
+                      onSelected: (_) {
+                        filters = [false, false, false, true];
+                        query = query.trim();
+                      }),
+                ),
+              ],
+            ),
           ),
         ),
       ),

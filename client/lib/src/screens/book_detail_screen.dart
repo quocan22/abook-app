@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../blocs/book_detail/book_detail_bloc.dart';
 import '../blocs/book_detail/book_detail_event.dart';
@@ -50,9 +51,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     if (commentDate == null) return '';
 
     if (now == commentDate) {
-      return 'Today ${commentDate.timeZoneName}';
+      return '${'bookDetailScreen.today'.tr()} ${commentDate.timeZoneName}';
     } else if (DateTime(now.year, now.month, now.day - 1) == commentDate) {
-      return 'Yesterday ${commentDate.timeZoneName}';
+      return '${'bookDetailScreen.yesterDay'.tr()} ${commentDate.timeZoneName}';
     } else {
       return '${commentDate.day}/${commentDate.month} ${commentDate.hour}:${commentDate.minute}';
     }
@@ -74,27 +75,27 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   Future<void> _showLoginDialog() async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Error'),
           content: SingleChildScrollView(
             child: ListBody(
-              children: const <Widget>[
-                Text('You need to login before using this feature'),
+              children: <Widget>[
+                Text('loginDialog.needLoginMsg'.tr()),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Go to Login'),
+              child: Text('loginDialog.goToLogin'.tr()),
               onPressed: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     RouteNames.login, (route) => false);
               },
             ),
             TextButton(
-              child: const Text('Cancel'),
+              child: Text('loginDialog.cancel'.tr()),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -331,12 +332,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
                                                         content: Text(
-                                                            'This book is already added in your cart')));
+                                                            'bookDetailScreen.bookAlreadyInCart'
+                                                                .tr())));
                                               },
                                               color:
                                                   ColorsConstant.primaryColor,
                                               textColor: Colors.white,
-                                              child: Text('Buy'),
+                                              child: Text(
+                                                  'bookDetailScreen.buy'.tr()),
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -356,7 +359,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(SnackBar(
                                                           content: Text(
-                                                              'This book is no longer available for sale')));
+                                                                  'bookDetailScreen.noSaleBookMsg')
+                                                              .tr()));
                                                   return;
                                                 }
 
@@ -368,14 +372,16 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
                                                         content: Text(
-                                                            'Added book to your cart')));
+                                                            'bookDetailScreen.addBookToCart'
+                                                                .tr())));
                                                 // Navigator.of(context)
                                                 //     .maybePop();
                                               },
                                               color:
                                                   ColorsConstant.primaryColor,
                                               textColor: Colors.white,
-                                              child: Text('Buy'),
+                                              child: Text(
+                                                  'bookDetailScreen.buy'.tr()),
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -417,7 +423,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(SnackBar(
                                                           content: Text(
-                                                              'Removed from your favorite books')));
+                                                              'bookDetailScreen.removeFavBookMsg'
+                                                                  .tr())));
                                                 } else {
                                                   context
                                                       .read<UserClaimBloc>()
@@ -433,7 +440,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(SnackBar(
                                                           content: Text(
-                                                              'Added to your favorite books')));
+                                                              'bookDetailScreen.addFavBookMsg'
+                                                                  .tr())));
                                                 }
 
                                                 // Navigator.maybePop(
@@ -463,7 +471,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     height: 25,
                                   ),
                                   Text(
-                                    'Descriptions',
+                                    'bookDetailScreen.descriptions'.tr(),
                                     style: Theme.of(context)
                                         .textTheme
                                         .headline4
@@ -491,7 +499,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Your Review',
+                                              'bookDetailScreen.yourReview'
+                                                  .tr(),
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .headline4
@@ -639,7 +648,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                         )
                                       : Center(),
                                   Text(
-                                    'Ratings & Review',
+                                    'bookDetailScreen.ratingAndReview'.tr(),
                                     style: Theme.of(context)
                                         .textTheme
                                         .headline4
@@ -651,7 +660,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   _otherReview.isEmpty
                                       ? Center(
                                           child: Text(
-                                            'This book has no any reviews',
+                                            'bookDetailScreen.noReview'.tr(),
                                             overflow: TextOverflow.ellipsis,
                                             style: Theme.of(context)
                                                 .textTheme
@@ -922,7 +931,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     style: TextStyle(color: Colors.blue, fontSize: 15.0),
                     controller: _textEditingController,
                     decoration: InputDecoration(
-                      hintText: 'Type your review...',
+                      hintText: 'bookDetailScreen.typeYourReview'.tr(),
                       hintStyle: TextStyle(color: Colors.blue),
                     ),
                   ),
@@ -957,8 +966,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   onSendComment(String text) async {
     if (userRate == 0) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Please rate before review')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('bookDetailScreen.rateBeforeReview'.tr())));
       return;
     }
     bool isLoggedIn = await _checkLogin();
