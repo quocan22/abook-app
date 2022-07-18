@@ -53,7 +53,7 @@ const orderController = {
       await newOrder.save();
 
       // After ordering, cart have to be deleted
-      await Carts.findAndDelete({ userId: userId });
+      await Carts.deleteMany({ userId });
 
       res.status(202).json({
         msg: "Create order successfully",
