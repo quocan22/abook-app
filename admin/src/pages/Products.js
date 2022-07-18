@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { filter } from 'lodash';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
+import tiengVietKhongDau from 'tieng-viet-khong-dau';
 // material
 import { Box, Button, CircularProgress, Container, Stack, Typography } from '@mui/material';
 import { Icon } from '@iconify/react';
@@ -21,7 +22,8 @@ const ITEM_PER_PAGE = 12;
 function applyFilter(array, name, cate, onSale) {
   let stabilize = filter(
     array,
-    (_book) => _book.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+    (_book) =>
+      tiengVietKhongDau.cLowerCase(_book.name).indexOf(tiengVietKhongDau.cLowerCase(name)) !== -1
   );
 
   if (cate && cate !== 'all') {
