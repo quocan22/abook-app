@@ -42,7 +42,7 @@ const chatbotController = {
           // The query to send to the dialogflow agent
           text: req.body.text,
           // The language used by the client (vi-VN)
-          languageCode: languageCode,
+          languageCode: req.body.languageCode,
         },
       },
     };
@@ -53,40 +53,40 @@ const chatbotController = {
 
     switch (action) {
       case BEST_SELLING_ACTION:
-        bestSellInMonth(res);
+        bestSellInMonth(req, res, responses);
         break;
       case NEW_ARRIVALS_ACTION:
-        newArrivals(res);
+        newArrivals(req, res, responses);
         break;
       case CATEGORY_SEARCH_ACTION:
-        categorySearch(res);
+        categorySearch(req, res, responses);
         break;
       case SEARCH_BOOK_BY_CATEGORY_ACTION:
-        searchBookByCate(res, responses);
+        searchBookByCate(req, res, responses);
         break;
       case BEST_DISCOUNT_ACTION:
-        bestDiscount(res, responses);
+        bestDiscount(req, res, responses);
         break;
       case MOST_EXPENSIVE_ACTION:
-        mostExpensive(res);
+        mostExpensive(req, res, responses);
         break;
       case CHEAPEST_ACTION:
-        cheapest(res);
+        cheapest(req, res, responses);
         break;
       case GIVE_CATE_TO_FIND_BOOK:
-        searchBookByCate(res, responses);
+        searchBookByCate(req, res, responses);
         break;
       case BUY_A_BOOK_ACTION:
-        buyABook(res, responses);
+        buyABook(req, res, responses);
         break;
       case MAKE_ORDER_ACTION:
-        makeOrder(res, responses);
+        makeOrder(req, res, responses);
         break;
       case CONFIRM_ORDER_ACTION:
-        confirmOrder(res, responses);
+        confirmOrder(req, res, responses);
         break;
       default:
-        defaultAction(res, responses);
+        defaultAction(req, res, responses);
         break;
     }
 
@@ -102,7 +102,7 @@ const chatbotController = {
           // The query to send to the dialogflow agent
           name: req.body.event,
           // The language used by the client (en-US)
-          languageCode: languageCode,
+          languageCode: req.body.languageCode,
         },
       },
     };
@@ -118,16 +118,16 @@ const chatbotController = {
   },
 };
 
-function defaultAction(res, responses) {
-  const text = responses[0].queryResult.fulfillmentMessages[0].text.text[0];
+function defaultAction(req, res, responses) {
+  const message = responses[0].queryResult.fulfillmentMessages[0].text.text[0];
 
   res.status(200).json({
     type: 1,
-    text: text,
+    text: message,
   });
 }
 
-async function bestSellInMonth(res) {
+async function bestSellInMonth(req, res, responses) {
   // define the time range is 30 days to the past
   const from = new Date();
   from.setMonth(new Date().getMonth() - 1);
@@ -161,9 +161,13 @@ async function bestSellInMonth(res) {
   });
 
   if (booksInMonth.length < 1) {
-    res
-      .status(200)
-      .json({ type: 1, text: "Không đủ dữ liệu để hiển thị sách bán chạy." });
+    res.status(200).json({
+      type: 1,
+      text:
+        req.body.languageCode === "vi-VN"
+          ? "Không đủ dữ liệu để hiển thị sách bán chạy."
+          : "Not enough data to show you best selling book.",
+    });
   } else {
     let bestSellId = "";
     let maxQuantity = 0;
@@ -177,49 +181,64 @@ async function bestSellInMonth(res) {
 
     const book = await Books.findById(bestSellId);
 
+    const message =
+      responses[0].queryResult.fulfillmentMessages[0].text.text[0];
+
     res.status(200).json({
       type: 2,
-      text: "Đây là quyển sách bán chạy nhất tháng này của ABook.",
+      text: message,
       data: [book],
     });
   }
 }
 
-async function newArrivals(res) {
+async function newArrivals(req, res, responses) {
   const books = await Books.find().sort({ createdAt: -1 });
 
   if (books.length < 1) {
     res.status(200).json({
       type: 1,
-      text: "Xin lỗi, chúng tôi không có đủ dữ liệu để hiển thị cho bạn.",
+      text:
+        req.body.languageCode === "vi-VN"
+          ? "Xin lỗi, chúng tôi không có đủ dữ liệu để hiển thị cho bạn."
+          : "Sorry, we do not have enough data to show you.",
     });
   } else {
+    const message =
+      responses[0].queryResult.fulfillmentMessages[0].text.text[0];
+
     res.status(200).json({
       type: 2,
-      text: "Đây là những quyển sách mới nhất của ABook.",
+      text: message,
       data: books.slice(0, 3),
     });
   }
 }
 
-async function categorySearch(res) {
+async function categorySearch(req, res, responses) {
   const categories = await Categories.find();
 
   if (!categories) {
     res.status(200).json({
       type: 1,
-      text: "Xin lỗi, chúng tôi không có đủ dữ liệu để hiển thị cho bạn.",
+      text:
+        req.body.languageCode === "vi-VN"
+          ? "Xin lỗi, chúng tôi không có đủ dữ liệu để hiển thị cho bạn."
+          : "Sorry, we do not have enough data to show you.",
     });
   } else {
+    const message =
+      responses[0].queryResult.fulfillmentMessages[0].text.text[0];
+
     res.status(200).json({
       type: 3,
-      text: "Chúng tôi có những thể loại sách dưới đây dành cho bạn.",
+      text: message,
       data: categories,
     });
   }
 }
 
-async function searchBookByCate(res, responses) {
+async function searchBookByCate(req, res, responses) {
   const categoryName =
     responses[0].queryResult.parameters.fields.categoryName.stringValue;
 
@@ -228,20 +247,26 @@ async function searchBookByCate(res, responses) {
   if (!category) {
     res.status(200).json({
       type: 1,
-      text: "Xin lỗi, ABook hiện chưa có thể loại sách mà bạn cần.",
+      text:
+        req.body.languageCode === "vi-VN"
+          ? "Xin lỗi, ABook hiện chưa có thể loại sách mà bạn cần."
+          : "Sorry, we do not have the kind of book you want.",
     });
   } else {
     const books = await Books.find({ categoryId: category._id });
 
+    const message =
+      responses[0].queryResult.fulfillmentMessages[0].text.text[0];
+
     res.status(200).json({
       type: 2,
-      text: "Chúng tôi gợi ý vài tựa sách dưới đây cho bạn.",
+      text: message,
       data: books,
     });
   }
 }
 
-async function bestDiscount(res) {
+async function bestDiscount(req, res, responses) {
   const bestDiscountBooks = await Books.find()
     .sort({ discountRatio: -1, createdAt: 1 })
     .limit(5);
@@ -249,56 +274,70 @@ async function bestDiscount(res) {
   if (bestDiscountBooks.length < 1) {
     res.status(200).json({
       type: 1,
-      text: "Xin lỗi, chúng tôi không có đủ dữ liệu để hiển thị cho bạn.",
+      text:
+        req.body.languageCode === "vi-VN"
+          ? "Xin lỗi, chúng tôi không có đủ dữ liệu để hiển thị cho bạn."
+          : "Sorry, we do not have enough data to show you.",
     });
   } else {
+    const message =
+      responses[0].queryResult.fulfillmentMessages[0].text.text[0];
+
     res.status(200).json({
       type: 2,
-      text: "Đây là những quyển sách với giảm giá hấp dẫn nhất trên ABook.",
+      text: message,
       data: bestDiscountBooks,
     });
   }
 }
 
-async function mostExpensive(res) {
+async function mostExpensive(req, res, responses) {
   const mostExpensiveBook = await Books.find().sort({ price: -1 }).limit(1);
 
   if (mostExpensiveBook.length > 0) {
-    const price = formatCurrency(mostExpensiveBook[0].price);
+    const message =
+      responses[0].queryResult.fulfillmentMessages[0].text.text[0];
 
     res.status(200).json({
       type: 2,
-      text: `Đây là quyển sách giá cao nhất của chúng tôi với mức giá là ${price}.`,
+      text: message,
       data: mostExpensiveBook,
     });
   } else {
     res.status(200).json({
       type: 1,
-      text: "Xin lỗi, chúng tôi đang gặp một vài vấn đề nên không thể đáp ứng yêu cầu của bạn ngay được, chúng tôi sẽ quay lại ngay khi có thể.",
+      text:
+        req.body.languageCode === "vi-VN"
+          ? "Xin lỗi, chúng tôi đang gặp một vài vấn đề nên không thể đáp ứng yêu cầu của bạn ngay được, chúng tôi sẽ quay lại ngay khi có thể."
+          : "Sorry, we encounter sudden problem and cannot response your request right now, we will be back as soon as possible.",
     });
   }
 }
 
-async function cheapest(res) {
+async function cheapest(req, res, responses) {
   const cheapestBook = await Books.find().sort({ price: 1 }).limit(1);
 
   if (cheapestBook.length > 0) {
-    const price = formatCurrency(cheapestBook[0].price);
+    const message =
+      responses[0].queryResult.fulfillmentMessages[0].text.text[0];
 
     res.status(200).json({
       type: 2,
-      text: `Đây là quyển sách giá thấp nhất của chúng tôi với mức giá là ${price}.`,
+      text: message,
       data: cheapestBook,
     });
   } else {
     res.status(200).json({
       type: 1,
-      text: "Xin lỗi, chúng tôi đang gặp một vài vấn đề nên không thể đáp ứng yêu cầu của bạn ngay được, chúng tôi sẽ quay lại ngay khi có thể.",
+      text:
+        req.body.languageCode === "vi-VN"
+          ? "Xin lỗi, chúng tôi đang gặp một vài vấn đề nên không thể đáp ứng yêu cầu của bạn ngay được, chúng tôi sẽ quay lại ngay khi có thể."
+          : "Sorry, we encounter sudden problem and cannot response your request right now, we will be back as soon as possible.",
     });
   }
 }
 
-async function buyABook(res, responses) {
+async function buyABook(req, res, responses) {
   const result = responses[0].queryResult;
   const message = result.fulfillmentMessages[0].text.text[0];
 
@@ -311,7 +350,10 @@ async function buyABook(res, responses) {
     ) {
       return res.status(200).json({
         type: 1,
-        text: "Chúng tôi gặp sự cố bất ngờ trong khi tìm kiếm sách theo yêu cầu của bạn.",
+        text:
+          req.body.languageCode === "vi-VN"
+            ? "Chúng tôi gặp sự cố bất ngờ trong khi tìm kiếm sách theo yêu cầu của bạn."
+            : "We have some problems while trying to find book for you.",
       });
     }
 
@@ -322,14 +364,20 @@ async function buyABook(res, responses) {
     if (!book) {
       return res.status(200).json({
         type: 1,
-        text: "Chúng tôi gặp sự cố bất ngờ trong khi tìm kiếm sách theo yêu cầu của bạn.",
+        text:
+          req.body.languageCode === "vi-VN"
+            ? "Chúng tôi gặp sự cố bất ngờ trong khi tìm kiếm sách theo yêu cầu của bạn."
+            : "We have some problems while trying to find book for you.",
       });
     }
 
     if (!book.isAvailable) {
       return res.status(200).json({
         type: 2,
-        text: "Chúng tôi tìm thấy quyển sách này dựa trên yêu cầu của bạn, nhưng quyển sách này đã ngừng kinh doanh.",
+        text:
+          req.body.languageCode === "vi-VN"
+            ? "Chúng tôi tìm thấy quyển sách này dựa trên yêu cầu của bạn, nhưng quyển sách này đã ngừng kinh doanh."
+            : "We find this book for you, but it has already stopped business.",
         data: [book],
       });
     }
@@ -342,17 +390,15 @@ async function buyABook(res, responses) {
   }
 }
 
-async function makeOrder(res, responses) {
+async function makeOrder(req, res, responses) {
   const result = responses[0].queryResult;
   const message = result.fulfillmentMessages[0].text.text[0];
   res.status(200).json({ type: 1, text: message });
 }
 
-async function confirmOrder(res, responses) {
+async function confirmOrder(req, res, responses) {
   const { bookName, quantity, email, name, phoneNumber, address } =
     responses[0].queryResult.parameters.fields;
-
-  console.log(responses[0].queryResult);
 
   const user = await Users.findOne({ email: email.stringValue });
 
@@ -367,7 +413,10 @@ async function confirmOrder(res, responses) {
   if (!book) {
     res.status(200).json({
       type: 1,
-      text: "Chúng tôi gặp một sự cố bất ngờ. ABook xin lỗi vì sự bất tiện này.",
+      text:
+        req.body.languageCode === "vi-VN"
+          ? "Chúng tôi gặp một sự cố bất ngờ. ABook xin lỗi vì sự bất tiện này."
+          : "We have some sudden problems. ABook apologize for this inconvenient.",
     });
   }
 
