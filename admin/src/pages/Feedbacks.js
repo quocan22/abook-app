@@ -85,7 +85,7 @@ export default function Feedbacks() {
 
   return (
     <Page title="Feedbacks | ABook">
-      <Container>
+      <Container maxWidth="xl">
         <Typography sx={{ mb: 5 }} variant="h4" gutterBottom>
           Feedbacks
         </Typography>

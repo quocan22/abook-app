@@ -177,7 +177,7 @@ export default function Profile() {
 
   return (
     <Page title="Profile | ABook">
-      <Container>
+      <Container maxWidth="xl">
         <Typography sx={{ mb: 5 }} variant="h4" gutterBottom>
           Profile
         </Typography>

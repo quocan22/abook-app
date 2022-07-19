@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { filter } from 'lodash';
 import dateFormat from 'dateformat';
+import tiengVietKhongDau from 'tieng-viet-khong-dau';
 import {
   Container,
   Typography,
@@ -68,7 +69,9 @@ function applyFilter(array, field, value) {
   if (field !== 'paidStatus' && field !== 'shippingStatus') {
     return filter(
       array,
-      (_order) => _order[field].toLowerCase().indexOf(value.toLowerCase()) !== -1
+      (_order) =>
+        tiengVietKhongDau.cLowerCase(_order[field]).indexOf(tiengVietKhongDau.cLowerCase(value)) !==
+        -1
     );
   }
   return array.filter((_order) => _order[field].toString() === value);
@@ -141,7 +144,7 @@ export default function Orders() {
 
   return (
     <Page title="Orders Management | ABook">
-      <Container>
+      <Container maxWidth="xl">
         <Typography sx={{ mb: 5 }} variant="h4" gutterBottom>
           Orders
         </Typography>

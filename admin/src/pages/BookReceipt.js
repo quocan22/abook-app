@@ -138,7 +138,7 @@ export default function BookReceipt() {
   };
 
   const removeFromList = (index) => {
-    const tempArr = [receiveList];
+    const tempArr = [...receiveList];
     tempArr.splice(index, 1);
     setReceiveList(tempArr);
   };
@@ -160,7 +160,7 @@ export default function BookReceipt() {
 
   return (
     <Page title="Book Receipt | ABook">
-      <Container>
+      <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Typography variant="h4" gutterBottom>
             Book Receipt

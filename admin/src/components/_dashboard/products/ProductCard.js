@@ -76,7 +76,7 @@ export default function ProductCard({ product, onChange }) {
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Stack>
             <Tooltip title={<h2>{name}</h2>}>
-              <Typography sx={{ maxWidth: 150 }} variant="subtitle1" noWrap>
+              <Typography sx={{ maxWidth: 250 }} variant="subtitle1" noWrap>
                 {name}
               </Typography>
             </Tooltip>

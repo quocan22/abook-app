@@ -54,7 +54,6 @@ export default function BookDetails() {
   const { bookId } = useParams();
   const navigate = useNavigate();
   const [book, setBook] = useState([]);
-  // const [change, setChange] = useState(false);
 
   useEffect(() => {
     BookService.getBookById(bookId)
@@ -87,7 +86,7 @@ export default function BookDetails() {
 
   return (
     <Page title={`${book.name} | ABook`}>
-      <Container>
+      <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             Book Details

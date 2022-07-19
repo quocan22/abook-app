@@ -191,19 +191,29 @@ const bookController = {
 
       // create a new comment
       const newComment = {
-        userId: userId,
-        rate: rate,
-        review: review,
+        userId,
+        rate,
+        review,
         commentDate: new Date(),
       };
 
-      // add comment to array and update average rate of the book
-      book.comments.push(newComment);
+      const matchedCommentIndex = book.comments.findIndex((c) => {
+        return c.userId === userId;
+      });
+
+      if (matchedCommentIndex === -1) {
+        // add comment to array
+        book.comments.push(newComment);
+      } else {
+        book.comments[matchedCommentIndex] = newComment;
+      }
+
+      // update average rate of the book
       book.avgRate = updateAvgRate(book.comments);
 
       await book.save();
 
-      res.status(200).json({ msg: "Add new comment successfully" });
+      res.status(200).json({ msg: "Review book successfully" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
