@@ -1,6 +1,9 @@
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 import '../blocs/book/book_bloc.dart';
 import '../blocs/book/book_event.dart';
@@ -27,17 +30,47 @@ class ChatbotScreen extends StatefulWidget {
 class _ChatbotScreenState extends State<ChatbotScreen> {
   final _textEditingController = TextEditingController();
 
+  bool _speechEnabled = false;
+  SpeechToText _speechToText = SpeechToText();
+
   @override
   void initState() {
     super.initState();
+    _initSpeech();
     context
         .read<ChatbotBloc>()
         .add(ChatbotEventSent(eventName: 'welcomeToAbook'));
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  void _initSpeech() async {
+    try {
+      _speechEnabled = await _speechToText.initialize();
+    } catch (e) {
+      _speechEnabled = false;
+    }
+    setState(() {});
+  }
+
+  void _startListening() async {
+    await _speechToText.listen(
+        onResult: _onSpeechResult, localeId: 'languageCode'.tr());
+    setState(() {});
+  }
+
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {});
+  }
+
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _textEditingController.text = result.recognizedWords;
+    });
+    EasyDebounce.debounce('delay-send-msg', Duration(milliseconds: 500), () {
+      if (_speechToText.isNotListening) {
+        onSendMessage(result.recognizedWords.trim());
+      }
+    });
   }
 
   @override
@@ -155,6 +188,26 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
         child: Row(
           children: <Widget>[
+            // Button voice
+            Visibility(
+              visible: _speechEnabled,
+              child: Material(
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: IconButton(
+                    icon: Icon(_speechToText.isNotListening
+                        ? Icons.mic_off
+                        : Icons.mic),
+                    onPressed: _speechToText.isNotListening
+                        ? _startListening
+                        : _stopListening,
+                    color: Colors.blue,
+                  ),
+                ),
+                color: Colors.white,
+              ),
+            ),
+
             // Edit text
             Flexible(
               child: Container(
@@ -243,37 +296,38 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               backgroundColor: Colors.blue.withOpacity(0.1),
             ),
           ),
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  text,
-                  style: TextStyle(color: Colors.white),
-                ),
-                SizedBox(
-                  height: 150,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: bookList.length,
-                    itemBuilder: (context, index) =>
-                        (bookList[index].discountRatio != 0)
-                            ? SquaredBookCardWithDiscount(
-                                book: bookList[index],
-                              )
-                            : SquaredBookCard(
-                                book: bookList[index],
-                              ),
+          Expanded(
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    text,
+                    style: TextStyle(color: Colors.white),
                   ),
-                )
-              ],
+                  SizedBox(
+                    height: 150,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: bookList.length,
+                      itemBuilder: (context, index) =>
+                          (bookList[index].discountRatio != 0)
+                              ? SquaredBookCardWithDiscount(
+                                  book: bookList[index],
+                                )
+                              : SquaredBookCard(
+                                  book: bookList[index],
+                                ),
+                    ),
+                  )
+                ],
+              ),
+              padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+              decoration: BoxDecoration(
+                  color: Colors.grey, borderRadius: BorderRadius.circular(8.0)),
+              margin: EdgeInsets.only(left: 10.0, bottom: 10.0, right: 50.0),
             ),
-            padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-            constraints: BoxConstraints(maxWidth: 300),
-            decoration: BoxDecoration(
-                color: Colors.grey, borderRadius: BorderRadius.circular(8.0)),
-            margin: EdgeInsets.only(left: 10.0, bottom: 10.0, right: 10.0),
           ),
         ]);
   }
@@ -292,31 +346,32 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               backgroundColor: Colors.blue.withOpacity(0.1),
             ),
           ),
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  text,
-                  style: TextStyle(color: Colors.white),
-                ),
-                SizedBox(
-                  height: 150,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: categoryList.length,
-                    itemBuilder: (BuildContext context, int index) =>
-                        CategoryCard(category: categoryList[index]),
+          Expanded(
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    text,
+                    style: TextStyle(color: Colors.white),
                   ),
-                )
-              ],
+                  SizedBox(
+                    height: 150,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: categoryList.length,
+                      itemBuilder: (BuildContext context, int index) =>
+                          CategoryCard(category: categoryList[index]),
+                    ),
+                  )
+                ],
+              ),
+              padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+              decoration: BoxDecoration(
+                  color: Colors.grey, borderRadius: BorderRadius.circular(8.0)),
+              margin: EdgeInsets.only(left: 10.0, bottom: 10.0, right: 50.0),
             ),
-            padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-            constraints: BoxConstraints(maxWidth: 300),
-            decoration: BoxDecoration(
-                color: Colors.grey, borderRadius: BorderRadius.circular(8.0)),
-            margin: EdgeInsets.only(left: 10.0, bottom: 10.0, right: 10.0),
           ),
         ]);
   }

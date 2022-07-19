@@ -46,7 +46,8 @@
     "removeFavBookMsg": "Removed from your favorite books",
     "addFavBookMsg": "Added to your favorite books",
     "noReview": "This book has no any reviews",
-    "rateBeforeReview": "Please rate before review"
+    "rateBeforeReview": "Please rate before review",
+    "editReview": "Edit review"
   },
   "loginDialog": {
     "needLoginMsg": "You need to login before using this feature",

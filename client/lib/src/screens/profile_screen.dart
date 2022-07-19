@@ -308,8 +308,124 @@ class _ProfileScreenState extends State<ProfileScreen>
                             ),
                           );
                         } else {
-                          return Center(
-                            child: CircularProgressIndicator(),
+                          return Padding(
+                            padding:
+                                EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 16.0),
+                            child: Stack(
+                              alignment: Alignment.topCenter,
+                              children: <Widget>[
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 8,
+                                          offset: Offset(0, 3)),
+                                    ],
+                                  ),
+                                  margin: EdgeInsets.only(top: 100 / 2),
+                                  child: Stack(children: [
+                                    Container(
+                                      padding: EdgeInsets.fromLTRB(
+                                          16.0, 16.0 + 100 / 2, 16.0, 16.0),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: <Widget>[
+                                          const SizedBox(
+                                            height: 16.0,
+                                          ),
+                                          IntrinsicHeight(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      'profileScreen.totalOrder'
+                                                          .tr(),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .headline4
+                                                          ?.copyWith(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.black,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                VerticalDivider(
+                                                  color: Colors.grey,
+                                                  width: 2,
+                                                ),
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      'profileScreen.pendingOrder'
+                                                          .tr(),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .headline4
+                                                          ?.copyWith(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.black,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: IconButton(
+                                          onPressed: () {
+                                            openSettingOptions(context);
+                                          },
+                                          icon: Icon(Icons.settings)),
+                                    )
+                                  ]),
+                                ),
+                                Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 5.0,
+                                        offset: Offset(0.0, 5.0),
+                                      )
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              ],
+                            ),
                           );
                         }
                       },

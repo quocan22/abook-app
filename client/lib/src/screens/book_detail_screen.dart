@@ -34,6 +34,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   int userRate = 0;
   var _textEditingController = TextEditingController();
   bool isLoaded = false;
+  bool isEditUserReview = false;
 
   @override
   void initState() {
@@ -338,8 +339,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                               color:
                                                   ColorsConstant.primaryColor,
                                               textColor: Colors.white,
-                                              child: Text(
-                                                  'bookDetailScreen.buy'.tr()),
+                                              child:
+                                                  Icon(Icons.add_shopping_cart),
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -380,8 +381,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                               color:
                                                   ColorsConstant.primaryColor,
                                               textColor: Colors.white,
-                                              child: Text(
-                                                  'bookDetailScreen.buy'.tr()),
+                                              child:
+                                                  Icon(Icons.add_shopping_cart),
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -482,6 +483,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   ),
                                   Text(
                                     state.book!.description,
+                                    textAlign: TextAlign.justify,
                                     style: Theme.of(context)
                                         .textTheme
                                         .headline6
@@ -634,6 +636,36 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                                           maxLines: 1,
                                                           overflow: TextOverflow
                                                               .ellipsis,
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              userRate =
+                                                                  _yourReview[
+                                                                      'rate'];
+                                                              _textEditingController
+                                                                      .text =
+                                                                  _yourReview[
+                                                                      'review'];
+                                                              isEditUserReview =
+                                                                  true;
+                                                            });
+                                                          },
+                                                          child: Text(
+                                                            'bookDetailScreen.editReview'
+                                                                .tr(),
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .headline5
+                                                                ?.copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  color: ColorsConstant
+                                                                      .primaryColor,
+                                                                ),
+                                                          ),
                                                         ),
                                                       ],
                                                     ),
@@ -829,9 +861,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         ),
                         Visibility(
                           visible: !currentBook.comments
-                              .map((e) => e['userId'])
-                              .toList()
-                              .contains(userId),
+                                  .map((e) => e['userId'])
+                                  .toList()
+                                  .contains(userId) ||
+                              isEditUserReview,
                           child: Positioned(
                               bottom: 0,
                               left: 0,
@@ -975,6 +1008,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       _showLoginDialog();
       return;
     }
+    setState(() {
+      isEditUserReview = false;
+    });
     context.read<BookDetailBloc>().add(BookSentComment(
         bookId: widget.book.id,
         userId: userId!,

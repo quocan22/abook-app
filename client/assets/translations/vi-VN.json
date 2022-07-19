@@ -46,7 +46,8 @@
       "removeFavBookMsg": "Đã xóa sách khỏi mục yêu thích",
       "addFavBookMsg": "Đã thêm sách vào mục yêu thích",
       "noReview": "Chưa có đánh giá nào",
-      "rateBeforeReview": "Hãy xếp hạng sách trước khi viết đánh giá"
+      "rateBeforeReview": "Hãy xếp hạng sách trước khi viết đánh giá",
+      "editReview": "Chỉnh sửa đánh giá"
     },
     "loginDialog": {
       "needLoginMsg": "Bạn cần đăng nhập để sử dụng chức năng này",

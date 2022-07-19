@@ -101,8 +101,11 @@ class _HomeScreenState extends State<HomeScreen>
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
               itemCount: bookList.length,
-              itemBuilder: (context, index) => SquaredBookCardWithDiscount(
-                book: bookList[index],
+              itemBuilder: (context, index) => Padding(
+                padding: EdgeInsets.only(left: index == 0 ? 25.0 : 0.0),
+                child: SquaredBookCardWithDiscount(
+                  book: bookList[index],
+                ),
               ),
             );
           } else {
@@ -139,8 +142,10 @@ class _HomeScreenState extends State<HomeScreen>
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
               itemCount: state.categories!.length,
-              itemBuilder: (BuildContext context, int index) =>
-                  CategoryCard(category: state.categories![index]),
+              itemBuilder: (BuildContext context, int index) => Padding(
+                padding: EdgeInsets.only(left: index == 0 ? 25.0 : 0.0),
+                child: CategoryCard(category: state.categories![index]),
+              ),
             );
           } else {
             //temp screen
@@ -243,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen>
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         child: RefreshIndicator(
           onRefresh: () async {
             context.read<BookBloc>().add(BookRequested());
@@ -254,39 +259,51 @@ class _HomeScreenState extends State<HomeScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  'homeScreen.newBook'.tr(),
-                  style: Theme.of(context).textTheme.headline4?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    'homeScreen.newBook'.tr(),
+                    style: Theme.of(context).textTheme.headline4?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                  ),
                 ),
                 SizedBox(height: 120, child: _buildCarouselBookList()),
-                Text(
-                  'homeScreen.bestSeller'.tr(),
-                  style: Theme.of(context).textTheme.headline4?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    'homeScreen.bestSeller'.tr(),
+                    style: Theme.of(context).textTheme.headline4?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                  ),
                 ),
                 SizedBox(height: 200, child: _buildBestSellerBookList()),
-                Text(
-                  'homeScreen.categories'.tr(),
-                  style: Theme.of(context).textTheme.headline4?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    'homeScreen.categories'.tr(),
+                    style: Theme.of(context).textTheme.headline4?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                  ),
                 ),
                 SizedBox(
                   child: _buildCategoryList(),
                   height: 150,
                 ),
-                Text(
-                  'homeScreen.onSale'.tr(),
-                  style: Theme.of(context).textTheme.headline4?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0),
+                  child: Text(
+                    'homeScreen.onSale'.tr(),
+                    style: Theme.of(context).textTheme.headline4?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                  ),
                 ),
                 SizedBox(height: 200, child: _buildBookList()),
               ],
