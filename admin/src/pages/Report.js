@@ -210,7 +210,7 @@ export default function Report() {
 
   return (
     <Page title="Report | ABook">
-      <Container>
+      <Container maxWidth="xl">
         <Stack direction="row" alignContent="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             Report

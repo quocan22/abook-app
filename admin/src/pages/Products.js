@@ -54,7 +54,6 @@ export default function Products() {
     BookService.getAllBooks()
       .then((res) => {
         setBooks(res.data.data);
-        console.log(res.data.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -95,7 +94,7 @@ export default function Products() {
 
   return (
     <Page title="Products Management | ABook">
-      <Container>
+      <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Typography variant="h4" gutterBottom>
             Products

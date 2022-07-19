@@ -1,21 +1,12 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
 import eyeFill from '@iconify/icons-eva/eye-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
 // material
-import {
-  Link,
-  Stack,
-  Checkbox,
-  TextField,
-  IconButton,
-  InputAdornment,
-  FormControlLabel,
-  Typography
-} from '@mui/material';
+import { Stack, TextField, IconButton, InputAdornment, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { AuthService, TokenService } from '../../../services';
 
@@ -60,7 +51,7 @@ export default function LoginForm() {
     }
   });
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, isSubmitting, handleSubmit, getFieldProps } = formik;
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
@@ -106,18 +97,8 @@ export default function LoginForm() {
           </Typography>
         )}
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-          <FormControlLabel
-            control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
-            label="Remember me"
-          />
-
-          <Link component={RouterLink} variant="subtitle2" to="#">
-            Forgot password?
-          </Link>
-        </Stack>
-
         <LoadingButton
+          sx={{ my: 4 }}
           fullWidth
           size="large"
           type="submit"

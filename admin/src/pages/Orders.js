@@ -144,7 +144,7 @@ export default function Orders() {
 
   return (
     <Page title="Orders Management | ABook">
-      <Container>
+      <Container maxWidth="xl">
         <Typography sx={{ mb: 5 }} variant="h4" gutterBottom>
           Orders
         </Typography>
